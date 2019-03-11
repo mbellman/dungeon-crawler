@@ -1,0 +1,11 @@
+/cmake-build-debug/
+/build/
+CMakeCache.txt
+.vs/
+Debug/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.dll
+*.stackdump
