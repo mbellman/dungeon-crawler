@@ -2,6 +2,8 @@
 #include <System/Math.h>
 #include <Helpers.h>
 
+namespace Soft {
+
 /**
  * Positionable2d
  * --------------
@@ -80,3 +82,5 @@ void Positionable3d::updatePosition(int dt) {
 		position = Vec3::lerp(tween.value.start, tween.value.end, alpha);
 	}
 }
+
+} // namespace

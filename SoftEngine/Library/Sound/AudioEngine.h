@@ -4,6 +4,8 @@
 #include <al.h>
 #include <alc.h>
 
+namespace Soft {
+
 class AudioEngine {
 public:
 	AudioEngine();
@@ -16,3 +18,5 @@ private:
 	ALCdevice* device = nullptr;
 	ALCcontext* context = nullptr;
 };
+
+} // namespace Soft

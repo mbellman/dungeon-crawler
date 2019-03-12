@@ -4,6 +4,8 @@
 #include <System/Geometry.h>
 #include <System/Objects.h>
 
+namespace Soft {
+
 /**
  * RasterFilter
  * ------------
@@ -189,3 +191,5 @@ void RasterFilter::reset() {
 
 	covers.clear();
 }
+
+} // namespace Soft

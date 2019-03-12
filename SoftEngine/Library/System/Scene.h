@@ -15,6 +15,8 @@
 #include <System/Controller.h>
 #include <SDL.h>
 
+namespace Soft {
+
 /**
  * ControlMode
  * -----------
@@ -128,3 +130,5 @@ private:
 	void unload();
 	void updateCurrentOccupiedSectors();
 };
+
+} // namespace Soft

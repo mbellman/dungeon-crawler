@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <SDL.h>
 
+namespace Soft {
+
 /**
  * UI
  * --
@@ -54,3 +56,5 @@ void UI::update(int dt) {
 		uiObject->update(dt);
 	}
 }
+
+} // namespace Soft

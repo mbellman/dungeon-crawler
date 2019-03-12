@@ -8,6 +8,8 @@
 #include <functional>
 #include <vector>
 
+namespace Soft {
+
 /**
  * ParticleSystem
  * --------------
@@ -35,3 +37,5 @@ private:
 
 	void resetParticle(Particle* particle);
 };
+
+} // namespace Soft

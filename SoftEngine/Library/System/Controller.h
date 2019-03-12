@@ -5,6 +5,8 @@
 #include <System/Flags.h>
 #include <System/Math.h>
 
+namespace Soft {
+
 class Engine;
 class Scene;
 
@@ -42,3 +44,5 @@ private:
 	void handlePendingSceneChange();
 	void handleSwitchScene();
 };
+
+} // namespace Soft

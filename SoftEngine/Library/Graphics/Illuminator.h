@@ -4,6 +4,8 @@
 #include <System/Math.h>
 #include <System/Geometry.h>
 
+namespace Soft {
+
 /**
  * Illuminator
  * -----------
@@ -25,3 +27,5 @@ private:
 	void illuminateTextureTriangle(Triangle* triangle);
 	void resetTriangleLighting(Triangle* triangle);
 };
+
+} // namespace Soft

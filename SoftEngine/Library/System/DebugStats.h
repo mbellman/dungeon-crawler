@@ -3,6 +3,8 @@
 #include <System/Math.h>
 #include <System/Objects.h>
 
+namespace Soft {
+
 class DebugStats {
 public:
 	void trackScreenProjectionTime();
@@ -41,3 +43,5 @@ private:
 	int totalPolygons = 0;
 	int totalVertices = 0;
 };
+
+} // namespace Soft

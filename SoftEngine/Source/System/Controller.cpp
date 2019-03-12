@@ -6,6 +6,8 @@
 #include <Engine.h>
 #include <SDL.h>
 
+namespace Soft {
+
 /**
  * Controller
  * ----------
@@ -153,3 +155,5 @@ void Controller::switchScene(Scene* scene) {
 void Controller::toggleFlag(Flags flag) {
 	engine->toggleFlag(flag);
 }
+
+} // namespace Soft

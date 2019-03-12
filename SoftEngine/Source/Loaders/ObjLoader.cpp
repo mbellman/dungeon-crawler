@@ -3,11 +3,11 @@
 #include <iostream>
 #include <Loaders/ObjLoader.h>
 
-using namespace std;
+static std::string VERTEX_LABEL = "v";
+static std::string TEXTURE_COORDINATE_LABEL = "vt";
+static std::string FACE_LABEL = "f";
 
-static string VERTEX_LABEL = "v";
-static string TEXTURE_COORDINATE_LABEL = "vt";
-static string FACE_LABEL = "f";
+namespace Soft {
 
 /**
  * ObjLoader
@@ -19,7 +19,7 @@ ObjLoader::ObjLoader(const char* path) {
 	while (isLoading) {
 		setChunkDelimiter(" ");
 
-		string label = readNextChunk();
+		std::string label = readNextChunk();
 
 		if (label == VERTEX_LABEL) {
 			handleVertex();
@@ -49,16 +49,16 @@ void ObjLoader::handleFace() {
 }
 
 void ObjLoader::handleVertex() {
-	float x = stof(readNextChunk());
-	float y = stof(readNextChunk());
-	float z = stof(readNextChunk());
+	float x = std::stof(readNextChunk());
+	float y = std::stof(readNextChunk());
+	float z = std::stof(readNextChunk());
 
 	vertices.push_back({ x, y, z });
 }
 
 void ObjLoader::handleTextureCoordinate() {
-	float u = stof(readNextChunk());
-	float v = stof(readNextChunk());
+	float u = std::stof(readNextChunk());
+	float v = std::stof(readNextChunk());
 
 	textureCoordinates.push_back({ u, v });
 }
@@ -77,7 +77,7 @@ void ObjLoader::handleTextureCoordinate() {
  * and vn the normal index, with respect to previously listed
  * vertex/texture coordinate/normal values.
  */
-VertexData ObjLoader::parseVertexData(string chunk) {
+VertexData ObjLoader::parseVertexData(std::string chunk) {
 	VertexData vertexData;
 	int offset = 0;
 
@@ -95,9 +95,9 @@ VertexData ObjLoader::parseVertexData(string chunk) {
 			// As long as characters are found in between the
 			// previous '/' and the next, or we still have extra
 			// characters in the chunk, attempt to parse the index.
-			int len = hasNext ? next : string::npos;
+			int len = hasNext ? next : std::string::npos;
 
-			vertexData.indexes[i] = stoi(chunk.substr(offset, len));
+			vertexData.indexes[i] = std::stoi(chunk.substr(offset, len));
 		}
 
 		offset = hasNext ? next + 1 : chunk.length();
@@ -105,3 +105,5 @@ VertexData ObjLoader::parseVertexData(string chunk) {
 
 	return vertexData;
 }
+
+} // namespace Soft

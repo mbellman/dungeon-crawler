@@ -9,6 +9,8 @@ static std::string BACKGROUND_COLOR = "backgroundColor";
 static std::string BRIGHTNESS = "brightness";
 static std::string VISIBILITY = "visibility";
 
+namespace Soft {
+
 /**
  * CommandLine
  * -----------
@@ -127,3 +129,5 @@ void CommandLine::queueCharacter(char character) {
 void CommandLine::setActiveScene(Scene* scene) {
 	activeScene = scene;
 }
+
+} // namespace Soft

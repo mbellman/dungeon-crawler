@@ -1,10 +1,9 @@
 #include <Scenes/GameScene.h>
-#include <Engine.h>
-#include <System/Controller.h>
+#include <SoftEngine.h>
 
 int main(int argc, char* argv[]) {
-	Engine* engine = new Engine(1200, 720, "Dungeon Crawler", NULL, NULL, 0);
-	Controller* controller = new Controller(engine);
+	Soft::Engine* engine = new Soft::Engine(1200, 720, "Dungeon Crawler", NULL, NULL, 0);
+	Soft::Controller* controller = new Soft::Controller(engine);
 
 	controller->start(new GameScene());
 

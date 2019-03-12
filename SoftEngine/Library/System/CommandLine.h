@@ -7,6 +7,8 @@
 #include <Graphics/Color.h>
 #include <SDL.h>
 
+namespace Soft {
+
 /**
  * CommandLine
  * -----------
@@ -32,3 +34,5 @@ private:
 	void parseVec3(std::string& value, Vec3& vector);
 	void parseTriple(std::string& value, std::string (&triple)[3]);
 };
+
+} // namespace Soft

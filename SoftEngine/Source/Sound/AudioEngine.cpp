@@ -6,7 +6,7 @@
 #include <iostream>
 #include <UI/Alert.h>
 
-using namespace std;
+namespace Soft {
 
 /**
  * AudioEngine
@@ -50,3 +50,5 @@ void AudioEngine::mute() {
 void AudioEngine::unmute() {
 	alListenerf(AL_GAIN, 1.0f);
 }
+
+} // namespace Soft

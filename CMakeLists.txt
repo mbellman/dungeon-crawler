@@ -72,6 +72,7 @@ set(SOURCE_FILES
     SoftEngine/Library/Constants.h
     SoftEngine/Library/Engine.h
     SoftEngine/Library/Helpers.h
+    SoftEngine/Library/SoftEngine.h
 
     # -- CPP Files --
     SoftEngine/Source/Graphics/Color.cpp

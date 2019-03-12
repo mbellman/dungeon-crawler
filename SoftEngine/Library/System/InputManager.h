@@ -3,6 +3,8 @@
 #include <SDL.h>
 #include <functional>
 
+namespace Soft {
+
 typedef std::function<void(const SDL_Event&)> EventHandler;
 typedef std::function<void(int, int)> MouseMotionHandler;
 typedef std::function<void()> MouseButtonHandler;
@@ -54,3 +56,5 @@ private:
 	void handleMouseMotion(const SDL_MouseMotionEvent& event);
 	void handleMouseUp(const SDL_MouseButtonEvent& event);
 };
+
+} // namespace Soft

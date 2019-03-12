@@ -2,6 +2,8 @@
 
 #include <functional>
 
+namespace Soft {
+
 struct RotationMatrix;
 
 /**
@@ -136,3 +138,5 @@ struct Tween {
 		return easing(p);
 	}
 };
+
+} // namespace Soft

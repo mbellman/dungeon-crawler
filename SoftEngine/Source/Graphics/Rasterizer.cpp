@@ -11,7 +11,7 @@
 #include <System/Objects.h>
 #include <UI/Alert.h>
 
-using namespace std;
+namespace Soft {
 
 /**
  * Rasterizer
@@ -42,8 +42,8 @@ void Rasterizer::clear() {
 	int bufferLength = width * height;
 	Uint32 clearColor = ARGB(backgroundColor.R, backgroundColor.G, backgroundColor.B);
 
-	fill(pixelBuffer, pixelBuffer + bufferLength, clearColor);
-	fill(depthBuffer, depthBuffer + bufferLength, 0.0f);
+	std::fill(pixelBuffer, pixelBuffer + bufferLength, clearColor);
+	std::fill(depthBuffer, depthBuffer + bufferLength, 0.0f);
 
 	totalBufferedScanlines = 0;
 }
@@ -56,15 +56,15 @@ void Rasterizer::dispatchTriangle(Triangle& triangle) {
 	const TextureBuffer* texture = triangle.sourcePolygon->sourceObject->texture;
 
 	if (top->coordinate.y > middle->coordinate.y) {
-		swap(top, middle);
+		std::swap(top, middle);
 	}
 
 	if (middle->coordinate.y > bottom->coordinate.y) {
-		swap(middle, bottom);
+		std::swap(middle, bottom);
 	}
 
 	if (top->coordinate.y > middle->coordinate.y) {
-		swap(top, middle);
+		std::swap(top, middle);
 	}
 
 	if (top->coordinate.y >= height || bottom->coordinate.y < 0) {
@@ -75,14 +75,14 @@ void Rasterizer::dispatchTriangle(Triangle& triangle) {
 	if (top->coordinate.y == middle->coordinate.y) {
 		// Trivial case #1: Triangle with a flat top edge
 		if (top->coordinate.x > middle->coordinate.x) {
-			swap(top, middle);
+			std::swap(top, middle);
 		}
 
 		dispatchFlatTopTriangle(*top, *middle, *bottom, texture);
 	} else if (bottom->coordinate.y == middle->coordinate.y) {
 		// Trivial case #2: Triangle with a flat bottom edge
 		if (bottom->coordinate.x < middle->coordinate.x) {
-			swap(bottom, middle);
+			std::swap(bottom, middle);
 		}
 
 		dispatchFlatBottomTriangle(*top, *middle, *bottom, texture);
@@ -105,7 +105,7 @@ void Rasterizer::dispatchTriangle(Triangle& triangle) {
 		Vertex2d* middleRight = &hypotenuseVertex;
 
 		if (middleLeft->coordinate.x > middleRight->coordinate.x) {
-			swap(middleLeft, middleRight);
+			std::swap(middleLeft, middleRight);
 		}
 
 		dispatchFlatBottomTriangle(*top, *middleLeft, *middleRight, texture);
@@ -226,10 +226,10 @@ int Rasterizer::getTotalBufferedScanlines() {
 
 void Rasterizer::line(int x1, int y1, int x2, int y2) {
 	bool isOffScreen = (
-		max(x1, x2) < 0 ||
-		min(x1, x2) >= width ||
-		max(y1, y2) < 0 ||
-		min(y1, y2) >= height
+		std::max(x1, x2) < 0 ||
+		std::min(x1, x2) >= width ||
+		std::max(y1, y2) < 0 ||
+		std::min(y1, y2) >= height
 	);
 
 	if (isOffScreen) {
@@ -456,3 +456,5 @@ void Rasterizer::triangleScanline(
 		}
 	}
 }
+
+} // namespace Soft

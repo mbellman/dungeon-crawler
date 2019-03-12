@@ -5,6 +5,8 @@
 #include <Graphics/TextureBuffer.h>
 #include <map>
 
+namespace Soft {
+
 struct Polygon;
 struct Object;
 
@@ -95,3 +97,5 @@ struct Sector {
 	Bounds bounds;
 	int id;
 };
+
+} // namespace Soft

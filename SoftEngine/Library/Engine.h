@@ -22,6 +22,8 @@
 #include <System/CommandLine.h>
 #include <Sound/AudioEngine.h>
 
+namespace Soft {
+
 /**
  * FrustumCuller
  * -------------
@@ -151,3 +153,5 @@ private:
 	void handleCommandLineInput(const SDL_Event& event);
 	void updateCommandLineText();
 };
+
+} // namespace Soft

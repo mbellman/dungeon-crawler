@@ -5,6 +5,8 @@
 #include <Graphics/ColorBuffer.h>
 #include <vector>
 
+namespace Soft {
+
 /**
  * TextureMode
  * -----------
@@ -40,3 +42,5 @@ private:
 
 	void savePixel(SDL_Surface* surface, int index);
 };
+
+} // namespace Soft

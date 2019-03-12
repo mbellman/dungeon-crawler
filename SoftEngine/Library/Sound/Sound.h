@@ -7,6 +7,8 @@
 #include <SDL_mixer.h>
 #include <map>
 
+namespace Soft {
+
 class Sound : public Positionable3d {
 public:
 	Sound(const char* filename);
@@ -43,3 +45,5 @@ private:
 	bool isOn();
 	bool isPaused();
 };
+
+} // namespace Soft

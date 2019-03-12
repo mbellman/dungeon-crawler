@@ -3,6 +3,8 @@
 #include <System/Math.h>
 #include <System/Positionable.h>
 
+namespace Soft {
+
 /**
  * Camera
  * ------
@@ -23,3 +25,5 @@ struct Camera : public Positionable3d {
 	void setDirection(const Vec3& direction);
 	void update(int dt);
 };
+
+} // namespace Soft

@@ -1,6 +1,8 @@
 #include <System/DebugStats.h>
 #include <SDL.h>
 
+namespace Soft {
+
 /**
  * DebugStats
  * ----------
@@ -101,3 +103,5 @@ void DebugStats::reset() {
 	totalPolygons = 0;
 	totalVertices = 0;
 }
+
+} // namespace Soft

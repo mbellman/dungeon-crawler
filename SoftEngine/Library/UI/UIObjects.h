@@ -6,6 +6,8 @@
 #include <System/Positionable.h>
 #include <Graphics/Color.h>
 
+namespace Soft {
+
 /**
  * UIObject
  * --------
@@ -94,3 +96,5 @@ private:
 
 	void setTransparentPixels();
 };
+
+} // namespace Soft

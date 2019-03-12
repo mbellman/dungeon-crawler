@@ -11,6 +11,8 @@
 #include <Graphics/TextureBuffer.h>
 #include <Constants.h>
 
+namespace Soft {
+
 /**
  * UpdateHandler
  * -------------
@@ -215,3 +217,5 @@ struct DirectionalLight : Light {
 private:
 	Vec3 direction = { 0, -1, 0 };
 };
+
+} // namespace Soft

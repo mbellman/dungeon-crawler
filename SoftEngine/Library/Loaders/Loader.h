@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-using namespace std;
+namespace Soft {
 
 class Loader {
 public:
@@ -13,19 +13,21 @@ protected:
 	bool isLoading = false;
 
 	void load(const char* filePath);
-	string readNextChunk();
+	std::string readNextChunk();
 	void nextLine();
-	void setChunkDelimiter(string delimiter);
+	void setChunkDelimiter(std::string delimiter);
 
 private:
-	string buffer = "";
-	string delimiter = " ";
+	std::string buffer = "";
+	std::string delimiter = " ";
 	FILE* file = 0;
 
-	void fillBufferUntil(string end);
-	bool bufferEndsWith(string str);
+	void fillBufferUntil(std::string end);
+	bool bufferEndsWith(std::string str);
 	bool isAtDelimiter();
 	bool isAtEOL();
 	int getDelimiterOffset();
 	char nextChar();
 };
+
+} // namespace Soft

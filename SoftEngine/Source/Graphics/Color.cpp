@@ -2,6 +2,8 @@
 #include <System/Math.h>
 #include <Helpers.h>
 
+namespace Soft {
+
 /**
  * Color
  * -----
@@ -95,3 +97,5 @@ Color Color::operator *=(float multiplier) {
 
 	return *this;
 }
+
+} // namespace Soft

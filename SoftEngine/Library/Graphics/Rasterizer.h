@@ -9,6 +9,8 @@
 #include <Graphics/TextureBuffer.h>
 #include <Constants.h>
 
+namespace Soft {
+
 /**
  * Scanline
  * --------
@@ -80,3 +82,5 @@ private:
 		const TextureBuffer* texture
 	);
 };
+
+} // namespace Soft

@@ -5,6 +5,8 @@
 #include <Helpers.h>
 #include <Constants.h>
 
+namespace Soft {
+
 /**
  * TriangleBuffer
  * --------------
@@ -118,3 +120,5 @@ void TriangleBuffer::resetAll() {
 	triangleBufferA.clear();
 	triangleBufferB.clear();
 }
+
+} // namespace Soft

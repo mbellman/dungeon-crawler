@@ -5,6 +5,8 @@
 #include <Constants.h>
 #include <SDL.h>
 
+namespace Soft {
+
 /**
  * Illuminator
  * -----------
@@ -209,3 +211,5 @@ void Illuminator::resetTriangleLighting(Triangle* triangle) {
 void Illuminator::setActiveScene(Scene* scene) {
 	activeScene = scene;
 }
+
+} // namespace Soft

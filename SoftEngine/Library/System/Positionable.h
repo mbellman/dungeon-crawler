@@ -3,6 +3,8 @@
 #include <functional>
 #include <System/Math.h>
 
+namespace Soft {
+
 typedef std::function<void(const Vec3&, Vec3&)> FollowHandler;
 
 /**
@@ -46,3 +48,5 @@ private:
 	FollowHandler followHandler;
 	Tween<Vec3> tween;
 };
+
+} // namespace Soft

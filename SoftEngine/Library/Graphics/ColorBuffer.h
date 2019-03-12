@@ -3,6 +3,8 @@
 #include <SDL.h>
 #include <Graphics/Color.h>
 
+namespace Soft {
+
 /**
  * ColorBuffer
  * -----------
@@ -28,3 +30,5 @@ private:
 	Color* buffer = NULL;
 	int bufferSize;
 };
+
+} // namespace Soft

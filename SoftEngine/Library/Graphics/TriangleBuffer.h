@@ -3,6 +3,8 @@
 #include <System/Geometry.h>
 #include <vector>
 
+namespace Soft {
+
 class TriangleBuffer {
 public:
 	TriangleBuffer();
@@ -25,3 +27,5 @@ private:
 	Triangle* trianglePoolA;
 	Triangle* trianglePoolB;
 };
+
+} // namespace Soft

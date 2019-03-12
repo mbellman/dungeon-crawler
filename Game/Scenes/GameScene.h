@@ -1,8 +1,8 @@
 #pragma once
 
-#include <System/Scene.h>
+#include <SoftEngine.h>
 
-class GameScene : public Scene {
+class GameScene : public Soft::Scene {
 public:
 	void load() override;
 };

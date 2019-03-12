@@ -3,6 +3,8 @@
 #include <Helpers.h>
 #include <Constants.h>
 
+namespace Soft {
+
 /**
  * ColorBuffer
  * -----------
@@ -62,3 +64,5 @@ void ColorBuffer::write(int x, int y, int R, int G, int B) {
 
 	buffer[getIndex(x, y)] = color;
 }
+
+} // namespace Soft

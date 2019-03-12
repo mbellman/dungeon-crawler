@@ -5,6 +5,8 @@
 #include <al.h>
 #include <map>
 
+namespace Soft {
+
 /**
  * Sound
  * -----
@@ -118,3 +120,5 @@ void Sound::setVolume(float volume) {
 void Sound::stop() {
 	alSourceStop(alAudioSource);
 }
+
+} // namespace Soft

@@ -3,6 +3,8 @@
 #include <cmath>
 #include <System/Math.h>
 
+namespace Soft {
+
 struct Quaternion {
 	float w;
 	float x;
@@ -13,3 +15,5 @@ struct Quaternion {
 	RotationMatrix toRotationMatrix();
 	Quaternion operator *(const Quaternion& q2) const;
 };
+
+} // namespace Soft

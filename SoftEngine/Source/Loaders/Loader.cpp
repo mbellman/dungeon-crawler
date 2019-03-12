@@ -4,9 +4,15 @@
 #include <algorithm>
 #include <Loaders/Loader.h>
 
+namespace Soft {
+
+/**
+ * Loader
+ * ------
+ */
 Loader::~Loader() {}
 
-void Loader::fillBufferUntil(string end) {
+void Loader::fillBufferUntil(std::string end) {
 	if (!isLoading) {
 		return;
 	}
@@ -33,7 +39,7 @@ void Loader::fillBufferUntil(string end) {
 	}
 }
 
-bool Loader::bufferEndsWith(string str) {
+bool Loader::bufferEndsWith(std::string str) {
 	int pos = std::max((int)(buffer.length() - str.length()), 0);
 	int len = str.length();
 
@@ -63,7 +69,7 @@ char Loader::nextChar() {
 	return fgetc(file);
 }
 
-string Loader::readNextChunk() {
+std::string Loader::readNextChunk() {
 	buffer.clear();
 	fillBufferUntil(delimiter);
 
@@ -75,6 +81,8 @@ void Loader::nextLine() {
 	buffer.clear();
 }
 
-void Loader::setChunkDelimiter(string delimiter) {
+void Loader::setChunkDelimiter(std::string delimiter) {
 	this->delimiter = delimiter;
 }
+
+} // namespace Soft

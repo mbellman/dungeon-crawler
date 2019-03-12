@@ -1,8 +1,8 @@
 #include <Scenes/GameScene.h>
-#include <System/Objects.h>
+#include <SoftEngine.h>
 
 void GameScene::load() {
-	Cube* cube = new Cube(50);
+	Soft::Cube* cube = new Soft::Cube(50);
 
 	cube->setColor({ 255, 0, 0 });
 	cube->position = { 0, 100, 500 };

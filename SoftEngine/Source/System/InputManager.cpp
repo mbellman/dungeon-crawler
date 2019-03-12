@@ -2,6 +2,8 @@
 #include <Constants.h>
 #include <SDL.h>
 
+namespace Soft {
+
 /**
  * InputManager
  * ------------
@@ -157,3 +159,5 @@ void InputManager::onMouseUp(MouseButtonHandler handler) {
 void InputManager::resetKeyState() {
 	keyState = 0;
 }
+
+} // namespace Soft

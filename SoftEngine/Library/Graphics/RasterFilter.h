@@ -4,6 +4,8 @@
 #include <System/Geometry.h>
 #include <Constants.h>
 
+namespace Soft {
+
 /**
  * Cover
  * -----
@@ -61,3 +63,5 @@ private:
 	bool isTriangleVisible(const Triangle* triangle);
 	void reset();
 };
+
+} // namespace Soft

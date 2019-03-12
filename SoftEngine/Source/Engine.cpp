@@ -28,7 +28,7 @@
 #include <Graphics/Illuminator.h>
 #include <System/DebugStats.h>
 
-using namespace std;
+namespace Soft {
 
 /**
  * Engine
@@ -669,7 +669,7 @@ void Engine::updateScene_Wireframe() {
 
 void Engine::updateScreenProjection() {
 	const Camera& camera = activeScene->getCamera();
-	float projectionScale = (float)max(halfRasterArea.width, halfRasterArea.height) * (180.0f / camera.fov);
+	float projectionScale = (float)std::max(halfRasterArea.width, halfRasterArea.height) * (180.0f / camera.fov);
 	float fovAngleRange = sinf(DEG_TO_RAD * camera.fov / 2.0f);
 	RotationMatrix cameraRotationMatrix = camera.getRotationMatrix();
 
@@ -748,21 +748,21 @@ void Engine::updateScreenProjection() {
 				// Sort vertices by descending z-order so we can determine
 				// where to interpolate the clipped vertices
 				if (t_verts[0].vector.z < t_verts[1].vector.z) {
-					swap(t_verts[0], t_verts[1]);
-					swap(u_vecs[0], u_vecs[1]);
-					swap(w_vecs[0], w_vecs[1]);
+					std::swap(t_verts[0], t_verts[1]);
+					std::swap(u_vecs[0], u_vecs[1]);
+					std::swap(w_vecs[0], w_vecs[1]);
 				}
 
 				if (t_verts[1].vector.z < t_verts[2].vector.z) {
-					swap(t_verts[1], t_verts[2]);
-					swap(u_vecs[1], u_vecs[2]);
-					swap(w_vecs[1], w_vecs[2]);
+					std::swap(t_verts[1], t_verts[2]);
+					std::swap(u_vecs[1], u_vecs[2]);
+					std::swap(w_vecs[1], w_vecs[2]);
 				}
 
 				if (t_verts[0].vector.z < t_verts[1].vector.z) {
-					swap(t_verts[0], t_verts[1]);
-					swap(u_vecs[0], u_vecs[1]);
-					swap(w_vecs[0], w_vecs[1]);
+					std::swap(t_verts[0], t_verts[1]);
+					std::swap(u_vecs[0], u_vecs[1]);
+					std::swap(w_vecs[0], w_vecs[1]);
 				}
 
 				if (frustumCuller.near == 2) {
@@ -958,3 +958,5 @@ void Engine::updateCommandLineText() {
 
 	commandLineText->setValue(("> " + commandLine->getCurrentCommand()).c_str());
 }
+
+} // namespace Soft

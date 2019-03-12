@@ -7,6 +7,8 @@
 #include <math.h>
 #include <SDL.h>
 
+namespace Soft {
+
 /**
  * Camera
  * ------
@@ -45,3 +47,5 @@ void Camera::setDirection(const Vec3& direction) {
 void Camera::update(int dt) {
 	updatePosition(dt);
 }
+
+} // namespace Soft

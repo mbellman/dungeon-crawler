@@ -3,6 +3,8 @@
 #include <Graphics/Color.h>
 #include <Helpers.h>
 
+namespace Soft {
+
 /**
  * Vertex2d
  * --------
@@ -114,3 +116,5 @@ bool Bounds::isColliding(const Bounds& bounds) const {
 		cornerB.z < bounds.cornerA.z || cornerA.z > bounds.cornerB.z
 	);
 }
+
+} // namespace Soft

@@ -5,6 +5,8 @@
 #include <SDL.h>
 #include <UI/UIObjects.h>
 
+namespace Soft {
+
 /**
  * UI
  * --
@@ -24,3 +26,5 @@ protected:
 	std::vector<UIObject*> uiObjects;
 	std::map<const char*, UIObject*> uiObjectMap;
 };
+
+} // namespace Soft

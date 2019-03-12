@@ -2,6 +2,8 @@
 
 #include <System/Math.h>
 
+namespace Soft {
+
 /**
  * Color
  * -----
@@ -35,3 +37,5 @@ private:
 struct Colorable {
 	Color color;
 };
+
+} // namespace Soft

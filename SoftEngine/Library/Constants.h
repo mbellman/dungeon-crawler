@@ -4,6 +4,8 @@
 #include <Graphics/Color.h>
 #include <SDL.h>
 
+namespace Soft {
+
 constexpr static float PI_HALF = M_PI / 2.0f;
 constexpr static float DEG_TO_RAD = M_PI / 180.0f;
 constexpr static float RAD_TO_DEG = 180.0f / M_PI;
@@ -43,3 +45,5 @@ constexpr static Color COLOR_BLACK = { 0, 0, 0 };
 constexpr static Color COLOR_TRANSPARENT = { 255, 0, 255 };
 
 constexpr static int CLICK_TIME_LIMIT = 150;
+
+} // namespace Soft

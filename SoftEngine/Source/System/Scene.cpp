@@ -14,6 +14,8 @@
 #include <Sound/Sound.h>
 #include <Constants.h>
 
+namespace Soft {
+
 /**
  * Scene
  * -----
@@ -477,3 +479,5 @@ void Scene::updateCurrentOccupiedSectors() {
 		}
 	}
 }
+
+} // namespace Soft

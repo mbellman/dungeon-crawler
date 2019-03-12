@@ -13,6 +13,8 @@ static int getTotalMipmaps(int size) {
 	return size <=2 ? 0 : 1 + getTotalMipmaps(size >> 1);
 }
 
+namespace Soft {
+
 /**
  * TextureBuffer
  * -------------
@@ -122,3 +124,5 @@ const Color& TextureBuffer::sample(float u, float v, const ColorBuffer* mipmap) 
 
 	return mipmap->read(pixelIndex);
 }
+
+} // namespace Soft

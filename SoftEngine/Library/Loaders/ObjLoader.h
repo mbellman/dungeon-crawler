@@ -6,7 +6,7 @@
 #include <System/Math.h>
 #include <Loaders/Loader.h>
 
-using namespace std;
+namespace Soft {
 
 /**
  * VertexData
@@ -51,9 +51,9 @@ struct Face {
  */
 class ObjLoader : Loader {
 public:
-	vector<Vec3> vertices;
-	vector<Vec2> textureCoordinates;
-	vector<Face> faces;
+	std::vector<Vec3> vertices;
+	std::vector<Vec2> textureCoordinates;
+	std::vector<Face> faces;
 
 	ObjLoader(const char* path);
 	~ObjLoader();
@@ -62,5 +62,7 @@ private:
 	void handleFace();
 	void handleVertex();
 	void handleTextureCoordinate();
-	VertexData parseVertexData(string data);
+	VertexData parseVertexData(std::string data);
 };
+
+} // namespace Soft

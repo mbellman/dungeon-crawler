@@ -1,10 +1,11 @@
 #include <System/Math.h>
 #include <memory>
 #include <cmath>
+#include <math.h>
 #include <algorithm>
 #include <Helpers.h>
 
-using namespace std;
+namespace Soft {
 
 /**
  * Ease
@@ -52,12 +53,12 @@ RotationMatrix RotationMatrix::operator *(const RotationMatrix& rm) const {
 }
 
 RotationMatrix RotationMatrix::fromVec3(const Vec3& rotation) {
-	float sx = sin(rotation.x);
-	float sy = sin(rotation.y);
-	float sz = sin(rotation.z);
-	float cx = cos(rotation.x);
-	float cy = cos(rotation.y);
-	float cz = cos(rotation.z);
+	float sx = sinf(rotation.x);
+	float sy = sinf(rotation.y);
+	float sz = sinf(rotation.z);
+	float cx = cosf(rotation.x);
+	float cy = cosf(rotation.y);
+	float cz = cosf(rotation.z);
 
 	RotationMatrix rX = { 1, 0, 0, 0, cx, -sx, 0, sx, cx };
 	RotationMatrix rY = { cy, 0, sy, 0, 1, 0, -sy, 0, cy };
@@ -246,3 +247,5 @@ Vec3 Vec3::operator /=(float scalar) {
 
 	return *this;
 }
+
+} // namespace Soft

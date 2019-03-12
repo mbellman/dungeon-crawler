@@ -7,6 +7,8 @@
 #include <SDL_image.h>
 #include <algorithm>
 
+namespace Soft {
+
 /**
  * UIObject
  * --------
@@ -210,3 +212,5 @@ void UIGraphic::setTransparentPixels() {
 		}
 	}
 }
+
+} // namespace Soft

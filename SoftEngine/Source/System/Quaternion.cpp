@@ -2,6 +2,12 @@
 #include <math.h>
 #include <System/Math.h>
 
+namespace Soft {
+
+/**
+ * Quaternion
+ * ----------
+ */
 Quaternion Quaternion::fromAxisAngle(float angle, float xi, float yj, float zk) {
 	float sa = sinf(angle / 2);
 
@@ -29,3 +35,5 @@ RotationMatrix Quaternion::toRotationMatrix() {
 		2 * x * z - 2 * y * w, 2 * y * z + 2 * x * w, 1 - 2 * x * x - 2 * y * y
 	};
 }
+
+} // namespace Soft

@@ -5,6 +5,8 @@
 #include <Helpers.h>
 #include <functional>
 
+namespace Soft {
+
 /**
  * ParticleSystem
  * --------------
@@ -88,3 +90,5 @@ void ParticleSystem::update(int dt) {
 
 	updatePosition(dt);
 }
+
+} // namespace Soft
