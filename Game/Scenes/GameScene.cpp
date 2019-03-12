@@ -1,5 +1,6 @@
 #include <Scenes/GameScene.h>
 #include <SoftEngine.h>
+#include <MathUtils.h>
 #include <cmath>
 #include <math.h>
 
@@ -18,25 +19,27 @@ void GameScene::load() {
 
 	add(ground);
 
-	inputManager->onKeyDown([=](const SDL_Keycode& code) {
-		onKeyDown(code);
-	});
-
 	settings.ambientLightFactor = 0.0f;
 	settings.brightness = 0.2f;
 	settings.controlMode = Soft::ControlMode::MOUSE;
 }
 
 void GameScene::onUpdate(int dt) {
-
-}
-
-float GameScene::getWrappedYaw(float yaw) {
-	return yaw - DEG_360 * floorf(yaw / DEG_360);
+	if (inputManager->isKeyPressed(Soft::Keys::W)) {
+		move(getYawTileDirection(camera->yaw));
+	} else if (inputManager->isKeyPressed(Soft::Keys::A)) {
+		move(getYawTileDirection(camera->yaw + MathUtils::DEG_90));
+	} else if (inputManager->isKeyPressed(Soft::Keys::S)) {
+		move(getYawTileDirection(camera->yaw + MathUtils::DEG_180));
+	} else if (inputManager->isKeyPressed(Soft::Keys::D)) {
+		move(getYawTileDirection(camera->yaw + MathUtils::DEG_270));
+	}
 }
 
 TileDirection GameScene::getYawTileDirection(float yaw) {
-	float wrappedYaw = getWrappedYaw(yaw);
+	using namespace MathUtils;
+
+	float wrappedYaw = modf(yaw, DEG_360);
 
 	if (wrappedYaw < DEG_45 || wrappedYaw >= DEG_315) {
 		return TileDirection::UP;
@@ -78,21 +81,4 @@ void GameScene::move(TileDirection direction) {
 	}
 
 	camera->tweenTo(movementTarget, MOVE_STEP_DURATION, Soft::Ease::linear);
-}
-
-void GameScene::onKeyDown(const SDL_Keycode& code) {
-	switch (code) {
-		case SDLK_w:
-			move(getYawTileDirection(camera->yaw));
-			break;
-		case SDLK_a:
-			move(getYawTileDirection(camera->yaw + DEG_90));
-			break;
-		case SDLK_s:
-			move(getYawTileDirection(camera->yaw + DEG_180));
-			break;
-		case SDLK_d:
-			move(getYawTileDirection(camera->yaw + DEG_270));
-			break;
-	}
 }

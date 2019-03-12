@@ -38,8 +38,9 @@ include_directories(${OPENAL_INCLUDE_DIR})
 set(SOURCE_FILES
     # -- Demo files --
     Game/main.cpp
-		Game/Scenes/GameScene.cpp
-		Game/Scenes/GameScene.h
+    Game/Scenes/GameScene.cpp
+    Game/Scenes/GameScene.h
+    Game/MathUtils.h
 
     # -- Header files --
     SoftEngine/Library/Graphics/Color.h
