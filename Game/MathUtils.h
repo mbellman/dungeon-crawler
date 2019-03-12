@@ -13,6 +13,13 @@ namespace MathUtils {
 	constexpr static float DEG_315 = DEG_45 * 7.0f;
 	constexpr static float DEG_360 = DEG_45 * 8.0f;
 
+	enum Direction {
+		UP = 1 << 0,
+		DOWN = 1 << 1,
+		LEFT = 1 << 2,
+		RIGHT = 1 << 3
+	};
+
 	inline float modf(float x, float y) {
 		return x - y * floorf(x / y);
 	}

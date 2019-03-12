@@ -1,6 +1,10 @@
 #include <Scenes/GameScene.h>
+#include <Level/LevelLayout.h>
+#include <Level/BlockBuilder.h>
+#include <Level/Floors.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
+#include <GameConstants.h>
 #include <cmath>
 #include <math.h>
 
@@ -8,57 +12,97 @@
  * GameScene
  * ---------
  */
+GameScene::~GameScene() {
+	if (levelLayout != nullptr) {
+		delete levelLayout;
+	}
+}
+
 void GameScene::load() {
-	add("ground-tex", new Soft::TextureBuffer("./Assets/gate1/ground.png"));
+	add("surface_1", new Soft::TextureBuffer("./Assets/Gate1/surface_1.png"));
 
-	Soft::Mesh* ground = new Soft::Mesh(25, 25, GameScene::TILE_SIZE);
+	Soft::Light* light = new Soft::Light();
 
-	ground->position = { -1250.0f, 0, 0 };
-	ground->setTexture(getTexture("ground-tex"));
-	ground->setTextureInterval(2, 2);
+	light->setColor({ 255, 0, 0 });
+	light->lockTo(camera);
 
-	add(ground);
+	add(light);
 
-	settings.ambientLightFactor = 0.0f;
-	settings.brightness = 0.2f;
-	settings.controlMode = Soft::ControlMode::MOUSE;
+	loadLevel();
 }
 
 void GameScene::onUpdate(int dt) {
 	if (inputManager->isKeyPressed(Soft::Keys::W)) {
-		move(getYawTileDirection(camera->yaw));
+		move(getYawDirection(camera->yaw));
 	} else if (inputManager->isKeyPressed(Soft::Keys::A)) {
-		move(getYawTileDirection(camera->yaw + MathUtils::DEG_90));
+		move(getYawDirection(camera->yaw + MathUtils::DEG_90));
 	} else if (inputManager->isKeyPressed(Soft::Keys::S)) {
-		move(getYawTileDirection(camera->yaw + MathUtils::DEG_180));
+		move(getYawDirection(camera->yaw + MathUtils::DEG_180));
 	} else if (inputManager->isKeyPressed(Soft::Keys::D)) {
-		move(getYawTileDirection(camera->yaw + MathUtils::DEG_270));
+		move(getYawDirection(camera->yaw + MathUtils::DEG_270));
 	}
 }
 
-TileDirection GameScene::getYawTileDirection(float yaw) {
+MathUtils::Direction GameScene::getYawDirection(float yaw) {
 	using namespace MathUtils;
 
 	float wrappedYaw = modf(yaw, DEG_360);
 
 	if (wrappedYaw < DEG_45 || wrappedYaw >= DEG_315) {
-		return TileDirection::UP;
+		return UP;
 	} else if (wrappedYaw < DEG_135 && wrappedYaw >= DEG_45) {
-		return TileDirection::LEFT;
+		return LEFT;
 	} else if (wrappedYaw < DEG_225 && wrappedYaw >= DEG_135) {
-		return TileDirection::DOWN;
+		return DOWN;
 	} else if (wrappedYaw < DEG_315 && wrappedYaw >= DEG_225) {
-		return TileDirection::RIGHT;
+		return RIGHT;
 	}
 
-	return TileDirection::UP;
+	return UP;
 }
 
 bool GameScene::isMoving() {
 	return camera->isTweening();
 }
 
-void GameScene::move(TileDirection direction) {
+void GameScene::loadLevel() {
+	using namespace GameConstants;
+
+	levelLayout = new LevelLayout(3, { 5, 5 });
+	const Soft::Area& size = levelLayout->getSize();
+
+	for (int layer = 0; layer < levelLayout->getTotalLayers(); layer++) {
+		for (int z = 0; z < size.height; z++) {
+			for (int x = 0; x < size.width; x++) {
+				Block block = Floors::Floor1[layer][z][x];
+
+				levelLayout->setBlock(layer, x, z, block);
+
+				if (block.type != BlockTypes::EMPTY) {
+					Soft::Object* blockObject = BlockBuilder::createBlockObject(block.type);
+
+					blockObject->position.x += x * TILE_SIZE - HALF_TILE_SIZE;
+					blockObject->position.y += layer * TILE_SIZE;
+					blockObject->position.z += -z * TILE_SIZE - HALF_TILE_SIZE;
+
+					blockObject->setTexture(getTexture("surface_1"));
+
+					add(blockObject);
+				}
+			}
+		}
+	}
+
+	camera->fov = 110;
+
+	settings.ambientLightFactor = 0.0f;
+	settings.brightness = 0.2f;
+	settings.controlMode = Soft::ControlMode::MOUSE;
+}
+
+void GameScene::move(MathUtils::Direction direction) {
+	using namespace MathUtils;
+
 	if (isMoving()) {
 		return;
 	}
@@ -66,19 +110,19 @@ void GameScene::move(TileDirection direction) {
 	Soft::Vec3 movementTarget = camera->position;
 
 	switch (direction) {
-		case TileDirection::UP:
-			movementTarget.z += GameScene::TILE_SIZE;
+		case UP:
+			movementTarget.z += GameConstants::TILE_SIZE;
 			break;
-		case TileDirection::DOWN:
-			movementTarget.z -= GameScene::TILE_SIZE;
+		case DOWN:
+			movementTarget.z -= GameConstants::TILE_SIZE;
 			break;
-		case TileDirection::LEFT:
-			movementTarget.x -= GameScene::TILE_SIZE;
+		case LEFT:
+			movementTarget.x -= GameConstants::TILE_SIZE;
 			break;
-		case TileDirection::RIGHT:
-			movementTarget.x += GameScene::TILE_SIZE;
+		case RIGHT:
+			movementTarget.x += GameConstants::TILE_SIZE;
 			break;
 	}
 
-	camera->tweenTo(movementTarget, MOVE_STEP_DURATION, Soft::Ease::linear);
+	camera->tweenTo(movementTarget, GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
 }

@@ -1,24 +1,21 @@
 #pragma once
 
 #include <SoftEngine.h>
-
-enum TileDirection {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
+#include <MathUtils.h>
+#include <Level/LevelLayout.h>
 
 class GameScene : public Soft::Scene {
 public:
+	~GameScene();
+
 	void load() override;
 	void onUpdate(int dt) override;
 
 private:
-	constexpr static float TILE_SIZE = 250.0f;
-	constexpr static int MOVE_STEP_DURATION = 250;
+	LevelLayout* levelLayout = nullptr;
 
-	TileDirection getYawTileDirection(float yaw);
+	MathUtils::Direction getYawDirection(float yaw);
 	bool isMoving();
-	void move(TileDirection direction);
+	void loadLevel();
+	void move(MathUtils::Direction direction);
 };
