@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Soft {
+
 /**
  * Flags
  * -----
@@ -13,3 +15,5 @@ enum Flags {
 	DISABLE_WINDOW_RESIZE = 1 << 5,
 	FPS_30 = 1 << 6
 };
+
+} // namespace Soft

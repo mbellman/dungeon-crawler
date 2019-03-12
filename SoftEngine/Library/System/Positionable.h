@@ -17,6 +17,7 @@ struct Positionable2d {
 	Positionable2d();
 	Positionable2d(const Coordinate& position);
 
+	bool isTweening() const;
 	void tweenTo(const Coordinate& target, int duration, Ease::EaseFunction easeFunction);
 
 protected:
@@ -38,6 +39,7 @@ struct Positionable3d {
 
 	void follow(const Positionable3d* target, FollowHandler handler);
 	void lockTo(const Positionable3d* target);
+	bool isTweening() const;
 	void tweenTo(const Vec3& target, int duration, Ease::EaseFunction easeFunction);
 
 protected:

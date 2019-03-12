@@ -14,6 +14,10 @@ Positionable2d::Positionable2d(const Coordinate& position) {
 	this->position = position;
 }
 
+bool Positionable2d::isTweening() const {
+	return tween.isActive;
+}
+
 void Positionable2d::tweenTo(const Coordinate& target, int duration, Ease::EaseFunction easing) {
 	tween.value.start = position;
 	tween.value.end = target;
@@ -56,6 +60,10 @@ void Positionable3d::lockTo(const Positionable3d* target) {
 	follow(target, [=](const Vec3& targetPosition, Vec3& position) {
 		position = targetPosition;
 	});
+}
+
+bool Positionable3d::isTweening() const {
+	return tween.isActive;
 }
 
 void Positionable3d::tweenTo(const Vec3& target, int duration, Ease::EaseFunction easing) {
