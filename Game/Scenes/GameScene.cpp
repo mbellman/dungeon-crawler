@@ -23,8 +23,10 @@ void GameScene::load() {
 
 	Soft::Light* light = new Soft::Light();
 
-	light->setColor({ 255, 0, 0 });
+	light->range = 750.0f;
+	light->setColor({ 255, 255, 255 });
 	light->lockTo(camera);
+	light->power = 3.0f;
 
 	add(light);
 
@@ -96,7 +98,7 @@ void GameScene::loadLevel() {
 	camera->fov = 110;
 
 	settings.ambientLightFactor = 0.0f;
-	settings.brightness = 0.2f;
+	settings.brightness = 0.1f;
 	settings.controlMode = Soft::ControlMode::MOUSE;
 }
 

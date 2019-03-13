@@ -27,23 +27,23 @@ namespace Floors {
 			{
 				{ BlockTypes::GROUND, 0 },
 				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
+				{ BlockTypes::CUBE, 0 },
 				{ BlockTypes::GROUND, 0 },
 				{ BlockTypes::GROUND, 0 }
 			},
 			// Row 3
 			{
 				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
+				{ BlockTypes::CUBE, 0 },
+				{ BlockTypes::EMPTY, 0 },
+				{ BlockTypes::CUBE, 0 },
 				{ BlockTypes::GROUND, 0 }
 			},
 			// Row 4
 			{
 				{ BlockTypes::GROUND, 0 },
 				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
+				{ BlockTypes::CUBE, 0 },
 				{ BlockTypes::GROUND, 0 },
 				{ BlockTypes::GROUND, 0 }
 			},

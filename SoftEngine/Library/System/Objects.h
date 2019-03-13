@@ -194,7 +194,7 @@ private:
  */
 struct Light : Object {
 	float power = 1.0f;
-	float range = 500;
+	float range = 500.0f;
 	bool isDisabled = false;
 
 	const Color& getColor() const;

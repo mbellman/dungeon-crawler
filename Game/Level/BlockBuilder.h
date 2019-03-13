@@ -18,5 +18,5 @@ public:
 	static Soft::Object* createBlockObject(int blockType);
 
 private:
-	static Soft::Mesh* createSingleTileMesh();
+	static Soft::Mesh* createSingleBlockFace();
 };
