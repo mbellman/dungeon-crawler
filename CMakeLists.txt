@@ -45,6 +45,7 @@ set(SOURCE_FILES
     Game/Level/BlockBuilder.h
     Game/Level/BlockBuilder.cpp
     Game/Level/Floors.h
+    Game/Level/Floors.cpp
     Game/Level/LevelLayout.h
     Game/Level/LevelLayout.cpp
     Game/Scenes/GameScene.h

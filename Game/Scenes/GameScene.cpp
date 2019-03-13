@@ -20,6 +20,7 @@ GameScene::~GameScene() {
 
 void GameScene::load() {
 	add("surface_1", new Soft::TextureBuffer("./Assets/Gate1/surface_1.png"));
+	loadLevel();
 
 	Soft::Light* light = new Soft::Light();
 
@@ -46,7 +47,11 @@ void GameScene::load() {
 		add(light);
 	});
 
-	loadLevel();
+	camera->fov = 110;
+
+	settings.ambientLightFactor = 0.0f;
+	settings.brightness = 0.05f;
+	settings.controlMode = Soft::ControlMode::MOUSE;
 }
 
 void GameScene::onUpdate(int dt) {
@@ -95,7 +100,7 @@ void GameScene::loadLevel() {
 	for (int layer = 0; layer < levelLayout->getTotalLayers(); layer++) {
 		for (int z = 0; z < size.height; z++) {
 			for (int x = 0; x < size.width; x++) {
-				int blockType = floorPlan.blockTypes[layer][z][x];
+				int blockType = floorPlan.blocks[layer][z][x];
 
 				levelLayout->setBlockType(layer, x, z, blockType);
 			}
@@ -114,11 +119,7 @@ void GameScene::loadLevel() {
 		}
 	}
 
-	camera->fov = 110;
-
-	settings.ambientLightFactor = 0.0f;
-	settings.brightness = 0.1f;
-	settings.controlMode = Soft::ControlMode::MOUSE;
+	spawn(floorPlan.spawnPosition);
 }
 
 void GameScene::move(MathUtils::Direction direction) {
@@ -146,4 +147,30 @@ void GameScene::move(MathUtils::Direction direction) {
 	}
 
 	camera->tweenTo(movementTarget, GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
+}
+
+void GameScene::spawn(SpawnPosition position) {
+	using namespace GameConstants;
+	using namespace MathUtils;
+
+	camera->position = {
+		position.x * TILE_SIZE,
+		position.layerIndex * TILE_SIZE - HALF_TILE_SIZE,
+		-position.z * TILE_SIZE
+	};
+
+	switch (position.direction) {
+		case Direction::FORWARD:
+			camera->yaw = 0.0f;
+			break;
+		case Direction::LEFT:
+			camera->yaw = DEG_90;
+			break;
+		case Direction::BACKWARD:
+			camera->yaw = DEG_180;
+			break;
+		case Direction::RIGHT:
+			camera->yaw = DEG_270;
+			break;
+	}
 }

@@ -3,6 +3,7 @@
 #include <SoftEngine.h>
 #include <MathUtils.h>
 #include <Level/LevelLayout.h>
+#include <Level/Floors.h>
 
 class GameScene : public Soft::Scene {
 public:
@@ -18,4 +19,5 @@ private:
 	bool isMoving();
 	void loadLevel();
 	void move(MathUtils::Direction direction);
+	void spawn(SpawnPosition position);
 };
