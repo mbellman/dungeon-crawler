@@ -24,7 +24,7 @@ void GameScene::load() {
 	Soft::Light* light = new Soft::Light();
 
 	light->range = 750.0f;
-	light->setColor({ 255, 255, 255 });
+	light->setColor({ 255, 150, 50 });
 	light->lockTo(camera);
 	light->power = 3.0f;
 
@@ -69,14 +69,18 @@ bool GameScene::isMoving() {
 
 void GameScene::loadLevel() {
 	using namespace GameConstants;
+	using namespace Floors;
 
-	levelLayout = new LevelLayout(3, { 5, 5 });
+	levelLayout = new LevelLayout(Floor1.totalLayers, Floor1.size);
 	const Soft::Area& size = levelLayout->getSize();
 
 	for (int layer = 0; layer < levelLayout->getTotalLayers(); layer++) {
 		for (int z = 0; z < size.height; z++) {
 			for (int x = 0; x < size.width; x++) {
-				Block block = Floors::Floor1[layer][z][x];
+				Block block = {
+					Floors::Floor1.blockTypes[layer][z][x],
+					Floors::Floor1.traversableDirections[layer][z][x]
+				};
 
 				levelLayout->setBlock(layer, x, z, block);
 

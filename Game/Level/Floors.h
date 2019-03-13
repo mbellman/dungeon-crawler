@@ -3,6 +3,15 @@
 #include <Level/BlockBuilder.h>
 #include <Level/LevelLayout.h>
 #include <MathUtils.h>
+#include <SoftEngine.h>
+
+template<int L, int S>
+struct FloorPlan {
+	Soft::Area size;
+	int totalLayers;
+	int blockTypes[L][S][S];
+	int traversableDirections[L][S][S];
+};
 
 namespace Floors {
 	namespace {
@@ -12,134 +21,91 @@ namespace Floors {
 		static int RIGHT = MathUtils::Direction::RIGHT;
 	}
 
-	Block Floor1[3][5][5] = {
-		// Layer 1
+	FloorPlan<3, 10> Floor1 = {
+		{ 10, 10 },
+		3,
+		// Block types
 		{
-			// Row 1
+			// Layer 1
 			{
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 }
+				{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+				{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+				{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+				{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+				{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+				{ 1, 7, 7, 7, 7, 1, 1, 1, 1, 1 },
+				{ 1, 7, 0, 0, 7, 1, 1, 1, 1, 1 },
+				{ 1, 7, 0, 0, 7, 1, 1, 1, 1, 1 },
+				{ 1, 7, 7, 7, 7, 1, 1, 1, 1, 1 },
+				{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 			},
-			// Row 2
+			// Layer 2
 			{
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::CUBE, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 }
+				{ 0, 5, 5, 5, 5, 5, 5, 5, 5, 0 },
+				{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 4 },
+				{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 4 },
+				{ 3, 0, 0, 0, 0, 0, 7, 7, 7, 4 },
+				{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 4 },
+				{ 3, 0, 0, 0, 0, 0, 0, 7, 0, 4 },
+				{ 3, 0, 0, 0, 0, 0, 0, 7, 0, 4 },
+				{ 3, 0, 0, 0, 0, 0, 0, 7, 0, 4 },
+				{ 3, 0, 0, 0, 0, 0, 0, 7, 0, 4 },
+				{ 0, 6, 6, 6, 6, 6, 6, 6, 6, 0 }
 			},
-			// Row 3
+			// Layer 3
 			{
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::CUBE, 0 },
-				{ BlockTypes::EMPTY, 0 },
-				{ BlockTypes::CUBE, 0 },
-				{ BlockTypes::GROUND, 0 }
-			},
-			// Row 4
-			{
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::CUBE, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 }
-			},
-			// Row 5
-			{
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 },
-				{ BlockTypes::GROUND, 0 }
+				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
+				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
 			}
 		},
-		// Layer 2
+		// Traversable directions
 		{
-			// Row 1
+			// Layer 1
 			{
-				{ BlockTypes::WALL_LEFT, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::WALL_FRONT, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::WALL_FRONT, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::WALL_FRONT, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::WALL_RIGHT, UP | DOWN | LEFT | RIGHT }
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 			},
-			// Row 2
+			// Layer 2
 			{
-				{ BlockTypes::WALL_LEFT, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::EMPTY, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::EMPTY, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::EMPTY, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::WALL_RIGHT, UP | DOWN | LEFT | RIGHT }
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 			},
-			// Row 3
+			// Layer 3
 			{
-				{ BlockTypes::WALL_LEFT, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::EMPTY, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::EMPTY, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::EMPTY, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::WALL_RIGHT, UP | DOWN | LEFT | RIGHT }
-			},
-			// Row 4
-			{
-				{ BlockTypes::WALL_LEFT, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::EMPTY, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::EMPTY, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::EMPTY, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::WALL_RIGHT, UP | DOWN | LEFT | RIGHT }
-			},
-			// Row 5
-			{
-				{ BlockTypes::WALL_LEFT, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::WALL_BACK, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::WALL_BACK, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::WALL_BACK, UP | DOWN | LEFT | RIGHT },
-				{ BlockTypes::WALL_RIGHT, UP | DOWN | LEFT | RIGHT }
-			}
-		},
-		// Layer 3
-		{
-			// Row 1
-			{
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 }
-			},
-			// Row 2
-			{
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 }
-			},
-			// Row 3
-			{
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 }
-			},
-			// Row 4
-			{
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 }
-			},
-			// Row 5
-			{
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 },
-				{ BlockTypes::CEILING, 0 }
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 			}
 		}
 	};
