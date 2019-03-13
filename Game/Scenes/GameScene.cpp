@@ -30,6 +30,22 @@ void GameScene::load() {
 
 	add(light);
 
+	inputManager->onMouseClick([=]() {
+		const Soft::Vec3& cameraDirection = camera->getDirection();
+
+		Soft::Light* light = new Soft::Light();
+
+		light->setColor({ 0, 255, 0 });
+		light->lifetime = 5000;
+		light->position = camera->position + cameraDirection * 100.0f;
+
+		light->onUpdate = [=](int dt) {
+			light->position += cameraDirection * 25.0f;
+		};
+
+		add(light);
+	});
+
 	loadLevel();
 }
 
