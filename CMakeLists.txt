@@ -39,6 +39,8 @@ set(SOURCE_FILES
     # -- Demo files --
     Game/main.cpp
     Game/GameConstants.h
+    Game/GameObjects.h
+    Game/GameObjects.cpp
     Game/MathUtils.h
     Game/Level/BlockBuilder.h
     Game/Level/BlockBuilder.cpp

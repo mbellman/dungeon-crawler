@@ -30,14 +30,14 @@ LevelLayout::~LevelLayout() {
 }
 
 int LevelLayout::getBlockType(int layerIndex, int x, int z) const {
-	if (layerIndex >= totalLayers) {
-		return GameConstants::BlockTypes::EMPTY;
+	if (layerIndex < 0 || layerIndex >= totalLayers) {
+		return GameConstants::BlockTypes::OUT_OF_BOUNDS;
 	}
 
 	Layer& layer = layers[layerIndex];
 
-	if (x >= layer.area.width || z >= layer.area.height) {
-		return GameConstants::BlockTypes::EMPTY;
+	if (x < 0 || x >= layer.area.width || z < 0 || z >= layer.area.height) {
+		return GameConstants::BlockTypes::OUT_OF_BOUNDS;
 	}
 
 	int blockIndex = z * layer.area.width + x;

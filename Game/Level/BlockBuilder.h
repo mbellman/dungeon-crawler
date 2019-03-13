@@ -1,11 +1,21 @@
 #pragma once
 
+#include <Level/LevelLayout.h>
 #include <SoftEngine.h>
 
 class BlockBuilder {
 public:
-	static Soft::Object* createBlockObject(int blockType);
+	BlockBuilder(LevelLayout* levelLayout);
+
+	Soft::Object* getNextBlockObject();
+	bool isComplete();
 
 private:
-	static Soft::Mesh* createSingleBlockFace();
+	const LevelLayout* levelLayout = nullptr;
+	int blockCounter = 0;
+	int totalBlocks = 0;
+	int blocksPerLayer = 0;
+
+	int getBlockSides(int layerIndex, int x, int z);
+	bool isVisibleSpace(int blockType);
 };

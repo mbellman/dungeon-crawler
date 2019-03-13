@@ -51,16 +51,16 @@ MathUtils::Direction GameScene::getYawDirection(float yaw) {
 	float wrappedYaw = modf(yaw, DEG_360);
 
 	if (wrappedYaw < DEG_45 || wrappedYaw >= DEG_315) {
-		return UP;
+		return Direction::FORWARD;
 	} else if (wrappedYaw < DEG_135 && wrappedYaw >= DEG_45) {
-		return LEFT;
+		return Direction::LEFT;
 	} else if (wrappedYaw < DEG_225 && wrappedYaw >= DEG_135) {
-		return DOWN;
+		return Direction::BACKWARD;
 	} else if (wrappedYaw < DEG_315 && wrappedYaw >= DEG_225) {
-		return RIGHT;
+		return Direction::RIGHT;
 	}
 
-	return UP;
+	return Direction::UP;
 }
 
 bool GameScene::isMoving() {
@@ -82,19 +82,19 @@ void GameScene::loadLevel() {
 				int blockType = floorPlan.blockTypes[layer][z][x];
 
 				levelLayout->setBlockType(layer, x, z, blockType);
-
-				if (blockType != BlockTypes::EMPTY) {
-					Soft::Object* blockObject = BlockBuilder::createBlockObject(blockType);
-
-					blockObject->position.x += x * TILE_SIZE - HALF_TILE_SIZE;
-					blockObject->position.y += layer * TILE_SIZE;
-					blockObject->position.z += -z * TILE_SIZE - HALF_TILE_SIZE;
-
-					blockObject->setTexture(getTexture("surface_1"));
-
-					add(blockObject);
-				}
 			}
+		}
+	}
+
+	BlockBuilder builder(levelLayout);
+
+	while (!builder.isComplete()) {
+		Soft::Object* blockObject = builder.getNextBlockObject();
+
+		if (blockObject != nullptr) {
+			blockObject->setTexture(getTexture("surface_1"));
+
+			add(blockObject);
 		}
 	}
 
@@ -115,16 +115,16 @@ void GameScene::move(MathUtils::Direction direction) {
 	Soft::Vec3 movementTarget = camera->position;
 
 	switch (direction) {
-		case UP:
+		case Direction::FORWARD:
 			movementTarget.z += GameConstants::TILE_SIZE;
 			break;
-		case DOWN:
+		case Direction::BACKWARD:
 			movementTarget.z -= GameConstants::TILE_SIZE;
 			break;
-		case LEFT:
+		case Direction::LEFT:
 			movementTarget.x -= GameConstants::TILE_SIZE;
 			break;
-		case RIGHT:
+		case Direction::RIGHT:
 			movementTarget.x += GameConstants::TILE_SIZE;
 			break;
 	}

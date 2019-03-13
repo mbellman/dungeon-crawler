@@ -6,13 +6,8 @@ namespace GameConstants {
 	constexpr static int MOVE_STEP_DURATION = 250;
 
 	enum BlockTypes {
+		OUT_OF_BOUNDS = -1,
 		EMPTY = 0,
-		GROUND = 1,
-		CEILING = 2,
-		WALL_LEFT = 3,
-		WALL_RIGHT = 4,
-		WALL_FRONT = 5,
-		WALL_BACK = 6,
-		CUBE = 7
+		WALL = 1
 	};
 }
