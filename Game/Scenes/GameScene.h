@@ -14,10 +14,12 @@ public:
 
 private:
 	LevelLayout* levelLayout = nullptr;
+	Position currentBlockPosition;
 
+	bool canMoveInDirection(MathUtils::Direction direction);
 	MathUtils::Direction getYawDirection(float yaw);
 	bool isMoving();
 	void loadLevel();
 	void move(MathUtils::Direction direction);
-	void spawn(SpawnPosition position);
+	void spawn(const SpawnPosition& spawnPosition);
 };

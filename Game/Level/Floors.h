@@ -5,10 +5,13 @@
 #include <MathUtils.h>
 #include <SoftEngine.h>
 
-struct SpawnPosition {
-	int layerIndex;
-	int x;
-	int z;
+struct Position {
+	int layer = 0;
+	int x = 0;
+	int z = 0;
+};
+
+struct SpawnPosition : Position {
 	MathUtils::Direction direction;
 };
 

@@ -26,6 +26,8 @@ public:
 	int getBlockType(int layerIndex, int x, int z) const;
 	const Soft::Area& getSize() const;
 	int getTotalLayers() const;
+	bool isEmptyBlock(int layerIndex, int x, int z) const;
+	bool isWalkableBlock(int layerIndex, int x, int z) const;
 	void setBlockType(int layerIndex, int x, int z, int blockType);
 
 private:

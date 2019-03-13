@@ -66,6 +66,30 @@ void GameScene::onUpdate(int dt) {
 	}
 }
 
+bool GameScene::canMoveInDirection(MathUtils::Direction direction) {
+	Position targetBlockPosition = currentBlockPosition;
+
+	switch (direction) {
+		case MathUtils::Direction::FORWARD:
+			targetBlockPosition.z--;
+			break;
+		case MathUtils::Direction::BACKWARD:
+			targetBlockPosition.z++;
+			break;
+		case MathUtils::Direction::LEFT:
+			targetBlockPosition.x--;
+			break;
+		case MathUtils::Direction::RIGHT:
+			targetBlockPosition.x++;
+			break;
+	}
+
+	return (
+		levelLayout->isEmptyBlock(targetBlockPosition.layer, targetBlockPosition.x, targetBlockPosition.z) &&
+		levelLayout->isWalkableBlock(targetBlockPosition.layer - 1, targetBlockPosition.x, targetBlockPosition.z)
+	);
+}
+
 MathUtils::Direction GameScene::getYawDirection(float yaw) {
 	using namespace MathUtils;
 
@@ -125,7 +149,7 @@ void GameScene::loadLevel() {
 void GameScene::move(MathUtils::Direction direction) {
 	using namespace MathUtils;
 
-	if (isMoving()) {
+	if (isMoving() || !canMoveInDirection(direction)) {
 		return;
 	}
 
@@ -134,32 +158,38 @@ void GameScene::move(MathUtils::Direction direction) {
 	switch (direction) {
 		case Direction::FORWARD:
 			movementTarget.z += GameConstants::TILE_SIZE;
+			currentBlockPosition.z--;
 			break;
 		case Direction::BACKWARD:
 			movementTarget.z -= GameConstants::TILE_SIZE;
+			currentBlockPosition.z++;
 			break;
 		case Direction::LEFT:
 			movementTarget.x -= GameConstants::TILE_SIZE;
+			currentBlockPosition.x--;
 			break;
 		case Direction::RIGHT:
 			movementTarget.x += GameConstants::TILE_SIZE;
+			currentBlockPosition.x++;
 			break;
 	}
 
 	camera->tweenTo(movementTarget, GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
 }
 
-void GameScene::spawn(SpawnPosition position) {
+void GameScene::spawn(const SpawnPosition& spawnPosition) {
 	using namespace GameConstants;
 	using namespace MathUtils;
 
+	currentBlockPosition = spawnPosition;
+
 	camera->position = {
-		position.x * TILE_SIZE,
-		position.layerIndex * TILE_SIZE - HALF_TILE_SIZE,
-		-position.z * TILE_SIZE
+		spawnPosition.x * TILE_SIZE,
+		spawnPosition.layer * TILE_SIZE - HALF_TILE_SIZE,
+		-spawnPosition.z * TILE_SIZE
 	};
 
-	switch (position.direction) {
+	switch (spawnPosition.direction) {
 		case Direction::FORWARD:
 			camera->yaw = 0.0f;
 			break;
