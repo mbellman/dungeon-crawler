@@ -2,29 +2,19 @@
 
 #include <Level/BlockBuilder.h>
 #include <Level/LevelLayout.h>
-#include <MathUtils.h>
 #include <SoftEngine.h>
 
 template<int L, int S>
 struct FloorPlan {
-	Soft::Area size;
 	int totalLayers;
+	Soft::Area size;
 	int blockTypes[L][S][S];
-	int traversableDirections[L][S][S];
 };
 
 namespace Floors {
-	namespace {
-		static int UP = MathUtils::Direction::UP;
-		static int DOWN = MathUtils::Direction::DOWN;
-		static int LEFT = MathUtils::Direction::LEFT;
-		static int RIGHT = MathUtils::Direction::RIGHT;
-	}
-
 	FloorPlan<3, 10> Floor1 = {
-		{ 10, 10 },
 		3,
-		// Block types
+		{ 10, 10 },
 		{
 			// Layer 1
 			{
@@ -64,48 +54,6 @@ namespace Floors {
 				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
 				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
 				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
-			}
-		},
-		// Traversable directions
-		{
-			// Layer 1
-			{
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-			},
-			// Layer 2
-			{
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-			},
-			// Layer 3
-			{
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 			}
 		}
 	};

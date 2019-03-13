@@ -71,21 +71,20 @@ void GameScene::loadLevel() {
 	using namespace GameConstants;
 	using namespace Floors;
 
-	levelLayout = new LevelLayout(Floor1.totalLayers, Floor1.size);
+	FloorPlan floorPlan = Floor1;
+
+	levelLayout = new LevelLayout(floorPlan.totalLayers, floorPlan.size);
 	const Soft::Area& size = levelLayout->getSize();
 
 	for (int layer = 0; layer < levelLayout->getTotalLayers(); layer++) {
 		for (int z = 0; z < size.height; z++) {
 			for (int x = 0; x < size.width; x++) {
-				Block block = {
-					Floors::Floor1.blockTypes[layer][z][x],
-					Floors::Floor1.traversableDirections[layer][z][x]
-				};
+				int blockType = floorPlan.blockTypes[layer][z][x];
 
-				levelLayout->setBlock(layer, x, z, block);
+				levelLayout->setBlockType(layer, x, z, blockType);
 
-				if (block.type != BlockTypes::EMPTY) {
-					Soft::Object* blockObject = BlockBuilder::createBlockObject(block.type);
+				if (blockType != BlockTypes::EMPTY) {
+					Soft::Object* blockObject = BlockBuilder::createBlockObject(blockType);
 
 					blockObject->position.x += x * TILE_SIZE - HALF_TILE_SIZE;
 					blockObject->position.y += layer * TILE_SIZE;

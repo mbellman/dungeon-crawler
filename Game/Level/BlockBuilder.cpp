@@ -3,6 +3,8 @@
 #include <GameConstants.h>
 
 Soft::Object* BlockBuilder::createBlockObject(int blockType) {
+	using namespace GameConstants;
+
 	switch (blockType) {
 		case BlockTypes::GROUND: {
 			return BlockBuilder::createSingleBlockFace();
@@ -11,7 +13,7 @@ Soft::Object* BlockBuilder::createBlockObject(int blockType) {
 			Soft::Mesh* mesh = BlockBuilder::createSingleBlockFace();
 
 			mesh->rotateDeg({ 180.0f, 0.0f, 0.0f });
-			mesh->position = { 0.0f, -GameConstants::TILE_SIZE, GameConstants::TILE_SIZE };
+			mesh->position = { 0.0f, -TILE_SIZE, TILE_SIZE };
 
 			return mesh;
 		}
@@ -19,7 +21,7 @@ Soft::Object* BlockBuilder::createBlockObject(int blockType) {
 			Soft::Mesh* mesh = BlockBuilder::createSingleBlockFace();
 
 			mesh->rotateDeg({ -90.0f, 0.0f, 0.0f });
-			mesh->position = { 0.0f, -GameConstants::TILE_SIZE, 0.0f };
+			mesh->position = { 0.0f, -TILE_SIZE, 0.0f };
 
 			return mesh;
 		}
@@ -27,7 +29,7 @@ Soft::Object* BlockBuilder::createBlockObject(int blockType) {
 			Soft::Mesh* mesh = BlockBuilder::createSingleBlockFace();
 
 			mesh->rotateDeg({ 90.0f, 0.0f, 0.0f });
-			mesh->position = { 0.0f, 0.0f, GameConstants::TILE_SIZE };
+			mesh->position = { 0.0f, 0.0f, TILE_SIZE };
 
 			return mesh;
 		}
@@ -35,7 +37,7 @@ Soft::Object* BlockBuilder::createBlockObject(int blockType) {
 			Soft::Mesh* mesh = BlockBuilder::createSingleBlockFace();
 
 			mesh->rotateDeg({ 0.0f, 0.0f, -90.0f });
-			mesh->position = { GameConstants::TILE_SIZE, 0.0f, 0.0f };
+			mesh->position = { TILE_SIZE, 0.0f, 0.0f };
 
 			return mesh;
 		}
@@ -43,15 +45,15 @@ Soft::Object* BlockBuilder::createBlockObject(int blockType) {
 			Soft::Mesh* mesh = BlockBuilder::createSingleBlockFace();
 
 			mesh->rotateDeg({ 0.0f, 0.0f, 90.0f });
-			mesh->position = { 0.0f, -GameConstants::TILE_SIZE, 0.0f };
+			mesh->position = { 0.0f, -TILE_SIZE, 0.0f };
 
 			return mesh;
 		}
 		case BlockTypes::CUBE: {
-			Soft::Cube* cube = new Soft::Cube(GameConstants::HALF_TILE_SIZE);
+			Soft::Cube* cube = new Soft::Cube(HALF_TILE_SIZE);
 
 			cube->setFaceUVCoordinates(0.0f, 0.0f, 1.0f, 1.0f);
-			cube->position = { GameConstants::HALF_TILE_SIZE, -GameConstants::HALF_TILE_SIZE, GameConstants::HALF_TILE_SIZE };
+			cube->position = { HALF_TILE_SIZE, -HALF_TILE_SIZE, HALF_TILE_SIZE };
 
 			return cube;
 		}

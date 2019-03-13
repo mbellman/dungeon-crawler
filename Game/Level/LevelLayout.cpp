@@ -1,4 +1,5 @@
 #include <Level/LevelLayout.h>
+#include <GameConstants.h>
 #include <SoftEngine.h>
 
 /**
@@ -20,7 +21,7 @@ LevelLayout::LevelLayout(int totalLayers, Soft::Area area) {
 
 	for (int i = 0; i < totalLayers; i++) {
 		layers[i].area = { area.width, area.height };
-		layers[i].blocks = new Block[area.width * area.height];
+		layers[i].blocks = new int[area.width * area.height];
 	}
 }
 
@@ -28,20 +29,20 @@ LevelLayout::~LevelLayout() {
 	delete[] layers;
 }
 
-Block* LevelLayout::getBlock(int layerIndex, int x, int z) const {
+int LevelLayout::getBlockType(int layerIndex, int x, int z) const {
 	if (layerIndex >= totalLayers) {
-		return nullptr;
+		return GameConstants::BlockTypes::EMPTY;
 	}
 
 	Layer& layer = layers[layerIndex];
 
 	if (x >= layer.area.width || z >= layer.area.height) {
-		return nullptr;
+		return GameConstants::BlockTypes::EMPTY;
 	}
 
 	int blockIndex = z * layer.area.width + x;
 
-	return &layer.blocks[blockIndex];
+	return layer.blocks[blockIndex];
 }
 
 const Soft::Area& LevelLayout::getSize() const {
@@ -52,9 +53,13 @@ int LevelLayout::getTotalLayers() const {
 	return totalLayers;
 }
 
-void LevelLayout::setBlock(int layerIndex, int x, int z, const Block& block) {
-	Block* levelBlock = getBlock(layerIndex, x, z);
+void LevelLayout::setBlockType(int layerIndex, int x, int z, int blockType) {
+	if (layerIndex >= totalLayers) {
+		return;
+	}
 
-	levelBlock->type = block.type;
-	levelBlock->traversableDirections = block.traversableDirections;
+	Layer* layer = &layers[layerIndex];
+	int blockIndex = z * layer->area.width + x;
+
+	layer->blocks[blockIndex] = blockType;
 }
