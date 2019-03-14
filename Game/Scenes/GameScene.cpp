@@ -31,7 +31,7 @@ void GameScene::load() {
 
 	add(light);
 
-	inputManager->onMouseClick([=]() {
+	inputManager->onMouseUp([=]() {
 		const Soft::Vec3& cameraDirection = camera->getDirection();
 
 		Soft::Light* light = new Soft::Light();
@@ -51,6 +51,7 @@ void GameScene::load() {
 
 	settings.ambientLightFactor = 0.0f;
 	settings.brightness = 0.05f;
+	settings.visibility = 5000;
 	settings.controlMode = Soft::ControlMode::MOUSE;
 }
 

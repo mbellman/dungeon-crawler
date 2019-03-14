@@ -16,6 +16,6 @@ private:
 	int totalBlocks = 0;
 	int blocksPerLayer = 0;
 
-	int getBlockSides(int layerIndex, int x, int z);
+	int getBlockSidesMask(int layerIndex, int x, int z);
 	bool isVisibleSpace(int blockType);
 };

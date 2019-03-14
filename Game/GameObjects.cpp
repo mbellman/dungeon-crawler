@@ -2,30 +2,30 @@
 #include <MathUtils.h>
 #include <SoftEngine.h>
 
-SidedBlock::SidedBlock(int sides) {
+SidedBlock::SidedBlock(int sidesMask) {
 	using namespace MathUtils;
 
-	if (sides & Direction::UP) {
+	if (sidesMask & Direction::UP) {
 		addSideVertices(SidedBlock::sideVertexPositions[0]);
 	}
 
-	if (sides & Direction::DOWN) {
+	if (sidesMask & Direction::DOWN) {
 		addSideVertices(SidedBlock::sideVertexPositions[1]);
 	}
 
-	if (sides & Direction::LEFT) {
+	if (sidesMask & Direction::LEFT) {
 		addSideVertices(SidedBlock::sideVertexPositions[2]);
 	}
 
-	if (sides & Direction::RIGHT) {
+	if (sidesMask & Direction::RIGHT) {
 		addSideVertices(SidedBlock::sideVertexPositions[3]);
 	}
 
-	if (sides & Direction::FORWARD) {
+	if (sidesMask & Direction::FORWARD) {
 		addSideVertices(SidedBlock::sideVertexPositions[5]);
 	}
 
-	if (sides & Direction::BACKWARD) {
+	if (sidesMask & Direction::BACKWARD) {
 		addSideVertices(SidedBlock::sideVertexPositions[4]);
 	}
 

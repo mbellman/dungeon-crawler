@@ -24,5 +24,5 @@ struct FloorPlan {
 };
 
 namespace Floors {
-	extern FloorPlan<3, 10, 10> Floor1;
+	extern FloorPlan<4, 20, 20> Floor1;
 }

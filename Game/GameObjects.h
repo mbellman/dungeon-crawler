@@ -3,7 +3,7 @@
 #include <SoftEngine.h>
 
 struct SidedBlock : public Soft::Object {
-	SidedBlock(int sides);
+	SidedBlock(int sidesMask);
 
 private:
 	static Soft::Vec3 sideVertexPositions[6][4];

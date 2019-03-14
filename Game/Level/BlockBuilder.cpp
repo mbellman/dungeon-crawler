@@ -25,9 +25,15 @@ Soft::Object* BlockBuilder::getNextBlockObject() {
 	blockCounter++;
 
 	if (blockType == GameConstants::BlockTypes::WALL) {
-		int sides = getBlockSides(layerIndex, x, z);
+		int sidesMask = getBlockSidesMask(layerIndex, x, z);
 
-		SidedBlock* block = new SidedBlock(sides);
+		if (sidesMask == 0) {
+			// Ignore blocks without any visible sides,
+			// since no vertices/faces will be generated
+			return nullptr;
+		}
+
+		SidedBlock* block = new SidedBlock(sidesMask);
 
 		block->scale(HALF_TILE_SIZE);
 
@@ -43,7 +49,7 @@ Soft::Object* BlockBuilder::getNextBlockObject() {
 	return nullptr;
 }
 
-int BlockBuilder::getBlockSides(int layerIndex, int x, int z) {
+int BlockBuilder::getBlockSidesMask(int layerIndex, int x, int z) {
 	using namespace MathUtils;
 
 	int sides = 0;
