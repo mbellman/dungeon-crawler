@@ -19,7 +19,7 @@ GameScene::~GameScene() {
 }
 
 void GameScene::load() {
-	add("surface_1", new Soft::TextureBuffer("./Assets/Gate1/surface_1.png"));
+	add("block_1", new Soft::TextureBuffer("./Assets/BlockTextures/block_1.png"));
 	loadLevel();
 
 	Soft::Light* light = new Soft::Light();
@@ -177,7 +177,7 @@ void GameScene::loadLevel() {
 		Soft::Object* blockObject = builder.getNextBlockObject();
 
 		if (blockObject != nullptr) {
-			blockObject->setTexture(getTexture("surface_1"));
+			blockObject->setTexture(getTexture("block_1"));
 
 			add(blockObject);
 		}

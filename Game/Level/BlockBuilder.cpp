@@ -24,7 +24,7 @@ Soft::Object* BlockBuilder::getNextBlockObject() {
 
 	blockCounter++;
 
-	if (blockType == GameConstants::BlockTypes::WALL) {
+	if (blockType == GameConstants::BlockTypes::BLOCK_1) {
 		int sidesMask = getBlockSidesMask(layerIndex, x, z);
 
 		if (sidesMask == 0) {
@@ -36,6 +36,7 @@ Soft::Object* BlockBuilder::getNextBlockObject() {
 		SidedBlock* block = new SidedBlock(sidesMask);
 
 		block->scale(HALF_TILE_SIZE);
+		block->isStatic = true;
 
 		block->position = {
 			x * TILE_SIZE,
@@ -92,5 +93,5 @@ bool BlockBuilder::isComplete() {
 }
 
 bool BlockBuilder::isVisibleSpace(int blockType) {
-	return blockType != GameConstants::BlockTypes::WALL && blockType != GameConstants::BlockTypes::OUT_OF_BOUNDS;
+	return blockType != GameConstants::BlockTypes::BLOCK_1 && blockType != GameConstants::BlockTypes::OUT_OF_BOUNDS;
 }
