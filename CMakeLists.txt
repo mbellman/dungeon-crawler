@@ -44,10 +44,10 @@ set(SOURCE_FILES
     Game/MathUtils.h
     Game/Level/BlockBuilder.h
     Game/Level/BlockBuilder.cpp
-    Game/Level/Floors.h
-    Game/Level/Floors.cpp
     Game/Level/LevelLayout.h
     Game/Level/LevelLayout.cpp
+    Game/Level/LevelLoader.h
+    Game/Level/LevelLoader.cpp
     Game/Scenes/GameScene.h
     Game/Scenes/GameScene.cpp
 

@@ -3,7 +3,7 @@
 #include <SoftEngine.h>
 #include <MathUtils.h>
 #include <Level/LevelLayout.h>
-#include <Level/Floors.h>
+#include <Level/LevelLoader.h>
 
 class GameScene : public Soft::Scene {
 public:
@@ -14,7 +14,7 @@ public:
 
 private:
 	LevelLayout* levelLayout = nullptr;
-	Position currentBlockPosition;
+	GridPosition currentGridPosition;
 
 	bool canMoveInDirection(MathUtils::Direction direction);
 	MathUtils::Direction getYawDirection(float yaw);

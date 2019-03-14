@@ -14,7 +14,7 @@ Layer::~Layer() {
  * LevelLayout
  * -----------
  */
-LevelLayout::LevelLayout(int totalLayers, Soft::Area area) {
+LevelLayout::LevelLayout(int totalLayers, const Soft::Area& area) {
 	this->totalLayers = totalLayers;
 
 	layers = new Layer[totalLayers];

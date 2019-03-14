@@ -1,7 +1,7 @@
 #include <Scenes/GameScene.h>
 #include <Level/LevelLayout.h>
 #include <Level/BlockBuilder.h>
-#include <Level/Floors.h>
+#include <Level/LevelLoader.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
 #include <GameConstants.h>
@@ -39,6 +39,7 @@ void GameScene::load() {
 		light->setColor({ 0, 255, 0 });
 		light->lifetime = 5000;
 		light->position = camera->position + cameraDirection * 100.0f;
+		light->range = 1000.0f;
 
 		light->onUpdate = [=](int dt) {
 			light->position += cameraDirection * (float)dt;
@@ -68,26 +69,30 @@ void GameScene::onUpdate(int dt) {
 }
 
 bool GameScene::canMoveInDirection(MathUtils::Direction direction) {
-	Position targetBlockPosition = currentBlockPosition;
+	if (levelLayout == nullptr) {
+		return false;
+	}
+
+	GridPosition targetGridPosition = currentGridPosition;
 
 	switch (direction) {
 		case MathUtils::Direction::FORWARD:
-			targetBlockPosition.z--;
+			targetGridPosition.z--;
 			break;
 		case MathUtils::Direction::BACKWARD:
-			targetBlockPosition.z++;
+			targetGridPosition.z++;
 			break;
 		case MathUtils::Direction::LEFT:
-			targetBlockPosition.x--;
+			targetGridPosition.x--;
 			break;
 		case MathUtils::Direction::RIGHT:
-			targetBlockPosition.x++;
+			targetGridPosition.x++;
 			break;
 	}
 
 	return (
-		levelLayout->isEmptyBlock(targetBlockPosition.layer, targetBlockPosition.x, targetBlockPosition.z) &&
-		levelLayout->isWalkableBlock(targetBlockPosition.layer - 1, targetBlockPosition.x, targetBlockPosition.z)
+		levelLayout->isEmptyBlock(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z) &&
+		levelLayout->isWalkableBlock(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z)
 	);
 }
 
@@ -115,33 +120,36 @@ bool GameScene::isMoving() {
 
 void GameScene::loadLevel() {
 	using namespace GameConstants;
-	using namespace Floor1;
 
-	levelLayout = new LevelLayout(totalLayers, size);
-	const Soft::Area& size = levelLayout->getSize();
+	LevelLoader levelLoader("./Assets/Gate1/Level.egp");
+
+	const LevelData& levelData = levelLoader.getLevelData();
+	const Soft::Area& size = levelData.size;
+	levelLayout = new LevelLayout(levelData.layers.size(), size);
 
 	for (int layer = 0; layer < levelLayout->getTotalLayers(); layer++) {
 		for (int z = 0; z < size.height; z++) {
 			for (int x = 0; x < size.width; x++) {
-				int blockType = blocks[layer][z][x];
+				int blockIndex = z * size.width + x;
+				int blockType = levelData.layers[layer].blockTypes[blockIndex];
 
 				levelLayout->setBlockType(layer, x, z, blockType);
 			}
 		}
 	}
 
-	for (int i = 0; i < totalLights; i++) {
-		LightSpawn lightSpawn = Floor1::lights[i];
-
+	for (int i = 0; i < levelData.staticLights.size(); i++) {
+		const StaticLight& staticLight = levelData.staticLights[i];
 		Soft::Light* light = new Soft::Light();
 
 		light->position = {
-			lightSpawn.position.x * TILE_SIZE,
-			lightSpawn.position.layer * TILE_SIZE - HALF_TILE_SIZE,
-			-lightSpawn.position.z * TILE_SIZE
+			staticLight.position.x * TILE_SIZE,
+			staticLight.position.layer * TILE_SIZE - HALF_TILE_SIZE,
+			-staticLight.position.z * TILE_SIZE
 		};
 
-		light->setColor(lightSpawn.color);
+		light->setColor(staticLight.color);
+		light->range = staticLight.range;
 		light->isStatic = true;
 
 		add(light);
@@ -159,7 +167,7 @@ void GameScene::loadLevel() {
 		}
 	}
 
-	spawn(spawnPosition);
+	spawn(levelData.spawnPosition);
 }
 
 void GameScene::move(MathUtils::Direction direction) {
@@ -174,19 +182,19 @@ void GameScene::move(MathUtils::Direction direction) {
 	switch (direction) {
 		case Direction::FORWARD:
 			movementTarget.z += GameConstants::TILE_SIZE;
-			currentBlockPosition.z--;
+			currentGridPosition.z--;
 			break;
 		case Direction::BACKWARD:
 			movementTarget.z -= GameConstants::TILE_SIZE;
-			currentBlockPosition.z++;
+			currentGridPosition.z++;
 			break;
 		case Direction::LEFT:
 			movementTarget.x -= GameConstants::TILE_SIZE;
-			currentBlockPosition.x--;
+			currentGridPosition.x--;
 			break;
 		case Direction::RIGHT:
 			movementTarget.x += GameConstants::TILE_SIZE;
-			currentBlockPosition.x++;
+			currentGridPosition.x++;
 			break;
 	}
 
@@ -197,7 +205,9 @@ void GameScene::spawn(const SpawnPosition& spawnPosition) {
 	using namespace GameConstants;
 	using namespace MathUtils;
 
-	currentBlockPosition = spawnPosition;
+	currentGridPosition.layer = spawnPosition.layer;
+	currentGridPosition.x = spawnPosition.x;
+	currentGridPosition.z = spawnPosition.z;
 
 	camera->position = {
 		spawnPosition.x * TILE_SIZE,

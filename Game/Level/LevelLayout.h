@@ -20,7 +20,7 @@ struct Layer {
  */
 class LevelLayout {
 public:
-	LevelLayout(int totalLayers, Soft::Area area);
+	LevelLayout(int totalLayers, const Soft::Area& area);
 	~LevelLayout();
 
 	int getBlockType(int layerIndex, int x, int z) const;

@@ -6,3 +6,4 @@
 #include <System/Objects.h>
 #include <System/Math.h>
 #include <Graphics/Color.h>
+#include <Loaders/Loader.h>

@@ -30,12 +30,12 @@ void Loader::fillBufferUntil(std::string end) {
 
 		isLoading = false;
 	} else if (isAtDelimiter()) {
-		int pos = (int)(buffer.length() - delimiter.length());
-		int len = delimiter.length();
+		int delimiterLen = delimiter.length();
+		int delimiterPos = (int)(buffer.length() - delimiterLen);
 
 		// Ignore the delimiter string at the end of the buffer
 		// so chunks can be cleanly parsed with only their contents.
-		buffer.erase(pos, len);
+		buffer.erase(delimiterPos, delimiterLen);
 	}
 }
 
@@ -73,7 +73,7 @@ std::string Loader::readNextChunk() {
 	buffer.clear();
 	fillBufferUntil(delimiter);
 
-	return buffer;
+	return isAtEOL() ? buffer.substr(0, buffer.size() - 1) : buffer;
 }
 
 void Loader::nextLine() {
