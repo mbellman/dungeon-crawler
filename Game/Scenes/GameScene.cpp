@@ -50,7 +50,7 @@ void GameScene::load() {
 	camera->fov = 110;
 
 	settings.ambientLightFactor = 0.0f;
-	settings.brightness = 0.05f;
+	settings.brightness = 0.1f;
 	settings.visibility = 5000;
 	settings.controlMode = Soft::ControlMode::MOUSE;
 }
@@ -115,21 +115,36 @@ bool GameScene::isMoving() {
 
 void GameScene::loadLevel() {
 	using namespace GameConstants;
-	using namespace Floors;
+	using namespace Floor1;
 
-	FloorPlan floorPlan = Floor1;
-
-	levelLayout = new LevelLayout(floorPlan.totalLayers, floorPlan.size);
+	levelLayout = new LevelLayout(totalLayers, size);
 	const Soft::Area& size = levelLayout->getSize();
 
 	for (int layer = 0; layer < levelLayout->getTotalLayers(); layer++) {
 		for (int z = 0; z < size.height; z++) {
 			for (int x = 0; x < size.width; x++) {
-				int blockType = floorPlan.blocks[layer][z][x];
+				int blockType = blocks[layer][z][x];
 
 				levelLayout->setBlockType(layer, x, z, blockType);
 			}
 		}
+	}
+
+	for (int i = 0; i < totalLights; i++) {
+		LightSpawn lightSpawn = Floor1::lights[i];
+
+		Soft::Light* light = new Soft::Light();
+
+		light->position = {
+			lightSpawn.position.x * TILE_SIZE,
+			lightSpawn.position.layer * TILE_SIZE - HALF_TILE_SIZE,
+			-lightSpawn.position.z * TILE_SIZE
+		};
+
+		light->setColor(lightSpawn.color);
+		light->isStatic = true;
+
+		add(light);
 	}
 
 	BlockBuilder builder(levelLayout);
@@ -144,7 +159,7 @@ void GameScene::loadLevel() {
 		}
 	}
 
-	spawn(floorPlan.spawnPosition);
+	spawn(spawnPosition);
 }
 
 void GameScene::move(MathUtils::Direction direction) {

@@ -5,3 +5,4 @@
 #include <System/Scene.h>
 #include <System/Objects.h>
 #include <System/Math.h>
+#include <Graphics/Color.h>

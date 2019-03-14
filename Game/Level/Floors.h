@@ -15,14 +15,16 @@ struct SpawnPosition : Position {
 	MathUtils::Direction direction;
 };
 
-template<int L, int W, int H>
-struct FloorPlan {
-	int totalLayers;
-	Soft::Area size;
-	SpawnPosition spawnPosition;
-	int blocks[L][H][W];
+struct LightSpawn {
+	Position position;
+	Soft::Color color;
 };
 
-namespace Floors {
-	extern FloorPlan<4, 20, 20> Floor1;
+namespace Floor1 {
+	extern int totalLayers;
+	extern Soft::Area size;
+	extern SpawnPosition spawnPosition;
+	extern int blocks[4][20][20];
+	extern int totalLights;
+	extern LightSpawn lights[5];
 }
