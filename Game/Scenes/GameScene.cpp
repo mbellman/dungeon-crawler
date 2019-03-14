@@ -112,6 +112,17 @@ void GameScene::castLight() {
 	lastLightCastTime = getRunningTime();
 }
 
+Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
+	using namespace GameConstants;
+
+	switch (blockType) {
+		case BlockTypes::BLOCK_1:
+			return getTexture("block_1");
+		default:
+			return nullptr;
+	}
+}
+
 MathUtils::Direction GameScene::getYawDirection(float yaw) {
 	using namespace MathUtils;
 
@@ -173,13 +184,17 @@ void GameScene::loadLevel() {
 
 	BlockBuilder builder(levelLayout);
 
-	while (!builder.isComplete()) {
-		Soft::Object* blockObject = builder.getNextBlockObject();
+	while (builder.hasBlocksRemaining()) {
+		Block block = builder.getNextBlock();
 
-		if (blockObject != nullptr) {
-			blockObject->setTexture(getTexture("block_1"));
+		if (block.object != nullptr) {
+			Soft::TextureBuffer* texture = getBlockTexture(block.type);
 
-			add(blockObject);
+			if (texture != nullptr) {
+				block.object->setTexture(getTexture("block_1"));
+			}
+
+			add(block.object);
 		}
 	}
 

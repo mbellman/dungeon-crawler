@@ -13,41 +13,40 @@ BlockBuilder::BlockBuilder(LevelLayout* levelLayout) {
 	totalBlocks = levelLayout->getTotalLayers() * blocksPerLayer;
 }
 
-Soft::Object* BlockBuilder::getNextBlockObject() {
+Block BlockBuilder::getNextBlock() {
 	using namespace GameConstants;
+
+	Block block;
 
 	int layerIndex = (int)floor((float)blockCounter / blocksPerLayer);
 	int blockIndex = blockCounter - blocksPerLayer * layerIndex;
 	int x = blockIndex % levelLayout->getSize().width;
 	int z = (int)floor(blockIndex / levelLayout->getSize().width);
-	int blockType = levelLayout->getBlockType(layerIndex, x, z);
 
+	block.type = levelLayout->getBlockType(layerIndex, x, z);
 	blockCounter++;
 
-	if (blockType == GameConstants::BlockTypes::BLOCK_1) {
+	if (block.type == GameConstants::BlockTypes::BLOCK_1) {
 		int sidesMask = getBlockSidesMask(layerIndex, x, z);
 
 		if (sidesMask == 0) {
 			// Ignore blocks without any visible sides,
 			// since no vertices/faces will be generated
-			return nullptr;
+			block.object = nullptr;
+		} else {
+			block.object = new SidedBlock(sidesMask);
+			block.object->scale(HALF_TILE_SIZE);
+			block.object->isStatic = true;
+
+			block.object->position = {
+				x * TILE_SIZE,
+				layerIndex * TILE_SIZE - HALF_TILE_SIZE,
+				-z * TILE_SIZE
+			};
 		}
-
-		SidedBlock* block = new SidedBlock(sidesMask);
-
-		block->scale(HALF_TILE_SIZE);
-		block->isStatic = true;
-
-		block->position = {
-			x * TILE_SIZE,
-			layerIndex * TILE_SIZE - HALF_TILE_SIZE,
-			-z * TILE_SIZE
-		};
-
-		return block;
 	}
 
-	return nullptr;
+	return block;
 }
 
 int BlockBuilder::getBlockSidesMask(int layerIndex, int x, int z) {
@@ -88,8 +87,8 @@ int BlockBuilder::getBlockSidesMask(int layerIndex, int x, int z) {
 	return sides;
 }
 
-bool BlockBuilder::isComplete() {
-	return blockCounter >= totalBlocks;
+bool BlockBuilder::hasBlocksRemaining() {
+	return blockCounter < totalBlocks;
 }
 
 bool BlockBuilder::isVisibleSpace(int blockType) {

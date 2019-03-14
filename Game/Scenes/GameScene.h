@@ -19,6 +19,7 @@ private:
 
 	bool canMoveInDirection(MathUtils::Direction direction);
 	void castLight();
+	Soft::TextureBuffer* getBlockTexture(int blockType);
 	MathUtils::Direction getYawDirection(float yaw);
 	bool isMoving();
 	void loadLevel();

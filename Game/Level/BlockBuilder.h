@@ -1,14 +1,20 @@
 #pragma once
 
 #include <Level/LevelLayout.h>
+#include <GameConstants.h>
 #include <SoftEngine.h>
+
+struct Block {
+	int type = GameConstants::BlockTypes::OUT_OF_BOUNDS;
+	Soft::Object* object = nullptr;
+};
 
 class BlockBuilder {
 public:
 	BlockBuilder(LevelLayout* levelLayout);
 
-	Soft::Object* getNextBlockObject();
-	bool isComplete();
+	Block getNextBlock();
+	bool hasBlocksRemaining();
 
 private:
 	const LevelLayout* levelLayout = nullptr;
