@@ -15,8 +15,10 @@ public:
 private:
 	LevelLayout* levelLayout = nullptr;
 	GridPosition currentGridPosition;
+	int lastLightCastTime = 0;
 
 	bool canMoveInDirection(MathUtils::Direction direction);
+	void castLight();
 	MathUtils::Direction getYawDirection(float yaw);
 	bool isMoving();
 	void loadLevel();

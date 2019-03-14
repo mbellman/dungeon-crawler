@@ -25,7 +25,7 @@ private:
 	Vec3 getTriangleVertexColorIntensity(Triangle* triangle, int vertexIndex);
 	void illuminateColorTriangle(Triangle* triangle);
 	void illuminateTextureTriangle(Triangle* triangle);
-	void resetTriangleLighting(Triangle* triangle);
+	void resetTextureTriangleLighting(Triangle* triangle);
 };
 
 } // namespace Soft

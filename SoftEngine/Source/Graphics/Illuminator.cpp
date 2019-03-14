@@ -125,16 +125,24 @@ Vec3 Illuminator::getTriangleVertexColorIntensity(Triangle* triangle, int vertex
 
 void Illuminator::illuminateColorTriangle(Triangle* triangle) {
 	const Settings& settings = activeScene->settings;
+	bool hasLighting = triangle->sourcePolygon->sourceObject->hasLighting;
 
+	// Lighting step
+	if (hasLighting) {
+		for (int i = 0; i < 3; i++) {
+			Vertex2d* vertex = &triangle->vertices[i];
+			const Vec3 colorIntensity = getTriangleVertexColorIntensity(triangle, i);
+
+			vertex->color.R *= colorIntensity.x;
+			vertex->color.G *= colorIntensity.y;
+			vertex->color.B *= colorIntensity.z;
+			vertex->color.clamp();
+		}
+	}
+
+	// Background color blending step
 	for (int i = 0; i < 3; i++) {
 		Vertex2d* vertex = &triangle->vertices[i];
-		const Vec3 colorIntensity = getTriangleVertexColorIntensity(triangle, i);
-
-		vertex->color.R *= colorIntensity.x;
-		vertex->color.G *= colorIntensity.y;
-		vertex->color.B *= colorIntensity.z;
-		vertex->color.clamp();
-
 		float visibilityRatio = FAST_MIN(vertex->z / settings.visibility, 1.0f);
 
 		vertex->color = Color::lerp(vertex->color, settings.backgroundColor, visibilityRatio);
@@ -183,22 +191,23 @@ void Illuminator::illuminateTextureTriangle(Triangle* triangle) {
 }
 
 void Illuminator::illuminateTriangle(Triangle* triangle) {
-	if (!triangle->sourcePolygon->sourceObject->hasLighting) {
-		// Clear any previous lighting values, since
-		// Triangles are recycled from the pool
-		resetTriangleLighting(triangle);
+	bool hasTexture = triangle->sourcePolygon->sourceObject->texture != NULL;
+	bool hasLighting = triangle->sourcePolygon->sourceObject->hasLighting;
 
-		return;
-	}
-
-	if (triangle->sourcePolygon->sourceObject->texture != NULL) {
-		illuminateTextureTriangle(triangle);
+	if (hasTexture) {
+		if (hasLighting) {
+			illuminateTextureTriangle(triangle);
+		} else if (hasTexture) {
+			// Clear any previous lighting values, since
+			// Triangles are recycled from the buffer pool
+			resetTextureTriangleLighting(triangle);
+		}
 	} else {
 		illuminateColorTriangle(triangle);
 	}
 }
 
-void Illuminator::resetTriangleLighting(Triangle* triangle) {
+void Illuminator::resetTextureTriangleLighting(Triangle* triangle) {
 	for (int i = 0; i < 3; i++) {
 		Vertex2d& vertex = triangle->vertices[i];
 

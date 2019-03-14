@@ -32,27 +32,11 @@ void GameScene::load() {
 	add(light);
 
 	inputManager->onMouseUp([=]() {
-		const Soft::Vec3& cameraDirection = camera->getDirection();
-
-		Soft::Light* light = new Soft::Light();
-
-		light->setColor({ 0, 255, 0 });
-		light->lifetime = 5000;
-		light->position = camera->position + cameraDirection * 100.0f;
-		light->range = 1000.0f;
-
-		light->onUpdate = [=](int dt) {
-			light->position += cameraDirection * (float)dt;
-		};
-
-		add(light);
+		castLight();
 	});
 
 	camera->fov = 110;
-
 	settings.ambientLightFactor = 0.0f;
-	settings.brightness = 0.1f;
-	settings.visibility = 5000;
 	settings.controlMode = Soft::ControlMode::MOUSE;
 }
 
@@ -94,6 +78,38 @@ bool GameScene::canMoveInDirection(MathUtils::Direction direction) {
 		levelLayout->isEmptyBlock(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z) &&
 		levelLayout->isWalkableBlock(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z)
 	);
+}
+
+void GameScene::castLight() {
+	using namespace GameConstants;
+
+	if (getRunningTime() - lastLightCastTime < CAST_LIGHT_LIFETIME && lastLightCastTime > 0) {
+		return;
+	}
+
+	const Soft::Vec3& cameraDirection = camera->getDirection();
+	Soft::Light* light = new Soft::Light();
+
+	light->setColor({ 0, 255, 0 });
+	light->lifetime = CAST_LIGHT_LIFETIME;
+	light->position = camera->position + cameraDirection * 100.0f;
+	light->range = CAST_LIGHT_RANGE;
+
+	light->onUpdate = [=](int dt) {
+		light->position += cameraDirection * (float)dt * 1.5f;
+	};
+
+	Soft::Cube* lightCube = new Soft::Cube(3.0f);
+
+	lightCube->setColor({ 0, 255, 0 });
+	lightCube->lifetime = CAST_LIGHT_LIFETIME;
+	lightCube->hasLighting = false;
+	lightCube->lockTo(light);
+
+	add(light);
+	add(lightCube);
+
+	lastLightCastTime = getRunningTime();
 }
 
 MathUtils::Direction GameScene::getYawDirection(float yaw) {
@@ -168,6 +184,9 @@ void GameScene::loadLevel() {
 	}
 
 	spawn(levelData.spawnPosition);
+
+	settings.visibility = levelData.visibility;
+	settings.brightness = levelData.brightness;
 }
 
 void GameScene::move(MathUtils::Direction direction) {
