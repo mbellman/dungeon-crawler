@@ -41,7 +41,7 @@ void GameScene::load() {
 		light->position = camera->position + cameraDirection * 100.0f;
 
 		light->onUpdate = [=](int dt) {
-			light->position += cameraDirection * 25.0f;
+			light->position += cameraDirection * (float)dt;
 		};
 
 		add(light);
