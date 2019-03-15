@@ -91,7 +91,7 @@ bool GameScene::canMoveInDirection(MathUtils::Direction direction) {
 void GameScene::castLight() {
 	using namespace GameConstants;
 
-	if (getRunningTime() - lastLightCastTime < CAST_LIGHT_LIFETIME && lastLightCastTime > 0) {
+	if (getCastLightCooldownProgress() < 1.0f) {
 		return;
 	}
 
@@ -133,7 +133,7 @@ Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
 	}
 }
 
-float GameScene::getLightCooldownProgress() {
+float GameScene::getCastLightCooldownProgress() {
 	if (lastLightCastTime == 0) {
 		return 1.0f;
 	}
@@ -316,5 +316,5 @@ void GameScene::spawn(const SpawnPosition& spawnPosition) {
 void GameScene::updateUI(int dt) {
 	Soft::UIObject* lightBar = ui->get("lightBar");
 
-	lightBar->clip(lightBar->getWidth() * getLightCooldownProgress(), lightBar->getHeight());
+	lightBar->clip(lightBar->getWidth() * getCastLightCooldownProgress(), lightBar->getHeight());
 }

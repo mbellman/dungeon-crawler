@@ -40,7 +40,8 @@ LevelLoader::LevelLoader(const char* path) {
 }
 
 LevelLoader::~LevelLoader() {
-
+	levelData.layers.clear();
+	levelData.staticLights.clear();
 }
 
 const LevelData& LevelLoader::getLevelData() {
