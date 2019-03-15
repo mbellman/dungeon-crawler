@@ -19,17 +19,11 @@ GameScene::~GameScene() {
 }
 
 void GameScene::load() {
-	add("block_1", new Soft::TextureBuffer("./Assets/BlockTextures/block_1.png"));
+	add("solid_1", new Soft::TextureBuffer("./Assets/BlockTextures/solid_1.png"));
+	add("solid_2", new Soft::TextureBuffer("./Assets/BlockTextures/solid_2.png"));
+
 	loadLevel();
-
-	Soft::Light* light = new Soft::Light();
-
-	light->range = 750.0f;
-	light->setColor({ 255, 150, 50 });
-	light->lockTo(camera);
-	light->power = 3.0f;
-
-	add(light);
+	addCameraLight();
 
 	inputManager->onMouseUp([=]() {
 		castLight();
@@ -50,6 +44,17 @@ void GameScene::onUpdate(int dt) {
 	} else if (inputManager->isKeyPressed(Soft::Keys::D)) {
 		move(getYawDirection(camera->yaw + MathUtils::DEG_270));
 	}
+}
+
+void GameScene::addCameraLight() {
+	Soft::Light* light = new Soft::Light();
+
+	light->range = 750.0f;
+	light->power = 1.0f;
+	light->setColor({ 255, 150, 50 });
+	light->lockTo(camera);
+
+	add(light);
 }
 
 bool GameScene::canMoveInDirection(MathUtils::Direction direction) {
@@ -116,8 +121,10 @@ Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
 	using namespace GameConstants;
 
 	switch (blockType) {
-		case BlockTypes::BLOCK_1:
-			return getTexture("block_1");
+		case BlockTypes::SOLID_1:
+			return getTexture("solid_1");
+		case BlockTypes::SOLID_2:
+			return getTexture("solid_2");
 		default:
 			return nullptr;
 	}
@@ -191,7 +198,7 @@ void GameScene::loadLevel() {
 			Soft::TextureBuffer* texture = getBlockTexture(block.type);
 
 			if (texture != nullptr) {
-				block.object->setTexture(getTexture("block_1"));
+				block.object->setTexture(texture);
 			}
 
 			add(block.object);

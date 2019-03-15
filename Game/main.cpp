@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
 		"Dungeon Crawler",
 		NULL,
 		"./Assets/fonts/FreeMono.ttf",
-		Soft::Flags::DEBUG_STATS | Soft::Flags::DEBUG_COMMAND_LINE
+		Soft::Flags::DEBUG_STATS
 	);
 
 	Soft::Controller* controller = new Soft::Controller(engine);

@@ -215,7 +215,7 @@ int Rasterizer::getMipmapLevel(float averageDepth) {
 }
 
 int Rasterizer::getTextureSampleInterval(int lineLength, float averageDepth) {
-	int interval = (int)(3000.0f / averageDepth) - (int)(100.0f / lineLength);
+	int interval = (int)(3000.0f / averageDepth) - (int)(300.0f / lineLength);
 
 	return FAST_CLAMP(interval, 1, MAX_TEXTURE_SAMPLE_INTERVAL);
 }
@@ -359,9 +359,11 @@ void Rasterizer::triangleScanline(
 		for (int x = start; x <= end; x++) {
 			int index = pixelIndexOffset + x;
 
+			textureSampleIntervalCounter++;
+
 			if (depthBuffer[index] < i_depth) {
-				if (++textureSampleIntervalCounter > textureSampleInterval) {
-					textureSampleIntervalCounter = 0;
+				if (textureSampleIntervalCounter > textureSampleInterval) {
+					textureSampleIntervalCounter %= textureSampleInterval;
 
 					float depth = 1.0f / i_depth;
 					float u = Lerp::lerp(perspectiveUV.start.x, perspectiveUV.end.x, progress) * depth;
@@ -380,7 +382,8 @@ void Rasterizer::triangleScanline(
 						int B = (int)(sample.B * intensity_B);
 
 						if (visibility < INT_MAX) {
-							float visibilityRatio = FAST_MIN(depth / visibility, 1.0f);
+							float visibilityRatio = depth / visibility;
+							visibilityRatio = FAST_MIN(visibilityRatio, 1.0f);
 
 							R = Lerp::lerp(R, backgroundColor.R, visibilityRatio);
 							G = Lerp::lerp(G, backgroundColor.G, visibilityRatio);

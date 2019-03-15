@@ -32,7 +32,7 @@ constexpr static int SERIAL_ILLUMINATION_NONSTATIC_TRIANGLE_LIMIT = 2500;
 
 constexpr static int MIN_COLOR_LERP_INTERVAL = 2;
 constexpr static int MIN_COVER_TRIANGLE_SIZE = 150;
-constexpr static int MAX_TEXTURE_SAMPLE_INTERVAL = 4;
+constexpr static int MAX_TEXTURE_SAMPLE_INTERVAL = 3;
 constexpr static int MAX_VISIBILITY = INT_MAX;
 constexpr static float MAX_CAMERA_PITCH = 89.0f * DEG_TO_RAD;
 constexpr static int MAX_RASTER_FILTER_ZONES = 50;

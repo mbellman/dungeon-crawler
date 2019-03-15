@@ -26,7 +26,7 @@ Block BlockBuilder::getNextBlock() {
 	block.type = levelLayout->getBlockType(layerIndex, x, z);
 	blockCounter++;
 
-	if (block.type == GameConstants::BlockTypes::BLOCK_1) {
+	if (isSolid(block.type)) {
 		int sidesMask = getBlockSidesMask(layerIndex, x, z);
 
 		if (sidesMask == 0) {
@@ -91,6 +91,10 @@ bool BlockBuilder::hasBlocksRemaining() {
 	return blockCounter < totalBlocks;
 }
 
+bool BlockBuilder::isSolid(int blockType) {
+	return blockType >= GameConstants::BlockTypes::SOLID_1 && blockType <= GameConstants::BlockTypes::SOLID_2;
+}
+
 bool BlockBuilder::isVisibleSpace(int blockType) {
-	return blockType != GameConstants::BlockTypes::BLOCK_1 && blockType != GameConstants::BlockTypes::OUT_OF_BOUNDS;
+	return !isSolid(blockType) && blockType != GameConstants::BlockTypes::OUT_OF_BOUNDS;
 }

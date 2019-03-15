@@ -10,6 +10,7 @@ namespace GameConstants {
 	enum BlockTypes {
 		OUT_OF_BOUNDS = -1,
 		EMPTY = 0,
-		BLOCK_1 = 1
+		SOLID_1 = 1,
+		SOLID_2 = 2
 	};
 }

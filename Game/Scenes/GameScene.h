@@ -17,6 +17,7 @@ private:
 	GridPosition currentGridPosition;
 	int lastLightCastTime = 0;
 
+	void addCameraLight();
 	bool canMoveInDirection(MathUtils::Direction direction);
 	void castLight();
 	Soft::TextureBuffer* getBlockTexture(int blockType);

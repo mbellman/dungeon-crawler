@@ -109,10 +109,6 @@ Uint32 TextureBuffer::readPixel(SDL_Surface* surface, int index) {
 }
 
 const Color& TextureBuffer::sample(float u, float v, const ColorBuffer* mipmap) const {
-	if (mipmaps.empty()) {
-		return COLOR_BLACK;
-	}
-
 	// Modulo-free out-of-bounds UV wrapping
 	if (u >= 1.0f) u -= (int)u;
 	else if (u < 0.0f) u += (int)(-1.0f * (u - 1.0f));
@@ -120,7 +116,7 @@ const Color& TextureBuffer::sample(float u, float v, const ColorBuffer* mipmap) 
 	if (v >= 1.0f) v -= (int)v;
 	else if (v < 0.0f) v += (int)(-1.0f * (v - 1.0f));
 
-	int pixelIndex = (int)(v * (mipmap->height)) * mipmap->width + (int)(u * mipmap->width);
+	int pixelIndex = (int)(v * mipmap->height) * mipmap->width + (int)(u * mipmap->width);
 
 	return mipmap->read(pixelIndex);
 }

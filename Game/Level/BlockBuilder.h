@@ -23,5 +23,6 @@ private:
 	int blocksPerLayer = 0;
 
 	int getBlockSidesMask(int layerIndex, int x, int z);
+	bool isSolid(int blockType);
 	bool isVisibleSpace(int blockType);
 };
