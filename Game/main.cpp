@@ -7,8 +7,10 @@ int main(int argc, char* argv[]) {
 		"Dungeon Crawler",
 		NULL,
 		"./Assets/fonts/FreeMono.ttf",
-		Soft::Flags::DEBUG_STATS
+		Soft::Flags::DEBUG_STATS | Soft::Flags::DEBUG_COMMAND_LINE
 	);
+
+	engine->lockProportionalRasterRegion(5, 0, 90, 85);
 
 	Soft::Controller* controller = new Soft::Controller(engine);
 

@@ -215,9 +215,9 @@ int Rasterizer::getMipmapLevel(float averageDepth) {
 }
 
 int Rasterizer::getTextureSampleInterval(int lineLength, float averageDepth) {
-	int interval = (int)(3000.0f / averageDepth) - (int)(300.0f / lineLength);
+	int interval = (int)(2000.0f / averageDepth) - (int)(1000.0f / lineLength);
 
-	return FAST_CLAMP(interval, 1, MAX_TEXTURE_SAMPLE_INTERVAL);
+	return FAST_CLAMP(interval, MIN_TEXTURE_SAMPLE_INTERVAL, MAX_TEXTURE_SAMPLE_INTERVAL);
 }
 
 int Rasterizer::getTotalBufferedScanlines() {
@@ -362,7 +362,7 @@ void Rasterizer::triangleScanline(
 			textureSampleIntervalCounter++;
 
 			if (depthBuffer[index] < i_depth) {
-				if (textureSampleIntervalCounter > textureSampleInterval) {
+				if (textureSampleIntervalCounter >= textureSampleInterval) {
 					textureSampleIntervalCounter %= textureSampleInterval;
 
 					float depth = 1.0f / i_depth;
