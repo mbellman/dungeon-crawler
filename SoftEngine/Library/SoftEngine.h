@@ -5,5 +5,6 @@
 #include <System/Scene.h>
 #include <System/Objects.h>
 #include <System/Math.h>
+#include <UI/UIObjects.h>
 #include <Graphics/Color.h>
 #include <Loaders/Loader.h>

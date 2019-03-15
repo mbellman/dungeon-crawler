@@ -21,9 +21,12 @@ private:
 	bool canMoveInDirection(MathUtils::Direction direction);
 	void castLight();
 	Soft::TextureBuffer* getBlockTexture(int blockType);
+	float getLightCooldownProgress();
 	MathUtils::Direction getYawDirection(float yaw);
 	bool isMoving();
 	void loadLevel();
+	void loadUI();
 	void move(MathUtils::Direction direction);
 	void spawn(const SpawnPosition& spawnPosition);
+	void updateUI(int dt);
 };

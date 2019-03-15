@@ -23,6 +23,7 @@ void GameScene::load() {
 	add("solid_2", new Soft::TextureBuffer("./Assets/BlockTextures/solid_2.png"));
 
 	loadLevel();
+	loadUI();
 	addCameraLight();
 
 	inputManager->onMouseUp([=]() {
@@ -44,13 +45,15 @@ void GameScene::onUpdate(int dt) {
 	} else if (inputManager->isKeyPressed(Soft::Keys::D)) {
 		move(getYawDirection(camera->yaw + MathUtils::DEG_270));
 	}
+
+	updateUI(dt);
 }
 
 void GameScene::addCameraLight() {
 	Soft::Light* light = new Soft::Light();
 
 	light->range = 750.0f;
-	light->power = 1.0f;
+	light->power = 0.5f;
 	light->setColor({ 255, 150, 50 });
 	light->lockTo(camera);
 
@@ -128,6 +131,16 @@ Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
 		default:
 			return nullptr;
 	}
+}
+
+float GameScene::getLightCooldownProgress() {
+	if (lastLightCastTime == 0) {
+		return 1.0f;
+	}
+
+	float progress = (float)(getRunningTime() - lastLightCastTime) / GameConstants::CAST_LIGHT_LIFETIME;
+
+	return progress > 1.0f ? 1.0f : progress;
 }
 
 MathUtils::Direction GameScene::getYawDirection(float yaw) {
@@ -211,6 +224,34 @@ void GameScene::loadLevel() {
 	settings.brightness = levelData.brightness;
 }
 
+void GameScene::loadUI() {
+	int windowWidth = controller->getWindowWidth();
+	int windowHeight = controller->getWindowHeight();
+	int baseHeight = windowHeight - (windowHeight * GameConstants::RASTER_REGION.height / 100.0f);
+	int baseY = windowHeight - baseHeight;
+
+	Soft::UIGraphic* leftColumn = new Soft::UIGraphic("./Assets/UI/column.png");
+	leftColumn->position = { -30, 0 };
+
+	Soft::UIGraphic* rightColumn = new Soft::UIGraphic("./Assets/UI/column.png");
+	rightColumn->position = { windowWidth - rightColumn->getWidth() + 30, 0 };
+
+	Soft::UIRect* base = new Soft::UIRect();
+	base->setSize(windowWidth, baseHeight);
+	base->position = { 0, baseY };
+	base->setColor({ 60, 40, 5 });
+
+	Soft::UIRect* lightBar = new Soft::UIRect();
+	lightBar->setSize(200, 20);
+	lightBar->setColor({ 0, 255, 0 });
+	lightBar->position = { 100, baseY + 50 };
+
+	ui->add("leftColumn", leftColumn);
+	ui->add("rightColumn", rightColumn);
+	ui->add("base", base);
+	ui->add("lightBar", lightBar);
+}
+
 void GameScene::move(MathUtils::Direction direction) {
 	using namespace MathUtils;
 
@@ -270,4 +311,10 @@ void GameScene::spawn(const SpawnPosition& spawnPosition) {
 			camera->yaw = DEG_270;
 			break;
 	}
+}
+
+void GameScene::updateUI(int dt) {
+	Soft::UIObject* lightBar = ui->get("lightBar");
+
+	lightBar->clip(lightBar->getWidth() * getLightCooldownProgress(), lightBar->getHeight());
 }

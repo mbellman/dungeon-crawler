@@ -31,6 +31,14 @@ Uint8 UIObject::getAlphaMod() {
 	return alpha * 255;
 }
 
+int UIObject::getHeight() const {
+	return height;
+}
+
+int UIObject::getWidth() const {
+	return width;
+}
+
 void UIObject::setAlpha(float alpha) {
 	this->alpha = alpha;
 
