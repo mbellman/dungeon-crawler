@@ -13,7 +13,8 @@ enum Flags {
 	PIXEL_FILTER = 1 << 3,
 	DISABLE_MULTITHREADING = 1 << 4,
 	DISABLE_WINDOW_RESIZE = 1 << 5,
-	FPS_30 = 1 << 6
+	DISABLE_TEXTURE_SAMPLING_INTERVAL = 1 << 6,
+	FPS_30 = 1 << 7
 };
 
 } // namespace Soft

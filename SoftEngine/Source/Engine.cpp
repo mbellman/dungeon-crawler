@@ -304,6 +304,8 @@ void Engine::initialize() {
 	}
 
 	SDL_SetRelativeMouseMode(SDL_TRUE);
+
+	rasterizer->setFlags(flags);
 }
 
 void Engine::lockProportionalRasterRegion(int xp, int yp, int wp, int hp) {
@@ -410,6 +412,7 @@ void Engine::resizeRasterRegion() {
 	rasterFilter = new RasterFilter(rasterWidth, rasterHeight);
 
 	rasterizer->setOffset({ rasterRegion.x, rasterRegion.y });
+	rasterizer->setFlags(flags);
 }
 
 void Engine::setActiveScene(Scene* scene) {
@@ -550,6 +553,8 @@ void Engine::toggleFlag(Flags flag) {
 			SDL_SetWindowResizable(window, (flags & DISABLE_WINDOW_RESIZE) ? SDL_FALSE : SDL_TRUE);
 			break;
 	}
+
+	rasterizer->setFlags(flags);
 }
 
 /**

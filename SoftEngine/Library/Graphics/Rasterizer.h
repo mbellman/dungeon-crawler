@@ -45,6 +45,7 @@ public:
 	void setDrawColor(int R, int G, int B);
 	void setDrawColor(const Color& color);
 	void setDrawColor(Uint32 color);
+	void setFlags(int flags);
 	void setOffset(const Coordinate& offset);
 	void setVisibility(int visibility);
 	void triangle(int x1, int y1, int x2, int y2, int x3, int y3);
@@ -63,6 +64,7 @@ private:
 	Coordinate offset;
 	int width;
 	int height;
+	int flags = 0;
 
 	void dispatchFlatTriangle(const Vertex2d& corner, const Vertex2d& left, const Vertex2d& right, const TextureBuffer* texture);
 	void dispatchFlatBottomTriangle(const Vertex2d& top, const Vertex2d& bottomLeft, const Vertex2d& bottomRight, const TextureBuffer* texture);

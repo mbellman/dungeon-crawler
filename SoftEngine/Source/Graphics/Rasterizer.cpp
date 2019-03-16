@@ -9,6 +9,7 @@
 #include <Graphics/ColorBuffer.h>
 #include <System/Geometry.h>
 #include <System/Objects.h>
+#include <System/Flags.h>
 #include <UI/Alert.h>
 
 namespace Soft {
@@ -215,9 +216,13 @@ int Rasterizer::getMipmapLevel(float averageDepth) {
 }
 
 int Rasterizer::getTextureSampleInterval(int lineLength, float averageDepth) {
-	int interval = (int)(2000.0f / averageDepth) - (int)(1000.0f / lineLength);
+	if (flags & Flags::DISABLE_TEXTURE_SAMPLING_INTERVAL) {
+		return 1;
+	} else {
+		int interval = (int)(2000.0f / averageDepth) - (int)(1000.0f / lineLength);
 
-	return FAST_CLAMP(interval, MIN_TEXTURE_SAMPLE_INTERVAL, MAX_TEXTURE_SAMPLE_INTERVAL);
+		return FAST_CLAMP(interval, MIN_TEXTURE_SAMPLE_INTERVAL, MAX_TEXTURE_SAMPLE_INTERVAL);
+	}
 }
 
 int Rasterizer::getTotalBufferedScanlines() {
@@ -287,6 +292,10 @@ void Rasterizer::setDrawColor(int R, int G, int B) {
 
 void Rasterizer::setDrawColor(const Color& color) {
 	setDrawColor(color.R, color.G, color.B);
+}
+
+void Rasterizer::setFlags(int flags) {
+	this->flags = flags;
 }
 
 void Rasterizer::setOffset(const Coordinate& offset) {
