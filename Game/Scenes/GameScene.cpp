@@ -236,15 +236,13 @@ void GameScene::loadUI() {
 	Soft::UIGraphic* rightColumn = new Soft::UIGraphic("./Assets/UI/column.png");
 	rightColumn->position = { windowWidth - rightColumn->getWidth() + 30, 0 };
 
-	Soft::UIRect* base = new Soft::UIRect();
-	base->setSize(windowWidth, baseHeight);
+	Soft::UIGraphic* base = new Soft::UIGraphic("./Assets/UI/hud.png");
 	base->position = { 0, baseY };
-	base->setColor({ 60, 40, 5 });
 
 	Soft::UIRect* lightBar = new Soft::UIRect();
 	lightBar->setSize(200, 20);
 	lightBar->setColor({ 0, 255, 0 });
-	lightBar->position = { 100, baseY + 50 };
+	lightBar->position = { 100, baseY + 30 };
 
 	ui->add("leftColumn", leftColumn);
 	ui->add("rightColumn", rightColumn);
