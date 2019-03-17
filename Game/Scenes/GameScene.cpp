@@ -230,10 +230,10 @@ void GameScene::loadUI() {
 	int baseHeight = windowHeight - (windowHeight * GameConstants::RASTER_REGION.height / 100.0f);
 	int baseY = windowHeight - baseHeight;
 
-	Soft::UIGraphic* leftColumn = new Soft::UIGraphic("./Assets/UI/hud-column.png");
+	Soft::UIGraphic* leftColumn = new Soft::UIGraphic("./Assets/UI/column-1.png");
 	leftColumn->position = { -30, 0 };
 
-	Soft::UIGraphic* rightColumn = new Soft::UIGraphic("./Assets/UI/hud-column.png");
+	Soft::UIGraphic* rightColumn = new Soft::UIGraphic("./Assets/UI/column-1.png");
 	rightColumn->position = { windowWidth - rightColumn->getWidth() + 30, 0 };
 
 	Soft::UIGraphic* base = new Soft::UIGraphic("./Assets/UI/hud.png");
