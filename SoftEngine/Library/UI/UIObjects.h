@@ -96,6 +96,7 @@ protected:
 private:
 	SDL_Surface* image = NULL;
 
+	void normalizeImageFormat();
 	void setTransparentPixels();
 };
 

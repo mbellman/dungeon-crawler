@@ -181,6 +181,18 @@ UIGraphic::UIGraphic(const char* filename) {
 	setTransparentPixels();
 }
 
+void UIGraphic::normalizeImageFormat() {
+	if (image == NULL) {
+		return;
+	}
+
+	SDL_Surface* rgbaImage = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA32, 0);
+
+	SDL_FreeSurface(image);
+
+	image = rgbaImage;
+}
+
 void UIGraphic::refresh() {
 	if (image != NULL) {
 		setTextureFromSurface(image);
@@ -195,6 +207,10 @@ void UIGraphic::refresh() {
 void UIGraphic::setTransparentPixels() {
 	if (image == NULL) {
 		return;
+	}
+
+	if (image->format->BytesPerPixel < 4) {
+		normalizeImageFormat();
 	}
 
 	SDL_PixelFormat* format = image->format;

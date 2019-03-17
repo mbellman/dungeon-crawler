@@ -89,6 +89,11 @@ const ColorBuffer* TextureBuffer::getMipmap(int level) const {
 	return level >= mipmaps.size() ? mipmaps.back() : mipmaps.at(level);
 }
 
+/**
+ * A static method for returning a normalized ARGB 32-bit
+ * integer representing to the color of a given pixel, by
+ * index, in an SDL_Surface.
+ */
 Uint32 TextureBuffer::readPixel(SDL_Surface* surface, int index) {
 	int x = index % surface->w;
 	int y = (int)(index / surface->w);
