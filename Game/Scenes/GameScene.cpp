@@ -138,7 +138,7 @@ float GameScene::getCastLightCooldownProgress() {
 		return 1.0f;
 	}
 
-	float progress = (float)(getRunningTime() - lastLightCastTime) / GameConstants::CAST_LIGHT_LIFETIME;
+	float progress = (float)(getRunningTime() - lastLightCastTime) / GameConstants::CAST_LIGHT_COOLDOWN_TIME;
 
 	return progress > 1.0f ? 1.0f : progress;
 }
@@ -240,9 +240,10 @@ void GameScene::loadUI() {
 	base->position = { 0, baseY };
 
 	Soft::UIRect* lightBar = new Soft::UIRect();
-	lightBar->setSize(200, 20);
+	lightBar->setSize(200, 24);
 	lightBar->setColor({ 0, 255, 0 });
-	lightBar->position = { 100, baseY + 30 };
+	lightBar->setAlpha(0.5f);
+	lightBar->position = { 92, baseY + 27 };
 
 	ui->add("leftColumn", leftColumn);
 	ui->add("rightColumn", rightColumn);
