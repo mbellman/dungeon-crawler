@@ -38,7 +38,6 @@ protected:
 	void setTextureFromSurface(SDL_Surface* surface);
 
 private:
-	int id;
 	float alpha = 1.0f;
 
 	Uint8 getAlphaMod();

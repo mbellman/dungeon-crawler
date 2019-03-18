@@ -78,7 +78,6 @@ void InputManager::handleKeyUp(const SDL_Keycode& code) {
 			keyState &= ~Keys::SHIFT;
 			break;
 		case SDLK_ESCAPE:
-		case SDLK_SPACE:
 			SDL_SetRelativeMouseMode(SDL_FALSE);
 			break;
 	}

@@ -37,7 +37,6 @@ void Scene::add(Entity* entity) {
 void Scene::add(const char* key, Entity* entity) {
 	entityMap.emplace(key, entity);
 	add(entity);
-	initializeEntity(entity);
 }
 
 void Scene::add(const char* key, Object* object) {

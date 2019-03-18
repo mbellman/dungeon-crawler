@@ -3,20 +3,28 @@
 #include <Level/BlockBuilder.h>
 #include <Level/LevelLoader.h>
 #include <Entities/CastLight.h>
+#include <Entities/TextBox.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
 #include <GameConstants.h>
 #include <cmath>
 #include <math.h>
+#include <SDL_ttf.h>
 
 /**
  * GameScene
  * ---------
  */
+GameScene::GameScene() {
+	uiFont = TTF_OpenFont("./Assets/Fonts/FreeMono.ttf", 20);
+}
+
 GameScene::~GameScene() {
 	if (levelLayout != nullptr) {
 		delete levelLayout;
 	}
+
+	TTF_CloseFont(uiFont);
 }
 
 void GameScene::load() {
@@ -29,6 +37,16 @@ void GameScene::load() {
 
 	inputManager->onMouseUp([=]() {
 		castLight();
+	});
+
+	inputManager->onKeyDown([=](const SDL_Keycode& code) {
+		if (code == SDLK_SPACE) {
+			TextBox* textBox = (TextBox*)getEntity("textBox");
+
+			if (textBox->isShowing()) {
+				textBox->hide();
+			}
+		}
 	});
 
 	camera->fov = 110;
@@ -91,6 +109,8 @@ bool GameScene::canMoveInDirection(MathUtils::Direction direction) {
 
 void GameScene::castLight() {
 	if (getCastLightCooldownProgress() < 1.0f) {
+		showText("Hey! Hold on a second.");
+
 		return;
 	}
 
@@ -212,6 +232,8 @@ void GameScene::loadUI() {
 	int baseHeight = windowHeight - (windowHeight * GameConstants::RASTER_REGION.height / 100.0f);
 	int baseY = windowHeight - baseHeight;
 
+	add("textBox", new TextBox(uiFont));
+
 	Soft::UIGraphic* leftColumn = new Soft::UIGraphic("./Assets/UI/column.png");
 	leftColumn->position = { -30, 0 };
 
@@ -262,6 +284,13 @@ void GameScene::move(MathUtils::Direction direction) {
 	}
 
 	camera->tweenTo(movementTarget, GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
+}
+
+void GameScene::showText(const char* value) {
+	TextBox* textBox = (TextBox*)getEntity("textBox");
+
+	textBox->setTextValue(value);
+	textBox->show();
 }
 
 void GameScene::spawn(const SpawnPosition& spawnPosition) {

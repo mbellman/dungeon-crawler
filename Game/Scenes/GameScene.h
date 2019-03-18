@@ -4,9 +4,11 @@
 #include <MathUtils.h>
 #include <Level/LevelLayout.h>
 #include <Level/LevelLoader.h>
+#include <SDL_ttf.h>
 
 class GameScene : public Soft::Scene {
 public:
+	GameScene();
 	~GameScene();
 
 	void load() override;
@@ -14,6 +16,7 @@ public:
 
 private:
 	LevelLayout* levelLayout = nullptr;
+	TTF_Font* uiFont = nullptr;
 	GridPosition currentGridPosition;
 	int lastLightCastTime = 0;
 
@@ -27,6 +30,7 @@ private:
 	void loadLevel();
 	void loadUI();
 	void move(MathUtils::Direction direction);
+	void showText(const char* value);
 	void spawn(const SpawnPosition& spawnPosition);
 	void updateUI(int dt);
 };
