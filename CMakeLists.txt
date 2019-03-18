@@ -67,6 +67,7 @@ set(SOURCE_FILES
     SoftEngine/Library/System/CommandLine.h
     SoftEngine/Library/System/Controller.h
     SoftEngine/Library/System/DebugStats.h
+    SoftEngine/Library/System/Entity.h
     SoftEngine/Library/System/Flags.h
     SoftEngine/Library/System/Geometry.h
     SoftEngine/Library/System/InputManager.h
@@ -100,6 +101,7 @@ set(SOURCE_FILES
     SoftEngine/Source/System/CommandLine.cpp
     SoftEngine/Source/System/Controller.cpp
     SoftEngine/Source/System/DebugStats.cpp
+    SoftEngine/Source/System/Entity.cpp
     SoftEngine/Source/System/Geometry.cpp
     SoftEngine/Source/System/InputManager.cpp
     SoftEngine/Source/System/Math.cpp
