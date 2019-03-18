@@ -5,6 +5,7 @@
 #include <climits>
 #include <functional>
 #include <Sound/Sound.h>
+#include <System/Entity.h>
 #include <System/Objects.h>
 #include <System/Geometry.h>
 #include <System/ParticleSystem.h>
@@ -74,14 +75,17 @@ protected:
 	Controller* controller = NULL;
 	Camera* camera = NULL;
 
+	void add(Entity* entity);
 	void add(Object* object);
 	void add(Sound* sound);
 	void add(const Sector& sector);
+	void add(const char* key, Entity* entity);
 	void add(const char* key, Object* object);
 	void add(const char* key, ObjLoader* objLoader);
 	void add(const char* key, TextureBuffer* textureBuffer);
 	void add(const char* key, Sound* sound);
 	void add(const char* key, ParticleSystem* particleSystem);
+	Entity* getEntity(const char* key);
 	Object* getObject(const char* key);
 	ObjLoader* getObjLoader(const char* key);
 	ParticleSystem* getParticleSystem(const char* key);
@@ -92,10 +96,12 @@ protected:
 	void reset();
 
 private:
+	std::vector<Entity*> entities;
 	std::vector<Object*> objects;
 	std::vector<Light*> lights;
 	std::vector<Sound*> sounds;
 	std::vector<Sector> sectors;
+	std::map<const char*, Entity*> entityMap;
 	std::map<const char*, Object*> objectMap;
 	std::map<const char*, ObjLoader*> objLoaderMap;
 	std::map<const char*, TextureBuffer*> textureBufferMap;
@@ -115,14 +121,19 @@ private:
 	void handleControl(int dt);
 	void handleMouseMotion(int dx, int dy);
 	void handleWASDControl(int dt);
-	void removeExpiredObjects();
+	void initializeEntity(Entity* entity);
+	void removeEntity(Entity* entity);
+	void removeExpiredItems();
 	void removeObject(Object* object);
+	void removeSound(Sound* sound);
 
 	template<class T>
-	T* retrieveMappedEntity(std::map<const char*, T*> map, const char* key);
+	T* retrieveMappedItem(std::map<const char*, T*> map, const char* key);
+
+	void safelyFreeMappedEntity(const char* key);
 
 	template<class T>
-	void safelyFreeMappedEntity(std::map<const char*, T*> map, const char* key);
+	void safelyFreeMappedItem(std::map<const char*, T*> map, const char* key);
 
 	void safelyFreeMappedObject(const char* key);
 	void safelyFreeMappedParticleSystem(const char* key);

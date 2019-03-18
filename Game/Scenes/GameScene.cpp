@@ -2,6 +2,7 @@
 #include <Level/LevelLayout.h>
 #include <Level/BlockBuilder.h>
 #include <Level/LevelLoader.h>
+#include <Entities/CastLight.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
 #include <GameConstants.h>
@@ -89,33 +90,14 @@ bool GameScene::canMoveInDirection(MathUtils::Direction direction) {
 }
 
 void GameScene::castLight() {
-	using namespace GameConstants;
-
 	if (getCastLightCooldownProgress() < 1.0f) {
 		return;
 	}
 
-	const Soft::Vec3& cameraDirection = camera->getDirection();
-	Soft::Light* light = new Soft::Light();
+	CastLight* castLight = new CastLight(camera->position, camera->getDirection());
+	castLight->lifetime = GameConstants::CAST_LIGHT_LIFETIME;
 
-	light->setColor({ 0, 255, 0 });
-	light->lifetime = CAST_LIGHT_LIFETIME;
-	light->position = camera->position + cameraDirection * 100.0f;
-	light->range = CAST_LIGHT_RANGE;
-
-	light->onUpdate = [=](int dt) {
-		light->position += cameraDirection * (float)dt * 1.5f;
-	};
-
-	Soft::Cube* lightCube = new Soft::Cube(3.0f);
-
-	lightCube->setColor({ 0, 255, 0 });
-	lightCube->lifetime = CAST_LIGHT_LIFETIME;
-	lightCube->hasLighting = false;
-	lightCube->lockTo(light);
-
-	add(light);
-	add(lightCube);
+	add(castLight);
 
 	lastLightCastTime = getRunningTime();
 }

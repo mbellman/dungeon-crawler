@@ -1,4 +1,5 @@
 #include <System/Scene.h>
+#include <System/Entity.h>
 #include <System/Objects.h>
 #include <System/InputManager.h>
 #include <System/Camera.h>
@@ -28,6 +29,17 @@ Scene::~Scene() {
 	unload();
 }
 
+void Scene::add(Entity* entity) {
+	entities.push_back(entity);
+	initializeEntity(entity);
+}
+
+void Scene::add(const char* key, Entity* entity) {
+	entityMap.emplace(key, entity);
+	add(entity);
+	initializeEntity(entity);
+}
+
 void Scene::add(const char* key, Object* object) {
 	if (object->lifetime > 0) {
 		char errorMessage[100];
@@ -38,7 +50,6 @@ void Scene::add(const char* key, Object* object) {
 	}
 
 	objectMap.emplace(key, object);
-
 	add(object);
 }
 
@@ -117,8 +128,12 @@ const std::vector<Light*>& Scene::getLights() {
 	return lights;
 }
 
+Entity* Scene::getEntity(const char* key) {
+	return retrieveMappedItem(entityMap, key);
+}
+
 Object* Scene::getObject(const char* key) {
-	return retrieveMappedEntity(objectMap, key);
+	return retrieveMappedItem(objectMap, key);
 }
 
 const std::vector<Object*>& Scene::getObjects() {
@@ -126,11 +141,11 @@ const std::vector<Object*>& Scene::getObjects() {
 }
 
 ObjLoader* Scene::getObjLoader(const char* key) {
-	return retrieveMappedEntity(objLoaderMap, key);
+	return retrieveMappedItem(objLoaderMap, key);
 }
 
 ParticleSystem* Scene::getParticleSystem(const char* key) {
-	return retrieveMappedEntity(particleSystemMap, key);
+	return retrieveMappedItem(particleSystemMap, key);
 }
 
 int Scene::getRunningTime() {
@@ -138,7 +153,7 @@ int Scene::getRunningTime() {
 }
 
 Sound* Scene::getSound(const char* key) {
-	return retrieveMappedEntity(soundMap, key);
+	return retrieveMappedItem(soundMap, key);
 }
 
 const std::vector<Sound*>& Scene::getSounds() {
@@ -146,7 +161,7 @@ const std::vector<Sound*>& Scene::getSounds() {
 }
 
 TextureBuffer* Scene::getTexture(const char* key) {
-	return retrieveMappedEntity(textureBufferMap, key);
+	return retrieveMappedItem(textureBufferMap, key);
 }
 
 void Scene::handleControl(int dt) {
@@ -197,6 +212,22 @@ void Scene::handleWASDControl(int dt) {
 	camera->position.z += cy * velocity.z + sy * velocity.x;
 }
 
+void Scene::initializeEntity(Entity* entity) {
+	entity->initialize();
+
+	for (auto* object : entity->getQueuedObjects()) {
+		add(object);
+	}
+
+	for (auto* sound : entity->getQueuedSounds()) {
+		add(sound);
+	}
+
+	for (auto& [key, uiObject] : entity->getQueuedUIObjectMap()) {
+		ui->add(key, uiObject);
+	}
+}
+
 bool Scene::isInCurrentOccupiedSector(int sectorId) {
 	if (sectorId == GLOBAL_SECTOR_ID) {
 		return true;
@@ -223,8 +254,8 @@ void Scene::provideUI(UI* ui) {
 }
 
 /**
- * Removes an entity by key, agnostic as to the entity type.
- * We invoke all routines for safely freeing mapped entities,
+ * Removes an item by key, agnostic as to the item type.
+ * We invoke all routines for safely freeing mapped items,
  * deferring to their mechanisms for verifying the existence
  * of and freeing resources.
  */
@@ -232,13 +263,32 @@ void Scene::remove(const char* key) {
 	safelyFreeMappedObject(key);
 	safelyFreeMappedSound(key);
 	safelyFreeMappedParticleSystem(key);
+	safelyFreeMappedEntity(key);
 
-	safelyFreeMappedEntity(objLoaderMap, key);
-	safelyFreeMappedEntity(textureBufferMap, key);
-	safelyFreeMappedEntity(particleSystemMap, key);
+	safelyFreeMappedItem(objLoaderMap, key);
+	safelyFreeMappedItem(textureBufferMap, key);
+	safelyFreeMappedItem(particleSystemMap, key);
 }
 
-void Scene::removeExpiredObjects() {
+void Scene::removeEntity(Entity* entity) {
+	for (auto* object : entity->getQueuedObjects()) {
+		removeObject(object);
+	}
+
+	for (auto* sound : entity->getQueuedSounds()) {
+		removeSound(sound);
+	}
+
+	for (auto& [key, uiObject] : entity->getQueuedUIObjectMap()) {
+		ui->remove(key);
+	}
+
+	entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());
+
+	delete entity;
+}
+
+void Scene::removeExpiredItems() {
 	int idx = 0;
 
 	while (idx < objects.size()) {
@@ -246,6 +296,18 @@ void Scene::removeExpiredObjects() {
 
 		if (object->lifetime == 0) {
 			removeObject(object);
+		} else {
+			idx++;
+		}
+	}
+
+	idx = 0;
+
+	while (idx < entities.size()) {
+		Entity* entity = entities.at(idx);
+
+		if (entity->lifetime == 0) {
+			removeEntity(entity);
 		} else {
 			idx++;
 		}
@@ -268,6 +330,15 @@ void Scene::removeObject(Object* object) {
 }
 
 /**
+ * Removes a Sound by reference from the Sound pointer list.
+ */
+void Scene::removeSound(Sound* sound) {
+	sounds.erase(std::remove(sounds.begin(), sounds.end(), sound), sounds.end());
+
+	delete sound;
+}
+
+/**
  * Flags the Scene to reset at the end of its update cycle.
  * A reset returns the Scene to its instantiation-time state,
  * prior to load() or onStart() calls. Reload/restart will
@@ -287,7 +358,7 @@ void Scene::resume() {
 }
 
 template<class T>
-T* Scene::retrieveMappedEntity(std::map<const char*, T*> map, const char* key) {
+T* Scene::retrieveMappedItem(std::map<const char*, T*> map, const char* key) {
 	const auto& entry = map.find(key);
 
 	if (entry != map.end()) {
@@ -297,8 +368,19 @@ T* Scene::retrieveMappedEntity(std::map<const char*, T*> map, const char* key) {
 	return NULL;
 }
 
+void Scene::safelyFreeMappedEntity(const char* key) {
+	const auto& entry = entityMap.find(key);
+
+	if (entry != entityMap.end()) {
+		Entity* entity = entry->second;
+
+		entityMap.erase(key);
+		removeEntity(entity);
+	}
+}
+
 template<class T>
-void Scene::safelyFreeMappedEntity(std::map<const char*, T*> map, const char* key) {
+void Scene::safelyFreeMappedItem(std::map<const char*, T*> map, const char* key) {
 	const auto& entry = map.find(key);
 
 	if (entry != map.end()) {
@@ -368,9 +450,7 @@ void Scene::safelyFreeMappedSound(const char* key) {
 		Sound* sound = entry->second;
 
 		soundMap.erase(key);
-		sounds.erase(std::remove(sounds.begin(), sounds.end(), sound), sounds.end());
-
-		delete sound;
+		removeSound(sound);
 	}
 }
 
@@ -393,6 +473,10 @@ void Scene::update(int dt) {
 
 	runningTime += dt;
 
+	for (auto* entity : entities) {
+		entity->update(dt);
+	}
+
 	for (auto* object : objects) {
 		object->update(dt);
 	}
@@ -406,7 +490,7 @@ void Scene::update(int dt) {
 	handleControl(dt);
 	camera->update(dt);
 	onUpdate(dt);
-	removeExpiredObjects();
+	removeExpiredItems();
 
 	for (auto* object : objects) {
 		object->syncLODs();
@@ -421,6 +505,10 @@ void Scene::update(int dt) {
 }
 
 void Scene::unload() {
+	for (auto* entity : entities) {
+		delete entity;
+	}
+
 	for (auto* object : objects) {
 		if (!object->isOfType<Particle>()) {
 			// Only delete Objects other than Particles, which
@@ -458,10 +546,13 @@ void Scene::unload() {
 		ui = NULL;
 	}
 
+	entities.clear();
 	objects.clear();
 	lights.clear();
 	sounds.clear();
 	sectors.clear();
+
+	entityMap.clear();
 	objectMap.clear();
 	objLoaderMap.clear();
 	textureBufferMap.clear();

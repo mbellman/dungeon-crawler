@@ -42,6 +42,8 @@ set(SOURCE_FILES
     Game/GameObjects.h
     Game/GameObjects.cpp
     Game/MathUtils.h
+    Game/Entities/CastLight.h
+    Game/Entities/CastLight.cpp
     Game/Level/BlockBuilder.h
     Game/Level/BlockBuilder.cpp
     Game/Level/LevelLayout.h

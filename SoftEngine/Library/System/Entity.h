@@ -1,20 +1,35 @@
 #pragma once
 
 #include <System/Objects.h>
+#include <Sound/Sound.h>
 #include <UI/UIObjects.h>
+#include <vector>
+#include <map>
 
 namespace Soft {
 
 class Entity {
 public:
+	int lifetime = -1;
+
 	~Entity();
 
-	virtual void load() = 0;
+	const std::vector<Object*>& getQueuedObjects() const;
+	const std::vector<Sound*>& getQueuedSounds() const;
+	const std::map<const char*, UIObject*>& getQueuedUIObjectMap() const;
+	virtual void initialize() = 0;
 	virtual void onUpdate(int dt);
+	void update(int dt);
 
 protected:
 	void add(Object* object);
-	void add(UIObject* uiObject);
+	void add(Sound* sound);
+	void add(const char* key, UIObject* uiObject);
+
+private:
+	std::vector<Object*> queuedObjects;
+	std::vector<Sound*> queuedSounds;
+	std::map<const char*, UIObject*> queuedUIObjectMap;
 };
 
 } // namespace Soft
