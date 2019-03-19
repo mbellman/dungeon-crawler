@@ -27,6 +27,9 @@ struct LayerData {
 struct LevelData {
 	Soft::Area size;
 	SpawnPosition spawnPosition;
+	Soft::Color ambientLightColor;
+	Soft::Vec3 ambientLightVector;
+	float ambientLightFactor;
 	int visibility;
 	float brightness;
 	std::vector<LayerData> layers;
@@ -43,6 +46,7 @@ public:
 private:
 	LevelData levelData;
 
+	void parseAmbientLightSettings();
 	void parseBrightness();
 	void parseLayerSize();
 	void parseLayerData();

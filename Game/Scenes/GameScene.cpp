@@ -52,7 +52,6 @@ void GameScene::load() {
 	});
 
 	camera->fov = 110;
-	settings.ambientLightFactor = 0.0f;
 	settings.controlMode = Soft::ControlMode::MOUSE;
 }
 
@@ -137,6 +136,7 @@ Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
 		case BlockTypes::SOLID_1:
 			return getTexture("solid_1");
 		case BlockTypes::SOLID_2:
+		case BlockTypes::COLUMN_MIDDLE:
 			return getTexture("solid_2");
 		default:
 			return nullptr;
@@ -230,6 +230,9 @@ void GameScene::loadLevel() {
 
 	spawn(levelData.spawnPosition);
 
+	settings.ambientLightColor = levelData.ambientLightColor;
+	settings.ambientLightVector = levelData.ambientLightVector;
+	settings.ambientLightFactor = levelData.ambientLightFactor;
 	settings.visibility = levelData.visibility;
 	settings.brightness = levelData.brightness;
 }

@@ -4,6 +4,7 @@
 
 static std::string LAYER_SIZE = "LS";
 static std::string SPAWN_POSITION= "SP";
+static std::string AMBIENT_LIGHT = "AL";
 static std::string VISIBILITY = "V";
 static std::string BRIGHTNESS = "B";
 static std::string STATIC_LIGHT = "SL";
@@ -25,6 +26,8 @@ LevelLoader::LevelLoader(const char* path) {
 			parseLayerSize();
 		} else if (label == SPAWN_POSITION) {
 			parseSpawnPosition();
+		} else if (label == AMBIENT_LIGHT) {
+			parseAmbientLightSettings();
 		} else if (label == VISIBILITY) {
 			parseVisibility();
 		} else if (label == BRIGHTNESS) {
@@ -46,6 +49,18 @@ LevelLoader::~LevelLoader() {
 
 const LevelData& LevelLoader::getLevelData() {
 	return levelData;
+}
+
+void LevelLoader::parseAmbientLightSettings() {
+	setChunkDelimiter(",");
+
+	levelData.ambientLightColor.R = std::stoi(readNextChunk());
+	levelData.ambientLightColor.G = std::stoi(readNextChunk());
+	levelData.ambientLightColor.B = std::stoi(readNextChunk());
+	levelData.ambientLightVector.x = std::stof(readNextChunk());
+	levelData.ambientLightVector.y = std::stof(readNextChunk());
+	levelData.ambientLightVector.z = std::stof(readNextChunk());
+	levelData.ambientLightFactor = std::stof(readNextChunk());
 }
 
 void LevelLoader::parseBrightness() {
