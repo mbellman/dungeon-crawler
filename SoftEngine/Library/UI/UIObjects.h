@@ -76,7 +76,7 @@ protected:
 	void refresh();
 
 private:
-	const char* m_value = 0;
+	std::string m_value = "";
 	TTF_Font* m_font = 0;
 	SDL_Color m_color = { 255, 255, 255 };
 };

@@ -130,14 +130,15 @@ UIText::UIText(const char* value) {
 }
 
 void UIText::refresh() {
-	if (m_renderer != NULL && m_font != NULL && m_value != NULL) {
+	if (m_renderer != NULL && m_font != NULL && m_value.size() > 0) {
 		if (m_texture != NULL) {
 			SDL_DestroyTexture(m_texture);
 		}
 
-		SDL_Surface* m_surface = TTF_RenderText_Solid(m_font, m_value, m_color);
+		const char* value = m_value.c_str();
+		SDL_Surface* m_surface = TTF_RenderText_Solid(m_font, value, m_color);
 
-		TTF_SizeText(m_font, m_value, &width, &height);
+		TTF_SizeText(m_font, value, &width, &height);
 		setTextureFromSurface(m_surface);
 		refreshAlpha();
 		unclip();

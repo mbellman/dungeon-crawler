@@ -43,7 +43,9 @@ void GameScene::load() {
 		if (code == SDLK_SPACE) {
 			TextBox* textBox = (TextBox*)getEntity("textBox");
 
-			if (textBox->isShowing()) {
+			if (textBox->isWriting()) {
+				textBox->skipWritingAnimation();
+			} else if (textBox->isShown()) {
 				textBox->hide();
 			}
 		}
@@ -112,6 +114,12 @@ void GameScene::castLight() {
 		showText("Hey! Hold on a second.");
 
 		return;
+	}
+
+	TextBox* textBox = (TextBox*)getEntity("textBox");
+
+	if (textBox->isShown()) {
+		textBox->hide();
 	}
 
 	CastLight* castLight = new CastLight(camera->position, camera->getDirection());
@@ -289,7 +297,7 @@ void GameScene::move(MathUtils::Direction direction) {
 void GameScene::showText(const char* value) {
 	TextBox* textBox = (TextBox*)getEntity("textBox");
 
-	textBox->setTextValue(value);
+	textBox->write(value, TextSpeed::NORMAL);
 	textBox->show();
 }
 
