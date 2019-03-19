@@ -31,6 +31,7 @@ constexpr static float LOD_DISTANCE_THRESHOLD = 2500.0f;
 constexpr static int SERIAL_ILLUMINATION_NONSTATIC_TRIANGLE_LIMIT = 2500;
 
 constexpr static int MIN_COLOR_LERP_INTERVAL = 2;
+constexpr static int MAX_COLOR_LERP_INTERVAL = 20;
 constexpr static int MIN_COVER_TRIANGLE_SIZE = 150;
 constexpr static int MIN_TEXTURE_SAMPLE_INTERVAL = 2;
 constexpr static int MAX_TEXTURE_SAMPLE_INTERVAL = 3;

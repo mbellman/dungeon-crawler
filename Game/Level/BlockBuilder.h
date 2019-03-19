@@ -23,6 +23,7 @@ private:
 	int blocksPerLayer = 0;
 
 	int getBlockSidesMask(int layerIndex, int x, int z);
+	Soft::Object* getBlockObject(int blockType);
 	bool isSolid(int blockType);
 	bool isVisibleSpace(int blockType);
 };

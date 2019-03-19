@@ -6,6 +6,10 @@
 #include <SoftEngine.h>
 #include <cmath>
 
+/**
+ * BlockBuilder
+ * ------------
+ */
 BlockBuilder::BlockBuilder(LevelLayout* levelLayout) {
 	this->levelLayout = levelLayout;
 
@@ -24,7 +28,6 @@ Block BlockBuilder::getNextBlock() {
 	int z = (int)floor(blockIndex / levelLayout->getSize().width);
 
 	block.type = levelLayout->getBlockType(layerIndex, x, z);
-	blockCounter++;
 
 	if (isSolid(block.type)) {
 		int sidesMask = getBlockSidesMask(layerIndex, x, z);
@@ -35,18 +38,43 @@ Block BlockBuilder::getNextBlock() {
 			block.object = nullptr;
 		} else {
 			block.object = new SidedBlock(sidesMask);
-			block.object->scale(HALF_TILE_SIZE);
-			block.object->isStatic = true;
-
-			block.object->position = {
-				x * TILE_SIZE,
-				layerIndex * TILE_SIZE - HALF_TILE_SIZE,
-				-z * TILE_SIZE
-			};
 		}
+	} else {
+		block.object = getBlockObject(block.type);
 	}
 
+	if (block.object != nullptr) {
+		block.object->isStatic = true;
+		block.object->scale(HALF_TILE_SIZE);
+
+		block.object->position = {
+			x * TILE_SIZE,
+			layerIndex * TILE_SIZE - HALF_TILE_SIZE,
+			-z * TILE_SIZE
+		};
+	}
+
+	blockCounter++;
+
 	return block;
+}
+
+Soft::Object* BlockBuilder::getBlockObject(int blockType) {
+	using namespace GameConstants;
+
+	Soft::Object* object = nullptr;
+
+	switch (blockType) {
+		case BlockTypes::COLUMN_MIDDLE:
+			Soft::ObjLoader loader("./Assets/Models/column.obj");
+
+			object = new Soft::Model(loader);
+			object->setColor({ 150, 100, 50 });
+			object->isFlatShaded = true;
+			break;
+	}
+
+	return object;
 }
 
 int BlockBuilder::getBlockSidesMask(int layerIndex, int x, int z) {

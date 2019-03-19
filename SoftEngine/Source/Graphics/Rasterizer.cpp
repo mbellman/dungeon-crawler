@@ -199,8 +199,9 @@ int Rasterizer::getColorLerpInterval(const Color& start, const Color& end, int l
 	int g_delta = abs(end.G - start.G);
 	int b_delta = abs(end.B - start.B);
 	float colorDelta = (float)(r_delta + g_delta + b_delta) / 3.0f;
+	int interval = (int)(lineLength / colorDelta);
 
-	return colorDelta > 0 ? FAST_MAX(MIN_COLOR_LERP_INTERVAL, (int)(lineLength / colorDelta)) : lineLength;
+	return colorDelta > 0 ? FAST_CLAMP(interval, MIN_COLOR_LERP_INTERVAL, MAX_COLOR_LERP_INTERVAL) : lineLength;
 }
 
 int Rasterizer::getMipmapLevel(float averageDepth) {
