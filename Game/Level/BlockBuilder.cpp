@@ -85,6 +85,29 @@ Soft::Object* BlockBuilder::getBlockObject(int blockType) {
 			object->isFlatShaded = true;
 			break;
 		}
+		case BlockTypes::STAIRCASE_FORWARD: {
+			Soft::ObjLoader loader("./Assets/Models/staircase.obj");
+
+			object = new Soft::Model(loader);
+			object->isFlatShaded = true;
+			break;
+		}
+		case BlockTypes::STAIRCASE_BACKWARD: {
+			Soft::ObjLoader loader("./Assets/Models/staircase.obj");
+
+			object = new Soft::Model(loader);
+			object->rotateDeg({ 0.0f, 180.0f, 0.0f });
+			object->isFlatShaded = true;
+			break;
+		}
+		case BlockTypes::STAIRCASE_LEFT: {
+			Soft::ObjLoader loader("./Assets/Models/staircase.obj");
+
+			object = new Soft::Model(loader);
+			object->rotateDeg({ 0.0f, -90.0f, 0.0f });
+			object->isFlatShaded = true;
+			break;
+		}
 		case BlockTypes::STAIRCASE_RIGHT: {
 			Soft::ObjLoader loader("./Assets/Models/staircase.obj");
 

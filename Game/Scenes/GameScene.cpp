@@ -376,6 +376,7 @@ void GameScene::moveOffStaircase(MathUtils::Direction direction) {
 			} else if (direction == Direction::RIGHT) {
 				targetGridPosition.x++;
 			}
+			break;
 		case BlockTypes::STAIRCASE_RIGHT:
 			if (direction == Direction::RIGHT) {
 				targetGridPosition.x++;
@@ -386,10 +387,6 @@ void GameScene::moveOffStaircase(MathUtils::Direction direction) {
 			break;
 	}
 
-	if (targetGridPosition == currentGridPosition) {
-		return;
-	}
-
 	Soft::Vec3 targetCameraPosition = getGridPositionVec3(targetGridPosition);
 
 	if (levelLayout->isStaircase(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z)) {
@@ -397,6 +394,8 @@ void GameScene::moveOffStaircase(MathUtils::Direction direction) {
 	} else if (levelLayout->isStaircase(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z)) {
 		targetCameraPosition.y -= GameConstants::HALF_TILE_SIZE;
 		targetGridPosition.layer--;
+	} else if (targetGridPosition == currentGridPosition || !isWalkablePosition(targetGridPosition)) {
+		return;
 	}
 
 	camera->tweenTo(targetCameraPosition, GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
