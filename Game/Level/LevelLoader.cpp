@@ -11,6 +11,14 @@ static std::string STATIC_LIGHT = "SL";
 static std::string LAYER = "L";
 
 /**
+ * GridPosition
+ * ------------
+ */
+bool GridPosition::operator ==(const GridPosition& position) {
+	return layer == position.layer && x == position.x && z == position.z;
+}
+
+/**
  * LevelLoader
  * -----------
  */

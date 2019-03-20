@@ -79,34 +79,6 @@ void GameScene::addCameraLight() {
 	add(light);
 }
 
-bool GameScene::canMoveInDirection(MathUtils::Direction direction) {
-	if (levelLayout == nullptr) {
-		return false;
-	}
-
-	GridPosition targetGridPosition = currentGridPosition;
-
-	switch (direction) {
-		case MathUtils::Direction::FORWARD:
-			targetGridPosition.z--;
-			break;
-		case MathUtils::Direction::BACKWARD:
-			targetGridPosition.z++;
-			break;
-		case MathUtils::Direction::LEFT:
-			targetGridPosition.x--;
-			break;
-		case MathUtils::Direction::RIGHT:
-			targetGridPosition.x++;
-			break;
-	}
-
-	return (
-		levelLayout->isEmptyBlock(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z) &&
-		levelLayout->isWalkableBlock(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z)
-	);
-}
-
 void GameScene::castLight() {
 	if (getCastLightCooldownProgress() < 1.0f) {
 		showText("Hey! Hold on a second.");
@@ -140,6 +112,11 @@ Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
 		case BlockTypes::COLUMN_MIDDLE:
 		case BlockTypes::COLUMN_TOP:
 			return getTexture("column");
+		case BlockTypes::STAIRCASE_BACKWARD:
+		case BlockTypes::STAIRCASE_FORWARD:
+		case BlockTypes::STAIRCASE_LEFT:
+		case BlockTypes::STAIRCASE_RIGHT:
+			return getTexture("staircase");
 		default:
 			return nullptr;
 	}
@@ -153,6 +130,37 @@ float GameScene::getCastLightCooldownProgress() {
 	float progress = (float)(getRunningTime() - lastLightCastTime) / GameConstants::CAST_LIGHT_COOLDOWN_TIME;
 
 	return progress > 1.0f ? 1.0f : progress;
+}
+
+GridPosition GameScene::getDirectionalGridPosition(MathUtils::Direction direction) {
+	GridPosition targetGridPosition = currentGridPosition;
+
+	switch (direction) {
+		case MathUtils::Direction::FORWARD:
+			targetGridPosition.z--;
+			break;
+		case MathUtils::Direction::BACKWARD:
+			targetGridPosition.z++;
+			break;
+		case MathUtils::Direction::LEFT:
+			targetGridPosition.x--;
+			break;
+		case MathUtils::Direction::RIGHT:
+			targetGridPosition.x++;
+			break;
+	}
+
+	return targetGridPosition;
+}
+
+Soft::Vec3 GameScene::getGridPositionVec3(GridPosition position) {
+	using namespace GameConstants;
+
+	return {
+		position.x * TILE_SIZE,
+		position.layer * TILE_SIZE - HALF_TILE_SIZE,
+		-position.z * TILE_SIZE
+	};
 }
 
 MathUtils::Direction GameScene::getYawDirection(float yaw) {
@@ -173,8 +181,92 @@ MathUtils::Direction GameScene::getYawDirection(float yaw) {
 	return Direction::UP;
 }
 
-bool GameScene::isMoving() {
+void GameScene::handleStaircaseMovement(MathUtils::Direction direction) {
+	using namespace GameConstants;
+	using namespace MathUtils;
+
+	if (isPlayerOnStaircase()) {
+		// Walking off the staircase, either up or down
+	} else {
+		// Walking onto the staircase
+		GridPosition targetGridPosition = getDirectionalGridPosition(direction);
+		int blockType = levelLayout->getBlockType(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z);
+
+		switch (blockType) {
+			case BlockTypes::STAIRCASE_FORWARD:
+				if (direction == Direction::FORWARD) {
+					targetGridPosition.z--;
+				} else if (direction == Direction::BACKWARD) {
+					targetGridPosition.z++;
+				}
+				break;
+			case BlockTypes::STAIRCASE_BACKWARD:
+				if (direction == Direction::BACKWARD) {
+					targetGridPosition.z++;
+				} else if (direction == Direction::FORWARD) {
+					targetGridPosition.z--;
+				}
+				break;
+			case BlockTypes::STAIRCASE_LEFT:
+				if (direction == Direction::LEFT) {
+					targetGridPosition.x--;
+				} else if (direction == Direction::RIGHT) {
+					targetGridPosition.x++;
+				}
+			case BlockTypes::STAIRCASE_RIGHT:
+				if (direction == Direction::RIGHT) {
+					targetGridPosition.x++;
+				} else if (direction == Direction::LEFT) {
+					targetGridPosition.x--;
+				}
+				break;
+		}
+	}
+}
+
+bool GameScene::isPlayerMoving() {
 	return camera->isTweening();
+}
+
+bool GameScene::isPlayerOnStaircase() {
+	return levelLayout->isStaircase(currentGridPosition.layer, currentGridPosition.x, currentGridPosition.z);
+}
+
+bool GameScene::isWalkablePosition(GridPosition position) {
+	return (
+		levelLayout->isEmptyBlock(position.layer, position.x, position.z) &&
+		levelLayout->isWalkableBlock(position.layer - 1, position.x, position.z)
+	);
+}
+
+bool GameScene::isWalkableDownStaircase(MathUtils::Direction direction) {
+	using namespace GameConstants;
+	using namespace MathUtils;
+
+	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
+	int floorBlockType = levelLayout->getBlockType(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z);
+
+	return (
+		(direction == Direction::FORWARD && floorBlockType == BlockTypes::STAIRCASE_BACKWARD) ||
+		(direction == Direction::BACKWARD && floorBlockType == BlockTypes::STAIRCASE_FORWARD) ||
+		(direction == Direction::LEFT && floorBlockType == BlockTypes::STAIRCASE_RIGHT) ||
+		(direction == Direction::RIGHT && floorBlockType == BlockTypes::STAIRCASE_LEFT)
+	);
+}
+
+bool GameScene::isWalkableUpStaircase(MathUtils::Direction direction) {
+	using namespace GameConstants;
+	using namespace MathUtils;
+
+	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
+	int blockType = levelLayout->getBlockType(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z);
+
+	return (
+		(direction == Direction::FORWARD && blockType == BlockTypes::STAIRCASE_FORWARD) ||
+		(direction == Direction::BACKWARD && blockType == BlockTypes::STAIRCASE_BACKWARD) ||
+		(direction == Direction::LEFT && blockType == BlockTypes::STAIRCASE_LEFT) ||
+		(direction == Direction::RIGHT && blockType == BlockTypes::STAIRCASE_RIGHT)
+	);
 }
 
 void GameScene::loadLevel() {
@@ -243,6 +335,7 @@ void GameScene::loadTextures() {
 	add("solid_1", new Soft::TextureBuffer("./Assets/BlockTextures/solid_1.png"));
 	add("solid_2", new Soft::TextureBuffer("./Assets/BlockTextures/solid_2.png"));
 	add("column", new Soft::TextureBuffer("./Assets/BlockTextures/column.png"));
+	add("staircase", new Soft::TextureBuffer("./Assets/BlockTextures/staircase.png"));
 }
 
 void GameScene::loadUI() {
@@ -277,32 +370,101 @@ void GameScene::loadUI() {
 void GameScene::move(MathUtils::Direction direction) {
 	using namespace MathUtils;
 
-	if (isMoving() || !canMoveInDirection(direction)) {
+	if (isPlayerMoving()) {
 		return;
 	}
 
-	Soft::Vec3 movementTarget = camera->position;
+	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
 
-	switch (direction) {
-		case Direction::FORWARD:
-			movementTarget.z += GameConstants::TILE_SIZE;
-			currentGridPosition.z--;
+	if (isPlayerOnStaircase()) {
+		moveOffStaircase(direction);
+	} else if (isWalkableUpStaircase(direction)) {
+		moveUpOntoStaircase(direction);
+	} else if (isWalkableDownStaircase(direction)) {
+		moveDownOntoStaircase(direction);
+	} else if (isWalkablePosition(targetGridPosition)) {
+		camera->tweenTo(getGridPositionVec3(targetGridPosition), GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
+		currentGridPosition = targetGridPosition;
+	}
+}
+
+void GameScene::moveOffStaircase(MathUtils::Direction direction) {
+	using namespace GameConstants;
+	using namespace MathUtils;
+
+	int blockType = levelLayout->getBlockType(currentGridPosition.layer, currentGridPosition.x, currentGridPosition.z);
+	GridPosition targetGridPosition = currentGridPosition;
+
+	switch (blockType) {
+		case BlockTypes::STAIRCASE_FORWARD:
+			if (direction == Direction::FORWARD) {
+				targetGridPosition.z--;
+				targetGridPosition.layer++;
+			} else if (direction == Direction::BACKWARD) {
+				targetGridPosition.z++;
+			}
 			break;
-		case Direction::BACKWARD:
-			movementTarget.z -= GameConstants::TILE_SIZE;
-			currentGridPosition.z++;
+		case BlockTypes::STAIRCASE_BACKWARD:
+			if (direction == Direction::BACKWARD) {
+				targetGridPosition.z++;
+				targetGridPosition.layer++;
+			} else if (direction == Direction::FORWARD) {
+				targetGridPosition.z--;
+			}
 			break;
-		case Direction::LEFT:
-			movementTarget.x -= GameConstants::TILE_SIZE;
-			currentGridPosition.x--;
-			break;
-		case Direction::RIGHT:
-			movementTarget.x += GameConstants::TILE_SIZE;
-			currentGridPosition.x++;
+		case BlockTypes::STAIRCASE_LEFT:
+			if (direction == Direction::LEFT) {
+				targetGridPosition.x--;
+				targetGridPosition.layer++;
+			} else if (direction == Direction::RIGHT) {
+				targetGridPosition.x++;
+			}
+		case BlockTypes::STAIRCASE_RIGHT:
+			if (direction == Direction::RIGHT) {
+				targetGridPosition.x++;
+				targetGridPosition.layer++;
+			} else if (direction == Direction::LEFT) {
+				targetGridPosition.x--;
+			}
 			break;
 	}
 
-	camera->tweenTo(movementTarget, GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
+	if (targetGridPosition == currentGridPosition) {
+		return;
+	}
+
+	camera->tweenTo(getGridPositionVec3(targetGridPosition), GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
+	currentGridPosition = targetGridPosition;
+}
+
+void GameScene::moveDownOntoStaircase(MathUtils::Direction direction) {
+	using namespace GameConstants;
+	using namespace MathUtils;
+
+	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
+	targetGridPosition.layer--;
+
+	Soft::Vec3 targetPosition = getGridPositionVec3(targetGridPosition);
+	targetPosition.y += HALF_TILE_SIZE;
+
+	int blockType = levelLayout->getBlockType(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z);
+
+	camera->tweenTo(targetPosition, MOVE_STEP_DURATION, Soft::Ease::linear);
+	currentGridPosition = targetGridPosition;
+}
+
+void GameScene::moveUpOntoStaircase(MathUtils::Direction direction) {
+	using namespace GameConstants;
+	using namespace MathUtils;
+
+	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
+	Soft::Vec3 targetPosition = getGridPositionVec3(targetGridPosition);
+	int blockType = levelLayout->getBlockType(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z);
+
+	targetPosition.y += HALF_TILE_SIZE;
+
+	camera->tweenTo(targetPosition, MOVE_STEP_DURATION, Soft::Ease::linear);
+	currentGridPosition = targetGridPosition;
 }
 
 void GameScene::showText(const char* value) {
@@ -320,11 +482,7 @@ void GameScene::spawnPlayer(const SpawnPosition& spawnPosition) {
 	currentGridPosition.x = spawnPosition.x;
 	currentGridPosition.z = spawnPosition.z;
 
-	camera->position = {
-		spawnPosition.x * TILE_SIZE,
-		spawnPosition.layer * TILE_SIZE - HALF_TILE_SIZE,
-		-spawnPosition.z * TILE_SIZE
-	};
+	camera->position = getGridPositionVec3(currentGridPosition);
 
 	switch (spawnPosition.direction) {
 		case Direction::FORWARD:

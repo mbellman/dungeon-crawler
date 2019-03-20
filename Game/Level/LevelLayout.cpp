@@ -57,6 +57,12 @@ bool LevelLayout::isEmptyBlock(int layerIndex, int x, int z) const {
 	return getBlockType(layerIndex, x, z) == GameConstants::BlockTypes::EMPTY;
 }
 
+bool LevelLayout::isStaircase(int layerIndex, int x, int z) const {
+	int blockType = getBlockType(layerIndex, x, z);
+
+	return blockType >= GameConstants::BlockTypes::STAIRCASE_FORWARD && blockType <= GameConstants::BlockTypes::STAIRCASE_RIGHT;
+}
+
 bool LevelLayout::isWalkableBlock(int layerIndex, int x, int z) const {
 	return getBlockType(layerIndex, x, z) >= GameConstants::BlockTypes::SOLID_1;
 }

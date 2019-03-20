@@ -8,6 +8,8 @@ struct GridPosition {
 	int layer = 0;
 	int x = 0;
 	int z = 0;
+
+	bool operator ==(const GridPosition& position);
 };
 
 struct SpawnPosition : GridPosition {
