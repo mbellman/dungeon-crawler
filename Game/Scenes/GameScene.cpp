@@ -181,49 +181,6 @@ MathUtils::Direction GameScene::getYawDirection(float yaw) {
 	return Direction::UP;
 }
 
-void GameScene::handleStaircaseMovement(MathUtils::Direction direction) {
-	using namespace GameConstants;
-	using namespace MathUtils;
-
-	if (isPlayerOnStaircase()) {
-		// Walking off the staircase, either up or down
-	} else {
-		// Walking onto the staircase
-		GridPosition targetGridPosition = getDirectionalGridPosition(direction);
-		int blockType = levelLayout->getBlockType(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z);
-
-		switch (blockType) {
-			case BlockTypes::STAIRCASE_FORWARD:
-				if (direction == Direction::FORWARD) {
-					targetGridPosition.z--;
-				} else if (direction == Direction::BACKWARD) {
-					targetGridPosition.z++;
-				}
-				break;
-			case BlockTypes::STAIRCASE_BACKWARD:
-				if (direction == Direction::BACKWARD) {
-					targetGridPosition.z++;
-				} else if (direction == Direction::FORWARD) {
-					targetGridPosition.z--;
-				}
-				break;
-			case BlockTypes::STAIRCASE_LEFT:
-				if (direction == Direction::LEFT) {
-					targetGridPosition.x--;
-				} else if (direction == Direction::RIGHT) {
-					targetGridPosition.x++;
-				}
-			case BlockTypes::STAIRCASE_RIGHT:
-				if (direction == Direction::RIGHT) {
-					targetGridPosition.x++;
-				} else if (direction == Direction::LEFT) {
-					targetGridPosition.x--;
-				}
-				break;
-		}
-	}
-}
-
 bool GameScene::isPlayerMoving() {
 	return camera->isTweening();
 }

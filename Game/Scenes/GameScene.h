@@ -28,7 +28,6 @@ private:
 	GridPosition getDirectionalGridPosition(MathUtils::Direction direction);
 	Soft::Vec3 getGridPositionVec3(GridPosition position);
 	MathUtils::Direction getYawDirection(float yaw);
-	void handleStaircaseMovement(MathUtils::Direction direction);
 	bool isPlayerMoving();
 	bool isPlayerOnStaircase();
 	bool isWalkablePosition(GridPosition position);
