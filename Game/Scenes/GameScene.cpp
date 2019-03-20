@@ -390,7 +390,16 @@ void GameScene::moveOffStaircase(MathUtils::Direction direction) {
 		return;
 	}
 
-	camera->tweenTo(getGridPositionVec3(targetGridPosition), GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
+	Soft::Vec3 targetCameraPosition = getGridPositionVec3(targetGridPosition);
+
+	if (levelLayout->isStaircase(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z)) {
+		targetCameraPosition.y += GameConstants::HALF_TILE_SIZE;
+	} else if (levelLayout->isStaircase(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z)) {
+		targetCameraPosition.y -= GameConstants::HALF_TILE_SIZE;
+		targetGridPosition.layer--;
+	}
+
+	camera->tweenTo(targetCameraPosition, GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
 	currentGridPosition = targetGridPosition;
 }
 
