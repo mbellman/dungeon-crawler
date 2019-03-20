@@ -28,6 +28,7 @@ private:
 	MathUtils::Direction getYawDirection(float yaw);
 	bool isMoving();
 	void loadLevel();
+	void loadTextures();
 	void loadUI();
 	void move(MathUtils::Direction direction);
 	void showText(const char* value);

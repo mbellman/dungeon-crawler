@@ -28,11 +28,10 @@ GameScene::~GameScene() {
 }
 
 void GameScene::load() {
-	add("solid_1", new Soft::TextureBuffer("./Assets/BlockTextures/solid_1.png"));
-	add("solid_2", new Soft::TextureBuffer("./Assets/BlockTextures/solid_2.png"));
-
+	loadTextures();
 	loadLevel();
 	loadUI();
+
 	addCameraLight();
 
 	inputManager->onMouseUp([=]() {
@@ -136,10 +135,11 @@ Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
 		case BlockTypes::SOLID_1:
 			return getTexture("solid_1");
 		case BlockTypes::SOLID_2:
+			return getTexture("solid_2");
 		case BlockTypes::COLUMN_BOTTOM:
 		case BlockTypes::COLUMN_MIDDLE:
 		case BlockTypes::COLUMN_TOP:
-			return getTexture("solid_2");
+			return getTexture("column");
 		default:
 			return nullptr;
 	}
@@ -237,6 +237,12 @@ void GameScene::loadLevel() {
 	settings.ambientLightFactor = levelData.ambientLightFactor;
 	settings.visibility = levelData.visibility;
 	settings.brightness = levelData.brightness;
+}
+
+void GameScene::loadTextures() {
+	add("solid_1", new Soft::TextureBuffer("./Assets/BlockTextures/solid_1.png"));
+	add("solid_2", new Soft::TextureBuffer("./Assets/BlockTextures/solid_2.png"));
+	add("column", new Soft::TextureBuffer("./Assets/BlockTextures/column.png"));
 }
 
 void GameScene::loadUI() {
