@@ -32,11 +32,9 @@ Block BlockBuilder::getNextBlock() {
 	if (isSolid(block.type)) {
 		int sidesMask = getBlockSidesMask(layerIndex, x, z);
 
-		if (sidesMask == 0) {
-			// Ignore blocks without any visible sides,
-			// since no vertices/faces will be generated
-			block.object = nullptr;
-		} else {
+		if (sidesMask > 0) {
+			// Only generate Objects for solids with visible sides,
+			// since no vertices/faces will be generated otherwise
 			block.object = new SidedBlock(sidesMask);
 		}
 	} else {
@@ -65,13 +63,28 @@ Soft::Object* BlockBuilder::getBlockObject(int blockType) {
 	Soft::Object* object = nullptr;
 
 	switch (blockType) {
-		case BlockTypes::COLUMN_MIDDLE:
+		case BlockTypes::COLUMN_BOTTOM: {
+			Soft::ObjLoader loader("./Assets/Models/column-base.obj");
+
+			object = new Soft::Model(loader);
+			object->isFlatShaded = true;
+			break;
+		}
+		case BlockTypes::COLUMN_MIDDLE: {
 			Soft::ObjLoader loader("./Assets/Models/column.obj");
 
 			object = new Soft::Model(loader);
-			object->setColor({ 150, 100, 50 });
 			object->isFlatShaded = true;
 			break;
+		}
+		case BlockTypes::COLUMN_TOP: {
+			Soft::ObjLoader loader("./Assets/Models/column-base.obj");
+
+			object = new Soft::Model(loader);
+			object->rotateDeg({ 180.0f, 0.0f, 0.0f });
+			object->isFlatShaded = true;
+			break;
+		}
 	}
 
 	return object;

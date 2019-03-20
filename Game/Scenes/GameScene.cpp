@@ -136,7 +136,9 @@ Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
 		case BlockTypes::SOLID_1:
 			return getTexture("solid_1");
 		case BlockTypes::SOLID_2:
+		case BlockTypes::COLUMN_BOTTOM:
 		case BlockTypes::COLUMN_MIDDLE:
+		case BlockTypes::COLUMN_TOP:
 			return getTexture("solid_2");
 		default:
 			return nullptr;

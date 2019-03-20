@@ -19,6 +19,8 @@ namespace GameConstants {
 		EMPTY = 0,
 		SOLID_1 = 1,
 		SOLID_2 = 2,
-		COLUMN_MIDDLE = 3
+		COLUMN_BOTTOM = 3,
+		COLUMN_MIDDLE = 4,
+		COLUMN_TOP = 5
 	};
 }
