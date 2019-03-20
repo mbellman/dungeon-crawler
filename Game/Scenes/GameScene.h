@@ -32,6 +32,6 @@ private:
 	void loadUI();
 	void move(MathUtils::Direction direction);
 	void showText(const char* value);
-	void spawn(const SpawnPosition& spawnPosition);
+	void spawnPlayer(const SpawnPosition& spawnPosition);
 	void updateUI(int dt);
 };

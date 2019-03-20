@@ -230,7 +230,7 @@ void GameScene::loadLevel() {
 		}
 	}
 
-	spawn(levelData.spawnPosition);
+	spawnPlayer(levelData.spawnPosition);
 
 	settings.ambientLightColor = levelData.ambientLightColor;
 	settings.ambientLightVector = levelData.ambientLightVector;
@@ -312,7 +312,7 @@ void GameScene::showText(const char* value) {
 	textBox->show();
 }
 
-void GameScene::spawn(const SpawnPosition& spawnPosition) {
+void GameScene::spawnPlayer(const SpawnPosition& spawnPosition) {
 	using namespace GameConstants;
 	using namespace MathUtils;
 
