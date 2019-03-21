@@ -19,7 +19,7 @@ struct SpawnPosition : GridPosition {
 struct StaticLight {
 	GridPosition position;
 	Soft::Color color;
-	float range = 500.0f;
+	float range;
 };
 
 struct LayerData {
@@ -31,9 +31,9 @@ struct LevelData {
 	SpawnPosition spawnPosition;
 	Soft::Color ambientLightColor;
 	Soft::Vec3 ambientLightVector;
-	float ambientLightFactor;
-	int visibility;
-	float brightness;
+	float ambientLightFactor = 1.0f;
+	int visibility = 10000;
+	float brightness = 1.0f;
 	std::vector<LayerData> layers;
 	std::vector<StaticLight> staticLights;
 };
