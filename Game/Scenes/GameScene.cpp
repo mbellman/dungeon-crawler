@@ -201,14 +201,10 @@ bool GameScene::isPlayerMoving() {
 	return camera->isTweening();
 }
 
-bool GameScene::isPlayerOnStaircase() {
-	return levelLayout->isStaircase(currentGridPosition.layer, currentGridPosition.x, currentGridPosition.z);
-}
-
 bool GameScene::isWalkablePosition(GridPosition position) {
 	return (
-		levelLayout->getBlockType(position.layer, position.x, position.z) == GameConstants::BlockTypes::BRIDGE ||
-		levelLayout->isEmptyBlock(position.layer, position.x, position.z) &&
+		levelLayout->getBlockType(position) == GameConstants::BlockTypes::BRIDGE ||
+		levelLayout->isEmptyBlock(position) &&
 		levelLayout->isWalkableBlock(position.layer - 1, position.x, position.z)
 	);
 }
@@ -218,13 +214,13 @@ bool GameScene::isWalkableDownStaircase(MathUtils::Direction direction) {
 	using namespace MathUtils;
 
 	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
-	int floorBlockType = levelLayout->getBlockType(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z);
+	int targetFloorBlockType = levelLayout->getBlockType(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z);
 
 	return (
-		(direction == Direction::FORWARD && floorBlockType == BlockTypes::STAIRCASE_BACKWARD) ||
-		(direction == Direction::BACKWARD && floorBlockType == BlockTypes::STAIRCASE_FORWARD) ||
-		(direction == Direction::LEFT && floorBlockType == BlockTypes::STAIRCASE_RIGHT) ||
-		(direction == Direction::RIGHT && floorBlockType == BlockTypes::STAIRCASE_LEFT)
+		(direction == Direction::FORWARD && targetFloorBlockType == BlockTypes::STAIRCASE_BACKWARD) ||
+		(direction == Direction::BACKWARD && targetFloorBlockType == BlockTypes::STAIRCASE_FORWARD) ||
+		(direction == Direction::LEFT && targetFloorBlockType == BlockTypes::STAIRCASE_RIGHT) ||
+		(direction == Direction::RIGHT && targetFloorBlockType == BlockTypes::STAIRCASE_LEFT)
 	);
 }
 
@@ -233,13 +229,13 @@ bool GameScene::isWalkableUpStaircase(MathUtils::Direction direction) {
 	using namespace MathUtils;
 
 	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
-	int blockType = levelLayout->getBlockType(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z);
+	int targetPositionBlockType = levelLayout->getBlockType(targetGridPosition);
 
 	return (
-		(direction == Direction::FORWARD && blockType == BlockTypes::STAIRCASE_FORWARD) ||
-		(direction == Direction::BACKWARD && blockType == BlockTypes::STAIRCASE_BACKWARD) ||
-		(direction == Direction::LEFT && blockType == BlockTypes::STAIRCASE_LEFT) ||
-		(direction == Direction::RIGHT && blockType == BlockTypes::STAIRCASE_RIGHT)
+		(direction == Direction::FORWARD && targetPositionBlockType == BlockTypes::STAIRCASE_FORWARD) ||
+		(direction == Direction::BACKWARD && targetPositionBlockType == BlockTypes::STAIRCASE_BACKWARD) ||
+		(direction == Direction::LEFT && targetPositionBlockType == BlockTypes::STAIRCASE_LEFT) ||
+		(direction == Direction::RIGHT && targetPositionBlockType == BlockTypes::STAIRCASE_RIGHT)
 	);
 }
 
@@ -353,7 +349,7 @@ void GameScene::move(MathUtils::Direction direction) {
 	shouldBobCamera = false;
 	lastMovementTime = getRunningTime();
 
-	if (isPlayerOnStaircase()) {
+	if (levelLayout->isStaircaseBlock(currentGridPosition)) {
 		moveOffStaircase(direction);
 	} else if (isWalkableUpStaircase(direction)) {
 		moveUpOntoStaircase(direction);
@@ -370,7 +366,7 @@ void GameScene::moveOffStaircase(MathUtils::Direction direction) {
 	using namespace GameConstants;
 	using namespace MathUtils;
 
-	int blockType = levelLayout->getBlockType(currentGridPosition.layer, currentGridPosition.x, currentGridPosition.z);
+	int blockType = levelLayout->getBlockType(currentGridPosition);
 	GridPosition targetGridPosition = currentGridPosition;
 
 	switch (blockType) {
@@ -414,9 +410,9 @@ void GameScene::moveOffStaircase(MathUtils::Direction direction) {
 
 	Soft::Vec3 targetCameraPosition = getGridPositionVec3(targetGridPosition);
 
-	if (levelLayout->isStaircase(targetGridPosition.layer, targetGridPosition.x, targetGridPosition.z)) {
+	if (levelLayout->isStaircaseBlock(targetGridPosition)) {
 		targetCameraPosition.y += GameConstants::HALF_TILE_SIZE;
-	} else if (levelLayout->isStaircase(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z)) {
+	} else if (levelLayout->isStaircaseBlock(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z)) {
 		targetCameraPosition.y -= GameConstants::HALF_TILE_SIZE;
 		targetGridPosition.layer--;
 	} else if (!isWalkablePosition(targetGridPosition)) {

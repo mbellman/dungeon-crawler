@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Level/LevelLoader.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
 
@@ -24,11 +25,15 @@ public:
 	~LevelLayout();
 
 	int getBlockType(int layerIndex, int x, int z) const;
+	int getBlockType(GridPosition position) const;
 	const Soft::Area& getSize() const;
 	int getTotalLayers() const;
 	bool isEmptyBlock(int layerIndex, int x, int z) const;
-	bool isStaircase(int layerIndex, int x, int z) const;
+	bool isEmptyBlock(GridPosition position) const;
+	bool isStaircaseBlock(int layerIndex, int x, int z) const;
+	bool isStaircaseBlock(GridPosition position) const;
 	bool isWalkableBlock(int layerIndex, int x, int z) const;
+	bool isWalkableBlock(GridPosition position) const;
 	void setBlockType(int layerIndex, int x, int z, int blockType);
 
 private:

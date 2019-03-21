@@ -32,7 +32,6 @@ private:
 	Soft::Vec3 getGridPositionVec3(GridPosition position);
 	MathUtils::Direction getYawDirection(float yaw);
 	bool isPlayerMoving();
-	bool isPlayerOnStaircase();
 	bool isWalkablePosition(GridPosition position);
 	bool isWalkableUpStaircase(MathUtils::Direction direction);
 	bool isWalkableDownStaircase(MathUtils::Direction direction);

@@ -3,6 +3,7 @@
 #include <GameConstants.h>
 #include <GameObjects.h>
 #include <MathUtils.h>
+#include <Level/BlockUtils.h>
 #include <SoftEngine.h>
 #include <cmath>
 
@@ -29,7 +30,7 @@ Block BlockBuilder::getNextBlock() {
 
 	block.type = levelLayout->getBlockType(layerIndex, x, z);
 
-	if (isSolid(block.type)) {
+	if (BlockUtils::isSolid(block.type)) {
 		int sidesMask = getBlockSidesMask(layerIndex, x, z);
 
 		if (sidesMask > 0) {
@@ -138,6 +139,7 @@ Soft::Object* BlockBuilder::getBlockObject(int blockType) {
 
 int BlockBuilder::getBlockSidesMask(int layerIndex, int x, int z) {
 	using namespace MathUtils;
+	using namespace BlockUtils;
 
 	int sides = 0;
 	int topBlock = levelLayout->getBlockType(layerIndex + 1, x, z);
@@ -176,12 +178,4 @@ int BlockBuilder::getBlockSidesMask(int layerIndex, int x, int z) {
 
 bool BlockBuilder::hasBlocksRemaining() {
 	return blockCounter < totalBlocks;
-}
-
-bool BlockBuilder::isSolid(int blockType) {
-	return blockType >= GameConstants::BlockTypes::SOLID_1 && blockType <= GameConstants::BlockTypes::SOLID_2;
-}
-
-bool BlockBuilder::isVisibleSpace(int blockType) {
-	return !isSolid(blockType) && blockType != GameConstants::BlockTypes::OUT_OF_BOUNDS;
 }

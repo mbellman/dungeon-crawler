@@ -1,4 +1,6 @@
 #include <Level/LevelLayout.h>
+#include <Level/LevelLoader.h>
+#include <Level/BlockUtils.h>
 #include <GameConstants.h>
 #include <SoftEngine.h>
 
@@ -45,6 +47,10 @@ int LevelLayout::getBlockType(int layerIndex, int x, int z) const {
 	return layer.blocks[blockIndex];
 }
 
+int LevelLayout::getBlockType(GridPosition position) const {
+	return getBlockType(position.layer, position.x, position.z);
+}
+
 const Soft::Area& LevelLayout::getSize() const {
 	return layers[0].area;
 }
@@ -54,17 +60,27 @@ int LevelLayout::getTotalLayers() const {
 }
 
 bool LevelLayout::isEmptyBlock(int layerIndex, int x, int z) const {
-	return getBlockType(layerIndex, x, z) == GameConstants::BlockTypes::EMPTY;
+	return BlockUtils::isEmpty(getBlockType(layerIndex, x, z));
 }
 
-bool LevelLayout::isStaircase(int layerIndex, int x, int z) const {
-	int blockType = getBlockType(layerIndex, x, z);
+bool LevelLayout::isEmptyBlock(GridPosition position) const {
+	return isEmptyBlock(position.layer, position.x, position.z);
+}
 
-	return blockType >= GameConstants::BlockTypes::STAIRCASE_FORWARD && blockType <= GameConstants::BlockTypes::STAIRCASE_RIGHT;
+bool LevelLayout::isStaircaseBlock(int layerIndex, int x, int z) const {
+	return BlockUtils::isStaircase(getBlockType(layerIndex, x, z));
+}
+
+bool LevelLayout::isStaircaseBlock(GridPosition position) const {
+	return isStaircaseBlock(position.layer, position.x, position.z);
 }
 
 bool LevelLayout::isWalkableBlock(int layerIndex, int x, int z) const {
-	return getBlockType(layerIndex, x, z) >= GameConstants::BlockTypes::SOLID_1;
+	return BlockUtils::isWalkable(getBlockType(layerIndex, x, z));
+}
+
+bool LevelLayout::isWalkableBlock(GridPosition position) const {
+	return isWalkableBlock(position.layer, position.x, position.z);
 }
 
 void LevelLayout::setBlockType(int layerIndex, int x, int z, int blockType) {

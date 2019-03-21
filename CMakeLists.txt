@@ -48,6 +48,8 @@ set(SOURCE_FILES
     Game/Entities/TextBox.cpp
     Game/Level/BlockBuilder.h
     Game/Level/BlockBuilder.cpp
+    Game/Level/BlockUtils.h
+    Game/Level/BlockUtils.cpp
     Game/Level/LevelLayout.h
     Game/Level/LevelLayout.cpp
     Game/Level/LevelLoader.h
