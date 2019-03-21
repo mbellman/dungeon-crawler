@@ -65,6 +65,10 @@ void GameScene::onUpdate(int dt) {
 		move(getYawDirection(camera->yaw + MathUtils::DEG_270));
 	}
 
+	if (isPlayerMoving() && shouldBobCamera) {
+		bobCamera();
+	}
+
 	updateUI(dt);
 }
 
@@ -77,6 +81,16 @@ void GameScene::addCameraLight() {
 	light->lockTo(camera);
 
 	add(light);
+}
+
+void GameScene::bobCamera() {
+	using namespace GameConstants;
+
+	float yBasis = currentGridPosition.layer * TILE_SIZE - HALF_TILE_SIZE;
+	float movementProgress = (float)(getRunningTime() - lastMovementTime) / MOVE_STEP_DURATION;
+	float yOffset = -4.0f * sinf(movementProgress * M_PI);
+
+	camera->position.y = yBasis + yOffset;
 }
 
 void GameScene::castLight() {
@@ -336,6 +350,8 @@ void GameScene::move(MathUtils::Direction direction) {
 	}
 
 	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
+	shouldBobCamera = false;
+	lastMovementTime = getRunningTime();
 
 	if (isPlayerOnStaircase()) {
 		moveOffStaircase(direction);
@@ -346,6 +362,7 @@ void GameScene::move(MathUtils::Direction direction) {
 	} else if (isWalkablePosition(targetGridPosition)) {
 		camera->tweenTo(getGridPositionVec3(targetGridPosition), GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
 		currentGridPosition = targetGridPosition;
+		shouldBobCamera = true;
 	}
 }
 

@@ -19,9 +19,12 @@ private:
 	TTF_Font* uiFont = nullptr;
 	GridPosition currentGridPosition;
 	int lastLightCastTime = 0;
+	int lastMovementTime = 0;
 	MathUtils::Direction staircaseDirection;
+	bool shouldBobCamera = false;
 
 	void addCameraLight();
+	void bobCamera();
 	void castLight();
 	Soft::TextureBuffer* getBlockTexture(int blockType);
 	float getCastLightCooldownProgress();
