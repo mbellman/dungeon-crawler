@@ -43,13 +43,18 @@ Block BlockBuilder::getNextBlock() {
 
 	if (block.object != nullptr) {
 		block.object->isStatic = true;
-		block.object->scale(HALF_TILE_SIZE);
 
-		block.object->position = {
+		if (block.type != BlockTypes::BRIDGE) {
+			block.object->scale(HALF_TILE_SIZE);
+		}
+
+		Soft::Vec3 offset = {
 			x * TILE_SIZE,
 			layerIndex * TILE_SIZE - HALF_TILE_SIZE,
 			-z * TILE_SIZE
 		};
+
+		block.object->position += offset;
 	}
 
 	blockCounter++;
@@ -114,6 +119,16 @@ Soft::Object* BlockBuilder::getBlockObject(int blockType) {
 			object = new Soft::Model(loader);
 			object->rotateDeg({ 0.0f, 90.0f, 0.0f });
 			object->isFlatShaded = true;
+			break;
+		}
+		case BlockTypes::BRIDGE: {
+			// Bridge blocks should not be scaled, but instead defined
+			// with dimensions at instantiation, owing to how Billboards
+			// separate their sides very slightly to avoid z-fighting.
+			object = new Soft::Billboard(TILE_SIZE, TILE_SIZE);
+			object->rotateDeg({ 90.0f, 0.0f, 0.0f });
+			object->position.y -= HALF_TILE_SIZE;
+			object->canOccludeSurfaces = false;
 			break;
 		}
 	}

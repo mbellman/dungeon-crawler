@@ -117,6 +117,8 @@ Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
 		case BlockTypes::STAIRCASE_LEFT:
 		case BlockTypes::STAIRCASE_RIGHT:
 			return getTexture("staircase");
+		case BlockTypes::BRIDGE:
+			return getTexture("bridge");
 		default:
 			return nullptr;
 	}
@@ -191,6 +193,7 @@ bool GameScene::isPlayerOnStaircase() {
 
 bool GameScene::isWalkablePosition(GridPosition position) {
 	return (
+		levelLayout->getBlockType(position.layer, position.x, position.z) == GameConstants::BlockTypes::BRIDGE ||
 		levelLayout->isEmptyBlock(position.layer, position.x, position.z) &&
 		levelLayout->isWalkableBlock(position.layer - 1, position.x, position.z)
 	);
@@ -293,6 +296,7 @@ void GameScene::loadTextures() {
 	add("solid_2", new Soft::TextureBuffer("./Assets/BlockTextures/solid_2.png"));
 	add("column", new Soft::TextureBuffer("./Assets/BlockTextures/column.png"));
 	add("staircase", new Soft::TextureBuffer("./Assets/BlockTextures/staircase.png"));
+	add("bridge", new Soft::TextureBuffer("./Assets/BlockTextures/bridge.png"));
 }
 
 void GameScene::loadUI() {

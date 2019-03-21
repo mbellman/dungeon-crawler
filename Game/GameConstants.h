@@ -25,6 +25,7 @@ namespace GameConstants {
 		STAIRCASE_FORWARD = 6,
 		STAIRCASE_BACKWARD = 7,
 		STAIRCASE_LEFT = 8,
-		STAIRCASE_RIGHT = 9
+		STAIRCASE_RIGHT = 9,
+		BRIDGE = 10
 	};
 }
