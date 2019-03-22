@@ -175,10 +175,10 @@ void Player::moveDownOntoStaircase(MathUtils::Direction direction) {
 	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
 	targetGridPosition.layer--;
 
-	Soft::Vec3 targetPosition = getGridPositionVec3(targetGridPosition);
-	targetPosition.y += HALF_TILE_SIZE;
+	Soft::Vec3 targetCameraPosition = getGridPositionVec3(targetGridPosition);
+	targetCameraPosition.y += HALF_TILE_SIZE;
 
-	camera->tweenTo(targetPosition, MOVE_STEP_DURATION, Soft::Ease::linear);
+	camera->tweenTo(targetCameraPosition, MOVE_STEP_DURATION, Soft::Ease::linear);
 	currentGridPosition = targetGridPosition;
 }
 
@@ -187,10 +187,10 @@ void Player::moveUpOntoStaircase(MathUtils::Direction direction) {
 	using namespace MathUtils;
 
 	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
-	Soft::Vec3 targetPosition = getGridPositionVec3(targetGridPosition);
-	targetPosition.y += HALF_TILE_SIZE;
+	Soft::Vec3 targetCameraPosition = getGridPositionVec3(targetGridPosition);
+	targetCameraPosition.y += HALF_TILE_SIZE;
 
-	camera->tweenTo(targetPosition, MOVE_STEP_DURATION, Soft::Ease::linear);
+	camera->tweenTo(targetCameraPosition, MOVE_STEP_DURATION, Soft::Ease::linear);
 	currentGridPosition = targetGridPosition;
 }
 
