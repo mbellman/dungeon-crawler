@@ -1,5 +1,5 @@
 #include <Scenes/GameScene.h>
-#include <GameConstants.h>
+#include <GameUtils.h>
 #include <SoftEngine.h>
 
 int main(int argc, char* argv[]) {
@@ -12,10 +12,10 @@ int main(int argc, char* argv[]) {
 	);
 
 	engine->lockProportionalRasterRegion(
-		GameConstants::RASTER_REGION.x,
-		GameConstants::RASTER_REGION.y,
-		GameConstants::RASTER_REGION.width,
-		GameConstants::RASTER_REGION.height
+		GameUtils::RASTER_REGION.x,
+		GameUtils::RASTER_REGION.y,
+		GameUtils::RASTER_REGION.width,
+		GameUtils::RASTER_REGION.height
 	);
 
 	Soft::Controller* controller = new Soft::Controller(engine);

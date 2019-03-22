@@ -1,5 +1,5 @@
 #include <Entities/CastLight.h>
-#include <GameConstants.h>
+#include <GameUtils.h>
 #include <SoftEngine.h>
 
 /**
@@ -16,7 +16,7 @@ void CastLight::initialize() {
 
 	light->setColor({ 0, 255, 0 });
 	light->position = spawnPosition + direction * 100.0f;
-	light->range = GameConstants::CAST_LIGHT_RANGE;
+	light->range = GameUtils::CAST_LIGHT_RANGE;
 
 	light->onUpdate = [=](int dt) {
 		light->position += direction * (float)dt * 1.5f;

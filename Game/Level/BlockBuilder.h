@@ -1,11 +1,11 @@
 #pragma once
 
 #include <Level/LevelLayout.h>
-#include <GameConstants.h>
+#include <GameUtils.h>
 #include <SoftEngine.h>
 
 struct Block {
-	int type = GameConstants::BlockTypes::OUT_OF_BOUNDS;
+	int type = GameUtils::BlockTypes::OUT_OF_BOUNDS;
 	Soft::Object* object = nullptr;
 };
 

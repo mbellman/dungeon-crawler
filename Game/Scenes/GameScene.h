@@ -17,32 +17,17 @@ public:
 private:
 	LevelLayout* levelLayout = nullptr;
 	TTF_Font* uiFont = nullptr;
-	GridPosition currentGridPosition;
+	SpawnPosition playerSpawnPosition;
 	int lastLightCastTime = 0;
-	int lastMovementTime = 0;
-	MathUtils::Direction staircaseDirection;
-	bool shouldBobCamera = false;
 
 	void addCameraLight();
-	void bobCamera();
+	void addPlayer();
 	void castLight();
 	Soft::TextureBuffer* getBlockTexture(int blockType);
 	float getCastLightCooldownProgress();
-	GridPosition getDirectionalGridPosition(MathUtils::Direction direction);
-	Soft::Vec3 getGridPositionVec3(GridPosition position);
-	MathUtils::Direction getYawDirection(float yaw);
-	bool isPlayerMoving();
-	bool isWalkablePosition(GridPosition position);
-	bool isWalkableUpStaircase(MathUtils::Direction direction);
-	bool isWalkableDownStaircase(MathUtils::Direction direction);
 	void loadLevel();
 	void loadTextures();
 	void loadUI();
-	void move(MathUtils::Direction direction);
-	void moveOffStaircase(MathUtils::Direction direction);
-	void moveUpOntoStaircase(MathUtils::Direction direction);
-	void moveDownOntoStaircase(MathUtils::Direction direction);
 	void showText(const char* value);
-	void spawnPlayer(const SpawnPosition& spawnPosition);
 	void updateUI(int dt);
 };

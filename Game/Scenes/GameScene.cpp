@@ -2,11 +2,12 @@
 #include <Level/LevelLayout.h>
 #include <Level/BlockBuilder.h>
 #include <Level/LevelLoader.h>
+#include <Entities/Player.h>
 #include <Entities/CastLight.h>
 #include <Entities/TextBox.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
-#include <GameConstants.h>
+#include <GameUtils.h>
 #include <cmath>
 #include <math.h>
 #include <SDL_ttf.h>
@@ -32,6 +33,7 @@ void GameScene::load() {
 	loadLevel();
 	loadUI();
 
+	addPlayer();
 	addCameraLight();
 
 	inputManager->onMouseUp([=]() {
@@ -55,18 +57,18 @@ void GameScene::load() {
 }
 
 void GameScene::onUpdate(int dt) {
-	if (inputManager->isKeyPressed(Soft::Keys::W)) {
-		move(getYawDirection(camera->yaw));
-	} else if (inputManager->isKeyPressed(Soft::Keys::A)) {
-		move(getYawDirection(camera->yaw + MathUtils::DEG_90));
-	} else if (inputManager->isKeyPressed(Soft::Keys::S)) {
-		move(getYawDirection(camera->yaw + MathUtils::DEG_180));
-	} else if (inputManager->isKeyPressed(Soft::Keys::D)) {
-		move(getYawDirection(camera->yaw + MathUtils::DEG_270));
-	}
+	using namespace GameUtils;
 
-	if (isPlayerMoving() && shouldBobCamera) {
-		bobCamera();
+	Player* player = (Player*)getEntity("player");
+
+	if (inputManager->isKeyPressed(Soft::Keys::W)) {
+		player->move(getYawDirection(camera->yaw));
+	} else if (inputManager->isKeyPressed(Soft::Keys::A)) {
+		player->move(getYawDirection(camera->yaw + MathUtils::DEG_90));
+	} else if (inputManager->isKeyPressed(Soft::Keys::S)) {
+		player->move(getYawDirection(camera->yaw + MathUtils::DEG_180));
+	} else if (inputManager->isKeyPressed(Soft::Keys::D)) {
+		player->move(getYawDirection(camera->yaw + MathUtils::DEG_270));
 	}
 
 	updateUI(dt);
@@ -83,14 +85,12 @@ void GameScene::addCameraLight() {
 	add(light);
 }
 
-void GameScene::bobCamera() {
-	using namespace GameConstants;
+void GameScene::addPlayer() {
+	Player* player = new Player(camera, levelLayout);
 
-	float yBasis = currentGridPosition.layer * TILE_SIZE - HALF_TILE_SIZE;
-	float movementProgress = (float)(getRunningTime() - lastMovementTime) / MOVE_STEP_DURATION;
-	float yOffset = -4.0f * sinf(movementProgress * M_PI);
+	player->spawn(playerSpawnPosition);
 
-	camera->position.y = yBasis + yOffset;
+	add("player", player);
 }
 
 void GameScene::castLight() {
@@ -107,7 +107,7 @@ void GameScene::castLight() {
 	}
 
 	CastLight* castLight = new CastLight(camera->position, camera->getDirection());
-	castLight->lifetime = GameConstants::CAST_LIGHT_LIFETIME;
+	castLight->lifetime = GameUtils::CAST_LIGHT_LIFETIME;
 
 	add(castLight);
 
@@ -115,7 +115,7 @@ void GameScene::castLight() {
 }
 
 Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
-	using namespace GameConstants;
+	using namespace GameUtils;
 
 	switch (blockType) {
 		case BlockTypes::SOLID_1:
@@ -143,109 +143,20 @@ float GameScene::getCastLightCooldownProgress() {
 		return 1.0f;
 	}
 
-	float progress = (float)(getRunningTime() - lastLightCastTime) / GameConstants::CAST_LIGHT_COOLDOWN_TIME;
+	float progress = (float)(getRunningTime() - lastLightCastTime) / GameUtils::CAST_LIGHT_COOLDOWN_TIME;
 
 	return progress > 1.0f ? 1.0f : progress;
 }
 
-GridPosition GameScene::getDirectionalGridPosition(MathUtils::Direction direction) {
-	GridPosition targetGridPosition = currentGridPosition;
-
-	switch (direction) {
-		case MathUtils::Direction::FORWARD:
-			targetGridPosition.z--;
-			break;
-		case MathUtils::Direction::BACKWARD:
-			targetGridPosition.z++;
-			break;
-		case MathUtils::Direction::LEFT:
-			targetGridPosition.x--;
-			break;
-		case MathUtils::Direction::RIGHT:
-			targetGridPosition.x++;
-			break;
-	}
-
-	return targetGridPosition;
-}
-
-Soft::Vec3 GameScene::getGridPositionVec3(GridPosition position) {
-	using namespace GameConstants;
-
-	return {
-		position.x * TILE_SIZE,
-		position.layer * TILE_SIZE - HALF_TILE_SIZE,
-		-position.z * TILE_SIZE
-	};
-}
-
-MathUtils::Direction GameScene::getYawDirection(float yaw) {
-	using namespace MathUtils;
-
-	float wrappedYaw = modf(yaw, DEG_360);
-
-	if (wrappedYaw < DEG_45 || wrappedYaw >= DEG_315) {
-		return Direction::FORWARD;
-	} else if (wrappedYaw < DEG_135 && wrappedYaw >= DEG_45) {
-		return Direction::LEFT;
-	} else if (wrappedYaw < DEG_225 && wrappedYaw >= DEG_135) {
-		return Direction::BACKWARD;
-	} else if (wrappedYaw < DEG_315 && wrappedYaw >= DEG_225) {
-		return Direction::RIGHT;
-	}
-
-	return Direction::UP;
-}
-
-bool GameScene::isPlayerMoving() {
-	return camera->isTweening();
-}
-
-bool GameScene::isWalkablePosition(GridPosition position) {
-	return (
-		levelLayout->getBlockType(position) == GameConstants::BlockTypes::BRIDGE ||
-		levelLayout->isEmptyBlock(position) &&
-		levelLayout->isWalkableBlock(position.layer - 1, position.x, position.z)
-	);
-}
-
-bool GameScene::isWalkableDownStaircase(MathUtils::Direction direction) {
-	using namespace GameConstants;
-	using namespace MathUtils;
-
-	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
-	int targetFloorBlockType = levelLayout->getBlockType(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z);
-
-	return (
-		(direction == Direction::FORWARD && targetFloorBlockType == BlockTypes::STAIRCASE_BACKWARD) ||
-		(direction == Direction::BACKWARD && targetFloorBlockType == BlockTypes::STAIRCASE_FORWARD) ||
-		(direction == Direction::LEFT && targetFloorBlockType == BlockTypes::STAIRCASE_RIGHT) ||
-		(direction == Direction::RIGHT && targetFloorBlockType == BlockTypes::STAIRCASE_LEFT)
-	);
-}
-
-bool GameScene::isWalkableUpStaircase(MathUtils::Direction direction) {
-	using namespace GameConstants;
-	using namespace MathUtils;
-
-	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
-	int targetPositionBlockType = levelLayout->getBlockType(targetGridPosition);
-
-	return (
-		(direction == Direction::FORWARD && targetPositionBlockType == BlockTypes::STAIRCASE_FORWARD) ||
-		(direction == Direction::BACKWARD && targetPositionBlockType == BlockTypes::STAIRCASE_BACKWARD) ||
-		(direction == Direction::LEFT && targetPositionBlockType == BlockTypes::STAIRCASE_LEFT) ||
-		(direction == Direction::RIGHT && targetPositionBlockType == BlockTypes::STAIRCASE_RIGHT)
-	);
-}
-
 void GameScene::loadLevel() {
-	using namespace GameConstants;
+	using namespace GameUtils;
 
 	LevelLoader levelLoader("./Assets/Gate1/Level.egp");
 
 	const LevelData& levelData = levelLoader.getLevelData();
 	const Soft::Area& size = levelData.size;
+
+	playerSpawnPosition = levelData.spawnPosition;
 	levelLayout = new LevelLayout(levelData.layers.size(), size);
 
 	for (int layer = 0; layer < levelLayout->getTotalLayers(); layer++) {
@@ -292,8 +203,6 @@ void GameScene::loadLevel() {
 		}
 	}
 
-	spawnPlayer(levelData.spawnPosition);
-
 	settings.ambientLightColor = levelData.ambientLightColor;
 	settings.ambientLightVector = levelData.ambientLightVector;
 	settings.ambientLightFactor = levelData.ambientLightFactor;
@@ -312,7 +221,7 @@ void GameScene::loadTextures() {
 void GameScene::loadUI() {
 	int windowWidth = controller->getWindowWidth();
 	int windowHeight = controller->getWindowHeight();
-	int baseHeight = windowHeight - (windowHeight * GameConstants::RASTER_REGION.height / 100.0f);
+	int baseHeight = windowHeight - (windowHeight * GameUtils::RASTER_REGION.height / 100.0f);
 	int baseY = windowHeight - baseHeight;
 
 	add("textBox", new TextBox(uiFont));
@@ -338,148 +247,11 @@ void GameScene::loadUI() {
 	ui->add("lightBar", lightBar);
 }
 
-void GameScene::move(MathUtils::Direction direction) {
-	using namespace MathUtils;
-
-	if (isPlayerMoving()) {
-		return;
-	}
-
-	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
-	shouldBobCamera = false;
-	lastMovementTime = getRunningTime();
-
-	if (levelLayout->isStaircaseBlock(currentGridPosition)) {
-		moveOffStaircase(direction);
-	} else if (isWalkableUpStaircase(direction)) {
-		moveUpOntoStaircase(direction);
-	} else if (isWalkableDownStaircase(direction)) {
-		moveDownOntoStaircase(direction);
-	} else if (isWalkablePosition(targetGridPosition)) {
-		camera->tweenTo(getGridPositionVec3(targetGridPosition), GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
-		currentGridPosition = targetGridPosition;
-		shouldBobCamera = true;
-	}
-}
-
-void GameScene::moveOffStaircase(MathUtils::Direction direction) {
-	using namespace GameConstants;
-	using namespace MathUtils;
-
-	int blockType = levelLayout->getBlockType(currentGridPosition);
-	GridPosition targetGridPosition = currentGridPosition;
-
-	switch (blockType) {
-		case BlockTypes::STAIRCASE_FORWARD:
-			if (direction == Direction::FORWARD) {
-				targetGridPosition.z--;
-				targetGridPosition.layer++;
-			} else if (direction == Direction::BACKWARD) {
-				targetGridPosition.z++;
-			}
-			break;
-		case BlockTypes::STAIRCASE_BACKWARD:
-			if (direction == Direction::BACKWARD) {
-				targetGridPosition.z++;
-				targetGridPosition.layer++;
-			} else if (direction == Direction::FORWARD) {
-				targetGridPosition.z--;
-			}
-			break;
-		case BlockTypes::STAIRCASE_LEFT:
-			if (direction == Direction::LEFT) {
-				targetGridPosition.x--;
-				targetGridPosition.layer++;
-			} else if (direction == Direction::RIGHT) {
-				targetGridPosition.x++;
-			}
-			break;
-		case BlockTypes::STAIRCASE_RIGHT:
-			if (direction == Direction::RIGHT) {
-				targetGridPosition.x++;
-				targetGridPosition.layer++;
-			} else if (direction == Direction::LEFT) {
-				targetGridPosition.x--;
-			}
-			break;
-	}
-
-	if (targetGridPosition == currentGridPosition) {
-		return;
-	}
-
-	Soft::Vec3 targetCameraPosition = getGridPositionVec3(targetGridPosition);
-
-	if (levelLayout->isStaircaseBlock(targetGridPosition)) {
-		targetCameraPosition.y += GameConstants::HALF_TILE_SIZE;
-	} else if (levelLayout->isStaircaseBlock(targetGridPosition.layer - 1, targetGridPosition.x, targetGridPosition.z)) {
-		targetCameraPosition.y -= GameConstants::HALF_TILE_SIZE;
-		targetGridPosition.layer--;
-	} else if (!isWalkablePosition(targetGridPosition)) {
-		return;
-	}
-
-	camera->tweenTo(targetCameraPosition, GameConstants::MOVE_STEP_DURATION, Soft::Ease::linear);
-	currentGridPosition = targetGridPosition;
-}
-
-void GameScene::moveDownOntoStaircase(MathUtils::Direction direction) {
-	using namespace GameConstants;
-	using namespace MathUtils;
-
-	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
-	targetGridPosition.layer--;
-
-	Soft::Vec3 targetPosition = getGridPositionVec3(targetGridPosition);
-	targetPosition.y += HALF_TILE_SIZE;
-
-	camera->tweenTo(targetPosition, MOVE_STEP_DURATION, Soft::Ease::linear);
-	currentGridPosition = targetGridPosition;
-}
-
-void GameScene::moveUpOntoStaircase(MathUtils::Direction direction) {
-	using namespace GameConstants;
-	using namespace MathUtils;
-
-	GridPosition targetGridPosition = getDirectionalGridPosition(direction);
-	Soft::Vec3 targetPosition = getGridPositionVec3(targetGridPosition);
-	targetPosition.y += HALF_TILE_SIZE;
-
-	camera->tweenTo(targetPosition, MOVE_STEP_DURATION, Soft::Ease::linear);
-	currentGridPosition = targetGridPosition;
-}
-
 void GameScene::showText(const char* value) {
 	TextBox* textBox = (TextBox*)getEntity("textBox");
 
 	textBox->write(value, TextSpeed::NORMAL);
 	textBox->show();
-}
-
-void GameScene::spawnPlayer(const SpawnPosition& spawnPosition) {
-	using namespace GameConstants;
-	using namespace MathUtils;
-
-	currentGridPosition.layer = spawnPosition.layer;
-	currentGridPosition.x = spawnPosition.x;
-	currentGridPosition.z = spawnPosition.z;
-
-	camera->position = getGridPositionVec3(currentGridPosition);
-
-	switch (spawnPosition.direction) {
-		case Direction::FORWARD:
-			camera->yaw = 0.0f;
-			break;
-		case Direction::LEFT:
-			camera->yaw = DEG_90;
-			break;
-		case Direction::BACKWARD:
-			camera->yaw = DEG_180;
-			break;
-		case Direction::RIGHT:
-			camera->yaw = DEG_270;
-			break;
-	}
 }
 
 void GameScene::updateUI(int dt) {

@@ -1,6 +1,6 @@
 #include <Level/BlockBuilder.h>
 #include <Level/LevelLayout.h>
-#include <GameConstants.h>
+#include <GameUtils.h>
 #include <GameObjects.h>
 #include <MathUtils.h>
 #include <Level/BlockUtils.h>
@@ -19,7 +19,7 @@ BlockBuilder::BlockBuilder(LevelLayout* levelLayout) {
 }
 
 Block BlockBuilder::getNextBlock() {
-	using namespace GameConstants;
+	using namespace GameUtils;
 
 	Block block;
 
@@ -64,7 +64,7 @@ Block BlockBuilder::getNextBlock() {
 }
 
 Soft::Object* BlockBuilder::getBlockObject(int blockType) {
-	using namespace GameConstants;
+	using namespace GameUtils;
 
 	Soft::Object* object = nullptr;
 

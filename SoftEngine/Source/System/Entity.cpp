@@ -33,6 +33,10 @@ void Entity::add(const char* key, UIObject* uiObject) {
 	queuedUIObjectMap.emplace(key, uiObject);
 }
 
+int Entity::getAge() const {
+	return age;
+}
+
 const std::vector<Object*>& Entity::getQueuedObjects() const {
 	return queuedObjects;
 }
@@ -49,6 +53,8 @@ void Entity::update(int dt) {
 	if (lifetime > 0) {
 		lifetime = FAST_MAX(lifetime - dt, 0);
 	}
+
+	age += dt;
 
 	onUpdate(dt);
 }

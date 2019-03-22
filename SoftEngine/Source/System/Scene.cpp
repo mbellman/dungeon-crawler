@@ -472,6 +472,10 @@ void Scene::update(int dt) {
 
 	runningTime += dt;
 
+	handleControl(dt);
+	camera->update(dt);
+	updateCurrentOccupiedSectors();
+
 	for (auto* entity : entities) {
 		entity->update(dt);
 	}
@@ -485,9 +489,6 @@ void Scene::update(int dt) {
 	}
 
 	emptyDisposalQueues();
-	updateCurrentOccupiedSectors();
-	handleControl(dt);
-	camera->update(dt);
 	onUpdate(dt);
 	removeExpiredItems();
 

@@ -1,8 +1,9 @@
 #pragma once
 
+#include <Level/LevelLoader.h>
 #include <SoftEngine.h>
 
-namespace GameConstants {
+namespace GameUtils {
 	constexpr static float TILE_SIZE = 250.0f;
 	constexpr static float HALF_TILE_SIZE = TILE_SIZE / 2.0f;
 	constexpr static int MOVE_STEP_DURATION = 300;
@@ -28,4 +29,7 @@ namespace GameConstants {
 		STAIRCASE_RIGHT = 9,
 		BRIDGE = 10
 	};
+
+	MathUtils::Direction getYawDirection(float yaw);
+	Soft::Vec3 getGridPositionVec3(GridPosition position);
 }

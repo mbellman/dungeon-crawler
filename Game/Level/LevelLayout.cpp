@@ -1,7 +1,7 @@
 #include <Level/LevelLayout.h>
 #include <Level/LevelLoader.h>
 #include <Level/BlockUtils.h>
-#include <GameConstants.h>
+#include <GameUtils.h>
 #include <SoftEngine.h>
 
 /**
@@ -33,13 +33,13 @@ LevelLayout::~LevelLayout() {
 
 int LevelLayout::getBlockType(int layerIndex, int x, int z) const {
 	if (layerIndex < 0 || layerIndex >= totalLayers) {
-		return GameConstants::BlockTypes::OUT_OF_BOUNDS;
+		return GameUtils::BlockTypes::OUT_OF_BOUNDS;
 	}
 
 	Layer& layer = layers[layerIndex];
 
 	if (x < 0 || x >= layer.area.width || z < 0 || z >= layer.area.height) {
-		return GameConstants::BlockTypes::OUT_OF_BOUNDS;
+		return GameUtils::BlockTypes::OUT_OF_BOUNDS;
 	}
 
 	int blockIndex = z * layer.area.width + x;
@@ -81,6 +81,14 @@ bool LevelLayout::isWalkableBlock(int layerIndex, int x, int z) const {
 
 bool LevelLayout::isWalkableBlock(GridPosition position) const {
 	return isWalkableBlock(position.layer, position.x, position.z);
+}
+
+bool LevelLayout::isWalkablePosition(GridPosition position) const {
+	return (
+		getBlockType(position) == GameUtils::BlockTypes::BRIDGE ||
+		isEmptyBlock(position) &&
+		isWalkableBlock(position.layer - 1, position.x, position.z)
+	);
 }
 
 void LevelLayout::setBlockType(int layerIndex, int x, int z, int blockType) {

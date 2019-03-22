@@ -14,6 +14,7 @@ public:
 
 	~Entity();
 
+	int getAge() const;
 	const std::vector<Object*>& getQueuedObjects() const;
 	const std::vector<Sound*>& getQueuedSounds() const;
 	const std::map<const char*, UIObject*>& getQueuedUIObjectMap() const;
@@ -27,6 +28,7 @@ protected:
 	void add(const char* key, UIObject* uiObject);
 
 private:
+	int age = 0;
 	std::vector<Object*> queuedObjects;
 	std::vector<Sound*> queuedSounds;
 	std::map<const char*, UIObject*> queuedUIObjectMap;

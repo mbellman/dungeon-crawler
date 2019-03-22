@@ -34,6 +34,7 @@ public:
 	bool isStaircaseBlock(GridPosition position) const;
 	bool isWalkableBlock(int layerIndex, int x, int z) const;
 	bool isWalkableBlock(GridPosition position) const;
+	bool isWalkablePosition(GridPosition position) const;
 	void setBlockType(int layerIndex, int x, int z, int blockType);
 
 private:

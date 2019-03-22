@@ -38,12 +38,15 @@ include_directories(${OPENAL_INCLUDE_DIR})
 set(SOURCE_FILES
     # -- Demo files --
     Game/main.cpp
-    Game/GameConstants.h
+    Game/GameUtils.h
+    Game/GameUtils.cpp
     Game/GameObjects.h
     Game/GameObjects.cpp
     Game/MathUtils.h
     Game/Entities/CastLight.h
     Game/Entities/CastLight.cpp
+    Game/Entities/Player.h
+    Game/Entities/Player.cpp
     Game/Entities/TextBox.h
     Game/Entities/TextBox.cpp
     Game/Level/BlockBuilder.h
