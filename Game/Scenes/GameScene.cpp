@@ -174,12 +174,7 @@ void GameScene::loadLevel() {
 		const StaticLight& staticLight = levelData.staticLights[i];
 		Soft::Light* light = new Soft::Light();
 
-		light->position = {
-			staticLight.position.x * TILE_SIZE,
-			staticLight.position.layer * TILE_SIZE - HALF_TILE_SIZE,
-			-staticLight.position.z * TILE_SIZE
-		};
-
+		light->position = getGridPositionVec3(staticLight.position);
 		light->setColor(staticLight.color);
 		light->range = staticLight.range;
 		light->isStatic = true;

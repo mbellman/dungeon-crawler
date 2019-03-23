@@ -49,11 +49,7 @@ Block BlockBuilder::getNextBlock() {
 			block.object->scale(HALF_TILE_SIZE);
 		}
 
-		Soft::Vec3 offset = {
-			x * TILE_SIZE,
-			layerIndex * TILE_SIZE - HALF_TILE_SIZE,
-			-z * TILE_SIZE
-		};
+		Soft::Vec3 offset = GameUtils::getGridPositionVec3({ layerIndex, x, z });
 
 		block.object->position += offset;
 	}
