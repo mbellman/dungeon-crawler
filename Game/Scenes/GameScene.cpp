@@ -42,7 +42,7 @@ void GameScene::load() {
 
 	inputManager->onKeyDown([=](const SDL_Keycode& code) {
 		if (code == SDLK_SPACE) {
-			TextBox* textBox = (TextBox*)getEntity("textBox");
+			auto* textBox = getEntity<TextBox>("textBox");
 
 			if (textBox->isWriting()) {
 				textBox->skipWritingAnimation();
@@ -59,7 +59,7 @@ void GameScene::load() {
 void GameScene::onUpdate(int dt) {
 	using namespace GameUtils;
 
-	Player* player = (Player*)getEntity("player");
+	auto* player = getEntity<Player>("player");
 
 	if (inputManager->isKeyPressed(Soft::Keys::W)) {
 		player->move(getYawDirection(camera->yaw));
@@ -100,7 +100,7 @@ void GameScene::castLight() {
 		return;
 	}
 
-	TextBox* textBox = (TextBox*)getEntity("textBox");
+	auto* textBox = getEntity<TextBox>("textBox");
 
 	if (textBox->isShown()) {
 		textBox->hide();
@@ -243,7 +243,7 @@ void GameScene::loadUI() {
 }
 
 void GameScene::showText(const char* value) {
-	TextBox* textBox = (TextBox*)getEntity("textBox");
+	auto* textBox = getEntity<TextBox>("textBox");
 
 	textBox->write(value, TextSpeed::NORMAL);
 	textBox->show();

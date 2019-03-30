@@ -127,10 +127,6 @@ const std::vector<Light*>& Scene::getLights() {
 	return lights;
 }
 
-Entity* Scene::getEntity(const char* key) {
-	return retrieveMappedItem(entityMap, key);
-}
-
 Object* Scene::getObject(const char* key) {
 	return retrieveMappedItem(objectMap, key);
 }
@@ -356,17 +352,6 @@ void Scene::resume() {
 	}
 }
 
-template<class T>
-T* Scene::retrieveMappedItem(std::map<const char*, T*> map, const char* key) {
-	const auto& entry = map.find(key);
-
-	if (entry != map.end()) {
-		return entry->second;
-	}
-
-	return NULL;
-}
-
 void Scene::safelyFreeMappedEntity(const char* key) {
 	const auto& entry = entityMap.find(key);
 
@@ -375,19 +360,6 @@ void Scene::safelyFreeMappedEntity(const char* key) {
 
 		entityMap.erase(key);
 		removeEntity(entity);
-	}
-}
-
-template<class T>
-void Scene::safelyFreeMappedItem(std::map<const char*, T*> map, const char* key) {
-	const auto& entry = map.find(key);
-
-	if (entry != map.end()) {
-		map.erase(key);
-
-		delete entry->second;
-
-		return;
 	}
 }
 

@@ -85,7 +85,17 @@ protected:
 	void add(const char* key, TextureBuffer* textureBuffer);
 	void add(const char* key, Sound* sound);
 	void add(const char* key, ParticleSystem* particleSystem);
-	Entity* getEntity(const char* key);
+
+	template<class T>
+	T* getEntity(const char* key) {
+		return ((T*)retrieveMappedItem(entityMap, key));
+	}
+
+	template<class T>
+	T* getObject(const char* key) {
+		return ((T*)getObject(key));
+	}
+
 	Object* getObject(const char* key);
 	ObjLoader* getObjLoader(const char* key);
 	ParticleSystem* getParticleSystem(const char* key);
@@ -128,12 +138,30 @@ private:
 	void removeSound(Sound* sound);
 
 	template<class T>
-	T* retrieveMappedItem(std::map<const char*, T*> map, const char* key);
+	T* retrieveMappedItem(std::map<const char*, T*> map, const char* key) {
+		const auto& entry = map.find(key);
+
+		if (entry != map.end()) {
+			return entry->second;
+		}
+
+		return NULL;
+	}
 
 	void safelyFreeMappedEntity(const char* key);
 
 	template<class T>
-	void safelyFreeMappedItem(std::map<const char*, T*> map, const char* key);
+	void safelyFreeMappedItem(std::map<const char*, T*> map, const char* key) {
+		const auto& entry = map.find(key);
+
+		if (entry != map.end()) {
+			map.erase(key);
+
+			delete entry->second;
+
+			return;
+		}
+	}
 
 	void safelyFreeMappedObject(const char* key);
 	void safelyFreeMappedParticleSystem(const char* key);
