@@ -11,7 +11,8 @@ public:
 
 	void initialize() override;
 	void onUpdate(int dt) override;
-	const GridPosition& getCurrentGridPosition();
+	const GridPosition& getCurrentGridPosition() const;
+	MathUtils::Direction getDirection() const;
 	void move(MathUtils::Direction direction);
 	void spawn(const SpawnPosition& spawnPosition);
 

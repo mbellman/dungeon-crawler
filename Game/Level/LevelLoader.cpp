@@ -8,6 +8,7 @@ static std::string AMBIENT_LIGHT = "AL";
 static std::string VISIBILITY = "V";
 static std::string BRIGHTNESS = "B";
 static std::string STATIC_LIGHT = "SL";
+static std::string ACTIONABLE = "A";
 static std::string LAYER = "L";
 
 /**
@@ -42,6 +43,8 @@ LevelLoader::LevelLoader(const char* path) {
 			parseBrightness();
 		} else if (label == STATIC_LIGHT) {
 			parseStaticLight();
+		} else if (label == ACTIONABLE) {
+			parseActionable();
 		} else if (label == LAYER) {
 			parseLayerData();
 		}
@@ -53,10 +56,39 @@ LevelLoader::LevelLoader(const char* path) {
 LevelLoader::~LevelLoader() {
 	levelData.layers.clear();
 	levelData.staticLights.clear();
+	levelData.actionables.clear();
+}
+
+MathUtils::Direction LevelLoader::getDirection(int code) {
+	switch (code) {
+		case 0:
+			return MathUtils::Direction::FORWARD;
+		case 1:
+			return MathUtils::Direction::LEFT;
+		case 2:
+			return MathUtils::Direction::BACKWARD;
+		case 3:
+			return MathUtils::Direction::RIGHT;
+		default:
+			return MathUtils::Direction::FORWARD;
+	}
 }
 
 const LevelData& LevelLoader::getLevelData() {
 	return levelData;
+}
+
+void LevelLoader::parseActionable() {
+	setChunkDelimiter(",");
+
+	Actionable actionable;
+
+	actionable.position.layer = std::stoi(readNextChunk());
+	actionable.position.x = std::stoi(readNextChunk());
+	actionable.position.z = std::stoi(readNextChunk());
+	actionable.direction = getDirection(std::stoi(readNextChunk()));
+
+	levelData.actionables.push_back(actionable);
 }
 
 void LevelLoader::parseAmbientLightSettings() {
@@ -99,26 +131,10 @@ void LevelLoader::parseLayerData() {
 void LevelLoader::parseSpawnPosition() {
 	setChunkDelimiter(",");
 
-	SpawnPosition& position = levelData.spawnPosition;
-
-	position.layer = std::stoi(readNextChunk());
-	position.x = std::stoi(readNextChunk());
-	position.z = std::stoi(readNextChunk());
-
-	switch (std::stoi(readNextChunk())) {
-		case 0:
-			position.direction = MathUtils::Direction::FORWARD;
-			break;
-		case 1:
-			position.direction = MathUtils::Direction::LEFT;
-			break;
-		case 2:
-			position.direction = MathUtils::Direction::BACKWARD;
-			break;
-		case 3:
-			position.direction = MathUtils::Direction::RIGHT;
-			break;
-	}
+	levelData.spawnPosition.layer = std::stoi(readNextChunk());
+	levelData.spawnPosition.x = std::stoi(readNextChunk());
+	levelData.spawnPosition.z = std::stoi(readNextChunk());
+	levelData.spawnPosition.direction = getDirection(std::stoi(readNextChunk()));
 }
 
 void LevelLoader::parseStaticLight() {

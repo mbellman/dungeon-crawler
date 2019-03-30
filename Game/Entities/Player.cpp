@@ -59,6 +59,14 @@ bool Player::canWalkUpStaircase(MathUtils::Direction direction) {
 	);
 }
 
+const GridPosition& Player::getCurrentGridPosition() const {
+	return currentGridPosition;
+}
+
+MathUtils::Direction Player::getDirection() const {
+	return GameUtils::getYawDirection(camera->yaw);
+}
+
 GridPosition Player::getDirectionalGridPosition(MathUtils::Direction direction) {
 	GridPosition targetGridPosition = currentGridPosition;
 

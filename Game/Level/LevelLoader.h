@@ -13,13 +13,18 @@ struct GridPosition {
 };
 
 struct SpawnPosition : GridPosition {
-	MathUtils::Direction direction = MathUtils::Direction::FORWARD;
+	MathUtils::Direction direction;
 };
 
 struct StaticLight {
 	GridPosition position;
 	Soft::Color color;
 	float range;
+};
+
+struct Actionable {
+	GridPosition position;
+	MathUtils::Direction direction;
 };
 
 struct LayerData {
@@ -36,6 +41,7 @@ struct LevelData {
 	float brightness = 1.0f;
 	std::vector<LayerData> layers;
 	std::vector<StaticLight> staticLights;
+	std::vector<Actionable> actionables;
 };
 
 class LevelLoader : Soft::Loader {
@@ -48,6 +54,8 @@ public:
 private:
 	LevelData levelData;
 
+	MathUtils::Direction getDirection(int code);
+	void parseActionable();
 	void parseAmbientLightSettings();
 	void parseBrightness();
 	void parseLayerSize();

@@ -41,15 +41,7 @@ void GameScene::load() {
 	});
 
 	inputManager->onKeyDown([=](const SDL_Keycode& code) {
-		if (code == SDLK_SPACE) {
-			auto* textBox = getEntity<TextBox>("textBox");
-
-			if (textBox->isWriting()) {
-				textBox->skipWritingAnimation();
-			} else if (textBox->isShown()) {
-				textBox->hide();
-			}
-		}
+		handleKeyDown(code);
 	});
 
 	camera->fov = 110;
@@ -148,6 +140,31 @@ float GameScene::getCastLightCooldownProgress() {
 	return progress > 1.0f ? 1.0f : progress;
 }
 
+void GameScene::handleAction() {
+	auto* textBox = getEntity<TextBox>("textBox");
+
+	if (textBox->isWriting()) {
+		textBox->skipWritingAnimation();
+	} else if (textBox->isShown()) {
+		textBox->hide();
+	} else {
+		auto* player = getEntity<Player>("player");
+		const Actionable* actionable = levelLayout->getMatchingActionable(player->getCurrentGridPosition(), player->getDirection());
+
+		if (actionable != nullptr) {
+			showText("Yep, there's an action here.");
+		}
+	}
+}
+
+void GameScene::handleKeyDown(const SDL_Keycode& code) {
+	switch (code) {
+		case SDLK_SPACE:
+			handleAction();
+			break;
+	}
+}
+
 void GameScene::loadLevel() {
 	using namespace GameUtils;
 
@@ -170,8 +187,7 @@ void GameScene::loadLevel() {
 		}
 	}
 
-	for (int i = 0; i < levelData.staticLights.size(); i++) {
-		const StaticLight& staticLight = levelData.staticLights[i];
+	for (const auto& staticLight : levelData.staticLights) {
 		Soft::Light* light = new Soft::Light();
 
 		light->position = getGridPositionVec3(staticLight.position);
@@ -180,6 +196,10 @@ void GameScene::loadLevel() {
 		light->isStatic = true;
 
 		add(light);
+	}
+
+	for (const auto& actionable : levelData.actionables) {
+		levelLayout->addActionable(actionable);
 	}
 
 	BlockBuilder builder(levelLayout);

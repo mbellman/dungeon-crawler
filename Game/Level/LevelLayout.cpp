@@ -29,6 +29,12 @@ LevelLayout::LevelLayout(int totalLayers, const Soft::Area& area) {
 
 LevelLayout::~LevelLayout() {
 	delete[] layers;
+
+	actionables.clear();
+}
+
+void LevelLayout::addActionable(const Actionable& actionable) {
+	actionables.push_back(actionable);
 }
 
 int LevelLayout::getBlockType(int layerIndex, int x, int z) const {
@@ -49,6 +55,16 @@ int LevelLayout::getBlockType(int layerIndex, int x, int z) const {
 
 int LevelLayout::getBlockType(GridPosition position) const {
 	return getBlockType(position.layer, position.x, position.z);
+}
+
+const Actionable* LevelLayout::getMatchingActionable(GridPosition position, MathUtils::Direction direction) const {
+	for (auto& actionable : actionables) {
+		if (position == actionable.position && direction == actionable.direction) {
+			return &actionable;
+		}
+	}
+
+	return nullptr;
 }
 
 const Soft::Area& LevelLayout::getSize() const {
