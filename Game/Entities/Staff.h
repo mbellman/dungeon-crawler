@@ -9,7 +9,7 @@ public:
 	void swing();
 
 private:
-	constexpr static float SIDE_DISTANCE = 18.0f;
+	constexpr static float SIDE_DISTANCE = 20.0f;
 	constexpr static float FORWARD_DISTANCE = 45.0f;
 	constexpr static float VERTICAL_OFFSET = -30.0f;
 	constexpr static float PITCH_VERTICAL_SHIFT = 40.0f;
