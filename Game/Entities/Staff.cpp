@@ -22,12 +22,33 @@ void Staff::initialize() {
 }
 
 void Staff::onUpdate(int dt) {
-	updatePosition();
-	updateRotation();
+	if (swingTween.isActive) {
+		updateSwing(dt);
+	} else {
+		updatePosition();
+		updateRotation();
+	}
+}
+
+Soft::Vec3 Staff::getPitchAxis() const {
+	return {
+		cosf(camera->yaw),
+		0.0f,
+		sinf(camera->yaw)
+	};
 }
 
 void Staff::swing() {
+	if (swingTween.isActive) {
+		return;
+	}
 
+	swingTween.value.start = 0.0f;
+	swingTween.value.end = Staff::SWING_PITCH_DEGREES;
+	swingTween.time = 0;
+	swingTween.duration = 500;
+	swingTween.easing = Soft::Ease::sineWave;
+	swingTween.isActive = true;
 }
 
 void Staff::updatePosition() {
@@ -56,14 +77,24 @@ void Staff::updateRotation() {
 		float pitchDelta = camera->pitch - lastCameraPitch;
 		float pitchAngle = -pitchDelta * 180.0f / M_PI;
 
-		Soft::Vec3 pitchAxis = {
-			cosf(camera->yaw),
-			0.0f,
-			sinf(camera->yaw)
-		};
-
-		model->rotateOnAxis(pitchAngle, pitchAxis);
+		model->rotateOnAxis(pitchAngle, getPitchAxis());
 
 		lastCameraPitch = camera->pitch;
+	}
+}
+
+void Staff::updateSwing(int dt) {
+	float lastPitch = swingTween.alpha();
+
+	swingTween.time += dt;
+
+	float alpha = swingTween.alpha();
+	float pitchDelta = alpha - lastPitch;
+	float pitchAngle = pitchDelta * 180.0f / M_PI;
+
+	model->rotateOnAxis(pitchAngle, getPitchAxis());
+
+	if (swingTween.progress() >= 1.0f) {
+		swingTween.isActive = false;
 	}
 }

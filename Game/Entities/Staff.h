@@ -14,12 +14,16 @@ private:
 	constexpr static float VERTICAL_OFFSET = -30.0f;
 	constexpr static float PITCH_VERTICAL_SHIFT = 40.0f;
 	constexpr static float SCALE = 20.0f;
+	constexpr static float SWING_PITCH_DEGREES = 45.0f;
 
 	const Soft::Camera* camera = nullptr;
 	Soft::Model* model = nullptr;
 	float lastCameraYaw = 0.0f;
 	float lastCameraPitch = 0.0f;
+	Soft::Tween<float> swingTween;
 
+	Soft::Vec3 getPitchAxis() const;
 	void updatePosition();
 	void updateRotation();
+	void updateSwing(int dt);
 };

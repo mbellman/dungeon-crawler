@@ -111,6 +111,8 @@ void GameScene::castLight() {
 
 	add(castLight);
 
+	getEntity<Staff>("staff")->swing();
+
 	lastLightCastTime = getRunningTime();
 }
 
