@@ -58,6 +58,7 @@ struct Object : public Positionable3d {
 	const std::vector<Object*>& getLODs() const;
 	int getPolygonCount() const;
 	const std::vector<Polygon*>& getPolygons() const;
+	const Vec3& getPreviousPosition() const;
 	int getVertexCount() const;
 	const std::vector<Vertex3d>& getVertices() const;
 	bool hasLODs() const;
@@ -101,6 +102,7 @@ private:
 		bool isReversed = false;
 	};
 
+	Vec3 previousPosition;
 	std::vector<Polygon*> polygons;
 	std::vector<Object*> lods;
 	Morph morph;

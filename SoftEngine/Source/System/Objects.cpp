@@ -184,6 +184,10 @@ const std::vector<Polygon*>& Object::getPolygons() const {
 	return polygons;
 }
 
+const Vec3& Object::getPreviousPosition() const {
+	return previousPosition;
+}
+
 int Object::getVertexCount() const {
 	return vertices.size();
 }
@@ -319,6 +323,8 @@ void Object::syncLODs() {
 }
 
 void Object::update(int dt) {
+	previousPosition = position;
+
 	updatePosition(dt);
 
 	if (morph.isActive) {
@@ -855,4 +861,4 @@ void DirectionalLight::setDirection(const Vec3& direction) {
 	this->direction = direction.unit();
 }
 
-} // namespace soft
+} // namespace Soft

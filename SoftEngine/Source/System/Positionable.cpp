@@ -91,4 +91,4 @@ void Positionable3d::updatePosition(int dt) {
 	}
 }
 
-} // namespace
+} // namespace Soft

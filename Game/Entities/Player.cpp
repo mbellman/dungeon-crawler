@@ -109,7 +109,9 @@ void Player::move(MathUtils::Direction direction) {
 		moveDownOntoStaircase(direction);
 	} else if (levelLayout->isWalkablePosition(targetGridPosition)) {
 		Soft::Vec3 targetCameraPosition = GameUtils::getGridPositionVec3(targetGridPosition);
+
 		camera->tweenTo(targetCameraPosition, GameUtils::MOVE_STEP_DURATION, Soft::Ease::linear);
+
 		currentGridPosition = targetGridPosition;
 		shouldBobCamera = true;
 	}

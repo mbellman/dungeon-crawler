@@ -21,7 +21,6 @@ public:
 private:
 	Scene* activeScene = 0;
 
-	float getIncidence(float dot);
 	Vec3 getTriangleVertexColorIntensity(Triangle* triangle, int vertexIndex);
 	void illuminateColorTriangle(Triangle* triangle);
 	void illuminateTextureTriangle(Triangle* triangle);

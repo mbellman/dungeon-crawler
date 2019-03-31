@@ -30,12 +30,21 @@ void Illuminator::computeAmbientLightColorIntensity(const Vec3& normal, float fr
 }
 
 void Illuminator::computeLightColorIntensity(Light* light, const Vec3& vertexPosition, const Vec3& normal, float fresnelFactor, Vec3& colorIntensity) {
+	// Static lights are assumed to remain in place indefinitely,
+	// but non-static lights may move. In multi-threaded mode, the
+	// rendering/illumination pipeline runs one frame behind to
+	// facilitate parallelization, meaning the effects of non-static
+	// lights must be computed based on their last-frame position.
+	const Vec3& lightPosition = light->isStatic
+		? light->position
+		: light->getPreviousPosition();
+
 	if (
 		light->isDisabled ||
 		light->power == 0 ||
-		abs(light->position.x - vertexPosition.x) > light->range ||
-		abs(light->position.y - vertexPosition.y) > light->range ||
-		abs(light->position.z - vertexPosition.z) > light->range
+		abs(lightPosition.x - vertexPosition.x) > light->range ||
+		abs(lightPosition.y - vertexPosition.y) > light->range ||
+		abs(lightPosition.z - vertexPosition.z) > light->range
 	) {
 		// Color intensity remains unaffected when lights
 		// are disabled, at 0 power, or out of axial range.
@@ -43,10 +52,11 @@ void Illuminator::computeLightColorIntensity(Light* light, const Vec3& vertexPos
 	}
 
 	const Settings& settings = activeScene->settings;
-	Vec3 lightSourceVector = vertexPosition - light->position;
+	Vec3 lightSourceVector = vertexPosition - lightPosition;
 	float lightDistance = lightSourceVector.magnitude();
 
 	if (lightDistance > light->range) {
+		// Out-of-range lights don't affect color intensity.
 		return;
 	}
 
@@ -77,7 +87,7 @@ void Illuminator::computeLightColorIntensity(Light* light, const Vec3& vertexPos
 		return;
 	}
 
-	float incidence = getIncidence(normalDot) * (isDirectional ? powf(directionalDot, 4) : 1.0f);
+	float incidence = cosf((1 + normalDot) * PI_HALF) * (isDirectional ? powf(directionalDot, 4) : 1.0f);
 	float illuminance = pow(1.0f - lightDistance / light->range, 2);
 	float intensity = light->power * incidence * illuminance * (1.0f + fresnelFactor);
 	const Vec3& colorRatios = light->getColorRatios();
@@ -85,10 +95,6 @@ void Illuminator::computeLightColorIntensity(Light* light, const Vec3& vertexPos
 	colorIntensity.x *= (1.0f + (intensity * colorRatios.x) / settings.brightness);
 	colorIntensity.y *= (1.0f + (intensity * colorRatios.y) / settings.brightness);
 	colorIntensity.z *= (1.0f + (intensity * colorRatios.z) / settings.brightness);
-}
-
-inline float Illuminator::getIncidence(float dot) {
-	return cosf((1 + dot) * PI_HALF);
 }
 
 Vec3 Illuminator::getTriangleVertexColorIntensity(Triangle* triangle, int vertexIndex) {
