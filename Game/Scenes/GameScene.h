@@ -22,6 +22,7 @@ private:
 
 	void addCameraLight();
 	void addPlayer();
+	void addStaff();
 	void castLight();
 	Soft::TextureBuffer* getBlockTexture(int blockType);
 	float getCastLightCooldownProgress();

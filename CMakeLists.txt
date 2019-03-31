@@ -47,6 +47,8 @@ set(SOURCE_FILES
     Game/Entities/CastLight.cpp
     Game/Entities/Player.h
     Game/Entities/Player.cpp
+    Game/Entities/Staff.h
+    Game/Entities/Staff.cpp
     Game/Entities/TextBox.h
     Game/Entities/TextBox.cpp
     Game/Level/BlockBuilder.h

@@ -4,6 +4,7 @@
 #include <Level/LevelLoader.h>
 #include <Entities/Player.h>
 #include <Entities/CastLight.h>
+#include <Entities/Staff.h>
 #include <Entities/TextBox.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
@@ -34,6 +35,7 @@ void GameScene::load() {
 	loadUI();
 
 	addPlayer();
+	addStaff();
 	addCameraLight();
 
 	inputManager->onMouseUp([=]() {
@@ -83,6 +85,12 @@ void GameScene::addPlayer() {
 	player->spawn(playerSpawnPosition);
 
 	add("player", player);
+}
+
+void GameScene::addStaff() {
+	Staff* staff = new Staff(camera);
+
+	add("staff", staff);
 }
 
 void GameScene::castLight() {
