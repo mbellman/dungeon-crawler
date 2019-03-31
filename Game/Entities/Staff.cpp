@@ -16,16 +16,17 @@ void Staff::initialize() {
 
 	model->setColor(180, 100, 10);
 	model->scale(Staff::SCALE);
-	model->transformOrigin = { 0.0f, -30.0f, 0.0f };
+	model->transformOrigin = Staff::DEFAULT_TRANSFORM_ORIGIN;
 
 	add(model);
 }
 
 void Staff::onUpdate(int dt) {
+	updatePosition();
+
 	if (swingTween.isActive) {
 		updateSwing(dt);
 	} else {
-		updatePosition();
 		updateRotation();
 	}
 }
@@ -46,9 +47,12 @@ void Staff::swing() {
 	swingTween.value.start = 0.0f;
 	swingTween.value.end = Staff::SWING_PITCH_DEGREES;
 	swingTween.time = 0;
-	swingTween.duration = 500;
+	swingTween.duration = 350;
 	swingTween.easing = Soft::Ease::sineWave;
 	swingTween.isActive = true;
+
+	model->transformOrigin = Staff::SWING_TRANSFORM_ORIGIN;
+	swingPitchAxis = getPitchAxis();
 }
 
 void Staff::updatePosition() {
@@ -92,9 +96,13 @@ void Staff::updateSwing(int dt) {
 	float pitchDelta = alpha - lastPitch;
 	float pitchAngle = pitchDelta * 180.0f / M_PI;
 
-	model->rotateOnAxis(pitchAngle, getPitchAxis());
+	model->rotateOnAxis(pitchAngle, swingPitchAxis);
 
 	if (swingTween.progress() >= 1.0f) {
+		model->transformOrigin = Staff::DEFAULT_TRANSFORM_ORIGIN;
 		swingTween.isActive = false;
 	}
 }
+
+Soft::Vec3 Staff::DEFAULT_TRANSFORM_ORIGIN = { 0.0f, 30.0f, 0.0f };
+Soft::Vec3 Staff::SWING_TRANSFORM_ORIGIN = { 0.0f, -30.0f, 0.0f };

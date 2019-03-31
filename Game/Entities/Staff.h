@@ -16,10 +16,14 @@ private:
 	constexpr static float SCALE = 20.0f;
 	constexpr static float SWING_PITCH_DEGREES = 45.0f;
 
+	static Soft::Vec3 DEFAULT_TRANSFORM_ORIGIN;
+	static Soft::Vec3 SWING_TRANSFORM_ORIGIN;
+
 	const Soft::Camera* camera = nullptr;
 	Soft::Model* model = nullptr;
 	float lastCameraYaw = 0.0f;
 	float lastCameraPitch = 0.0f;
+	Soft::Vec3 swingPitchAxis;
 	Soft::Tween<float> swingTween;
 
 	Soft::Vec3 getPitchAxis() const;

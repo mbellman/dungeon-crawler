@@ -102,18 +102,18 @@ void Object::addVertex(const Vec3& vector, const Vec2& uv) {
 
 void Object::applyRotationMatrix(const RotationMatrix& matrix) {
 	for (auto& vertex : vertices) {
-		vertex.vector += transformOrigin;
-
-		for (auto& morphTarget : vertex.morphTargets) {
-			morphTarget += transformOrigin;
-		}
-
-		vertex.rotate(matrix);
-
 		vertex.vector -= transformOrigin;
 
 		for (auto& morphTarget : vertex.morphTargets) {
 			morphTarget -= transformOrigin;
+		}
+
+		vertex.rotate(matrix);
+
+		vertex.vector += transformOrigin;
+
+		for (auto& morphTarget : vertex.morphTargets) {
+			morphTarget += transformOrigin;
 		}
 	}
 
