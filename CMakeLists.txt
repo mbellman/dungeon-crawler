@@ -51,6 +51,8 @@ set(SOURCE_FILES
     Game/Entities/Staff.cpp
     Game/Entities/TextBox.h
     Game/Entities/TextBox.cpp
+    Game/Entities/Torch.h
+    Game/Entities/Torch.cpp
     Game/Level/BlockBuilder.h
     Game/Level/BlockBuilder.cpp
     Game/Level/BlockUtils.h

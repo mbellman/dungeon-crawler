@@ -60,7 +60,7 @@ void Staff::updatePosition() {
 	float cy = cosf(camera->yaw);
 
 	float bounceOffset = camera->isTweening()
-		? sinf(getAge() / 50.0f) / 2.0f
+		? sinf(getAge() / 50.0f) * 0.25f
 		: 0.0f;
 
 	Soft::Vec3 offset = {

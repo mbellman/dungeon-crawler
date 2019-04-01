@@ -16,10 +16,9 @@ struct SpawnPosition : GridPosition {
 	MathUtils::Direction direction;
 };
 
-struct StaticLight {
+struct TorchData {
 	GridPosition position;
-	Soft::Color color;
-	float range;
+	MathUtils::Direction direction;
 };
 
 struct Actionable {
@@ -40,7 +39,7 @@ struct LevelData {
 	int visibility = 10000;
 	float brightness = 1.0f;
 	std::vector<LayerData> layers;
-	std::vector<StaticLight> staticLights;
+	std::vector<TorchData> torches;
 	std::vector<Actionable> actionables;
 };
 
@@ -61,6 +60,6 @@ private:
 	void parseLayerSize();
 	void parseLayerData();
 	void parseSpawnPosition();
-	void parseStaticLight();
+	void parseTorch();
 	void parseVisibility();
 };

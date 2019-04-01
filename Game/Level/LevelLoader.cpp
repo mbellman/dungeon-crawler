@@ -7,7 +7,7 @@ static std::string SPAWN_POSITION= "SP";
 static std::string AMBIENT_LIGHT = "AL";
 static std::string VISIBILITY = "V";
 static std::string BRIGHTNESS = "B";
-static std::string STATIC_LIGHT = "SL";
+static std::string TORCH = "T";
 static std::string ACTIONABLE = "A";
 static std::string LAYER = "L";
 
@@ -41,8 +41,8 @@ LevelLoader::LevelLoader(const char* path) {
 			parseVisibility();
 		} else if (label == BRIGHTNESS) {
 			parseBrightness();
-		} else if (label == STATIC_LIGHT) {
-			parseStaticLight();
+		} else if (label == TORCH) {
+			parseTorch();
 		} else if (label == ACTIONABLE) {
 			parseActionable();
 		} else if (label == LAYER) {
@@ -55,7 +55,7 @@ LevelLoader::LevelLoader(const char* path) {
 
 LevelLoader::~LevelLoader() {
 	levelData.layers.clear();
-	levelData.staticLights.clear();
+	levelData.torches.clear();
 	levelData.actionables.clear();
 }
 
@@ -137,20 +137,17 @@ void LevelLoader::parseSpawnPosition() {
 	levelData.spawnPosition.direction = getDirection(std::stoi(readNextChunk()));
 }
 
-void LevelLoader::parseStaticLight() {
+void LevelLoader::parseTorch() {
 	setChunkDelimiter(",");
 
-	StaticLight staticLight;
+	TorchData torchData;
 
-	staticLight.position.layer = std::stoi(readNextChunk());
-	staticLight.position.x = std::stoi(readNextChunk());
-	staticLight.position.z = std::stoi(readNextChunk());
-	staticLight.color.R = std::stoi(readNextChunk());
-	staticLight.color.G = std::stoi(readNextChunk());
-	staticLight.color.B = std::stoi(readNextChunk());
-	staticLight.range = std::stof(readNextChunk());
+	torchData.position.layer = std::stoi(readNextChunk());
+	torchData.position.x = std::stoi(readNextChunk());
+	torchData.position.z = std::stoi(readNextChunk());
+	torchData.direction = getDirection(std::stoi(readNextChunk()));
 
-	levelData.staticLights.push_back(staticLight);
+	levelData.torches.push_back(torchData);
 }
 
 void LevelLoader::parseVisibility() {

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SoftEngine.h>
 
 class Staff : public Soft::Entity {

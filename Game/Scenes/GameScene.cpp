@@ -6,6 +6,7 @@
 #include <Entities/CastLight.h>
 #include <Entities/Staff.h>
 #include <Entities/TextBox.h>
+#include <Entities/Torch.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
 #include <GameUtils.h>
@@ -197,15 +198,10 @@ void GameScene::loadLevel() {
 		}
 	}
 
-	for (const auto& staticLight : levelData.staticLights) {
-		Soft::Light* light = new Soft::Light();
+	for (const auto& torchData : levelData.torches) {
+		Torch* torch = new Torch(torchData);
 
-		light->position = getGridPositionVec3(staticLight.position);
-		light->setColor(staticLight.color);
-		light->range = staticLight.range;
-		light->isStatic = true;
-
-		add(light);
+		add(torch);
 	}
 
 	for (const auto& actionable : levelData.actionables) {
