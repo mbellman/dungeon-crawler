@@ -59,9 +59,13 @@ void Staff::updatePosition() {
 	float sy = sinf(camera->yaw);
 	float cy = cosf(camera->yaw);
 
+	float bounceOffset = camera->isTweening()
+		? sinf(getAge() / 50.0f) / 2.0f
+		: 0.0f;
+
 	Soft::Vec3 offset = {
 		cy * Staff::SIDE_DISTANCE - sy * Staff::FORWARD_DISTANCE,
-		Staff::VERTICAL_OFFSET + sinf(camera->pitch) * Staff::CAMERA_PITCH_VERTICAL_DRIFT,
+		Staff::VERTICAL_OFFSET + sinf(camera->pitch) * Staff::CAMERA_PITCH_VERTICAL_DRIFT + bounceOffset,
 		sy * Staff::SIDE_DISTANCE + cy * Staff::FORWARD_DISTANCE
 	};
 
