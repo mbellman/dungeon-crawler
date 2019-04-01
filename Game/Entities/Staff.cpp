@@ -47,7 +47,7 @@ void Staff::swing() {
 	swingTween.value.start = 0.0f;
 	swingTween.value.end = Staff::SWING_PITCH_DEGREES;
 	swingTween.time = 0;
-	swingTween.duration = 350;
+	swingTween.duration = Staff::SWING_DURATION;
 	swingTween.easing = Soft::Ease::sineWave;
 	swingTween.isActive = true;
 
@@ -61,7 +61,7 @@ void Staff::updatePosition() {
 
 	Soft::Vec3 offset = {
 		cy * Staff::SIDE_DISTANCE - sy * Staff::FORWARD_DISTANCE,
-		Staff::VERTICAL_OFFSET + sinf(camera->pitch) * Staff::PITCH_VERTICAL_SHIFT,
+		Staff::VERTICAL_OFFSET + sinf(camera->pitch) * Staff::CAMERA_PITCH_VERTICAL_DRIFT,
 		sy * Staff::SIDE_DISTANCE + cy * Staff::FORWARD_DISTANCE
 	};
 
@@ -88,15 +88,14 @@ void Staff::updateRotation() {
 }
 
 void Staff::updateSwing(int dt) {
-	float lastPitch = swingTween.alpha();
+	float lastPitch = swingTween.alpha() * Staff::SWING_PITCH_DEGREES;
 
 	swingTween.time += dt;
 
-	float alpha = swingTween.alpha();
-	float pitchDelta = alpha - lastPitch;
-	float pitchAngle = pitchDelta * 180.0f / M_PI;
+	float currentPitch = swingTween.alpha() * Staff::SWING_PITCH_DEGREES;
+	float pitchDelta = currentPitch - lastPitch;
 
-	model->rotateOnAxis(pitchAngle, swingPitchAxis);
+	model->rotateOnAxis(pitchDelta, swingPitchAxis);
 
 	if (swingTween.progress() >= 1.0f) {
 		model->transformOrigin = Staff::DEFAULT_TRANSFORM_ORIGIN;

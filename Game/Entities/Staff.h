@@ -9,12 +9,13 @@ public:
 	void swing();
 
 private:
+	constexpr static float SCALE = 20.0f;
 	constexpr static float SIDE_DISTANCE = 20.0f;
 	constexpr static float FORWARD_DISTANCE = 45.0f;
 	constexpr static float VERTICAL_OFFSET = -30.0f;
-	constexpr static float PITCH_VERTICAL_SHIFT = 40.0f;
-	constexpr static float SCALE = 20.0f;
-	constexpr static float SWING_PITCH_DEGREES = 45.0f;
+	constexpr static float CAMERA_PITCH_VERTICAL_DRIFT = 40.0f;
+	constexpr static float SWING_PITCH_DEGREES = 40.0f;
+	constexpr static int SWING_DURATION = 350;
 
 	static Soft::Vec3 DEFAULT_TRANSFORM_ORIGIN;
 	static Soft::Vec3 SWING_TRANSFORM_ORIGIN;

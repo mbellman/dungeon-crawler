@@ -125,10 +125,6 @@ struct Tween {
 	Ease::EaseFunction easing;
 	bool isActive = false;
 
-	float progress() const {
-		return (float)time / duration;
-	}
-
 	float alpha() const {
 		float p = progress();
 
@@ -137,6 +133,10 @@ struct Tween {
 		}
 
 		return easing(p);
+	}
+
+	float progress() const {
+		return (float)time / duration;
 	}
 };
 
