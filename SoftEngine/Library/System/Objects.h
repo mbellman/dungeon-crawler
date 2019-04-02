@@ -32,6 +32,7 @@ struct Object : public Positionable3d {
 	TextureBuffer* texture = NULL;
 	UpdateHandler onUpdate = nullptr;
 	int sectorId = GLOBAL_SECTOR_ID;
+	float lodDistanceThreshold = LOD_DISTANCE_THRESHOLD;
 	Vec3 transformOrigin;
 
 	/**

@@ -36,7 +36,13 @@ Block BlockBuilder::getNextBlock() {
 		if (sidesMask > 0) {
 			// Only generate Objects for solids with visible sides,
 			// since no vertices/faces will be generated otherwise
-			block.object = new SidedBlock(sidesMask);
+			SidedBlock* sidedBlock = new SidedBlock(sidesMask, 2);
+
+			sidedBlock->addLOD(new SidedBlock(sidesMask, 1));
+			sidedBlock->addLOD(new SidedBlock(sidesMask, 0));
+			sidedBlock->lodDistanceThreshold = 1750.0f;
+
+			block.object = sidedBlock;
 		}
 	} else {
 		block.object = getBlockObject(block.type);

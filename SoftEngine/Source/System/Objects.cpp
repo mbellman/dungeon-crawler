@@ -161,7 +161,7 @@ const Object* Object::getLOD(float distance) const {
 		return this;
 	}
 
-	float distanceRatio = distance / LOD_DISTANCE_THRESHOLD;
+	float distanceRatio = distance / lodDistanceThreshold;
 
 	if (distanceRatio < 1) {
 		return this;
