@@ -29,7 +29,7 @@ void Torch::initialize() {
 	torchLight->range = 400.0f;
 
 	torchLight->onUpdate = [=](int dt) {
-		torchLight->power = 0.95f + sinf(getAge() / 50.0f) * 0.075f;
+		torchLight->power = 1.1f + sinf(getAge() / 50.0f) * 0.075f;
 	};
 
 	Soft::Billboard* fire = new Soft::Billboard(10.0f, 10.0f);
