@@ -29,7 +29,7 @@ void Torch::initialize() {
 	torchLight->range = 400.0f;
 
 	torchLight->onUpdate = [=](int dt) {
-		torchLight->power = 0.95f + sinf(getAge() / 50.0f) * 0.05f;
+		torchLight->power = 0.95f + sinf(getAge() / 50.0f) * 0.075f;
 	};
 
 	Soft::Billboard* fire = new Soft::Billboard(10.0f, 10.0f);
@@ -41,10 +41,39 @@ void Torch::initialize() {
 	add(torchBase);
 	add(torchLight);
 	add(fire);
+
+	addEmbers();
 }
 
 void Torch::onUpdate(int dt) {
 
+}
+
+void Torch::addEmbers() {
+	Soft::ParticleSystem* embers = new Soft::ParticleSystem(15);
+	Soft::Vec3 lightPosition = getTorchLightPosition();
+
+	embers->setParticleColor({ 255, 150, 10 });
+	embers->setParticleSize(2.0f, 2.0f);
+
+	embers->setSpawnRange(
+		{ lightPosition.x - 8.0f, lightPosition.x + 8.0f },
+		{ lightPosition.y, lightPosition.y },
+		{ lightPosition.z - 8.0f, lightPosition.z + 8.0f }
+	);
+
+	embers->setParticleBehavior([=](Soft::Particle* particle, int dt) {
+		particle->position.y += 0.1f * dt;
+
+		if (
+			particle->position.y - lightPosition.y > 30.0f &&
+			Soft::RNG::random(0.0f, 10.0f) < 1.0f
+		) {
+			particle->shouldReset = true;
+		}
+	});
+
+	add(embers);
 }
 
 Soft::Vec3 Torch::getTorchBasePosition() {

@@ -15,6 +15,7 @@ namespace Soft {
  */
 Entity::~Entity() {
 	queuedObjects.clear();
+	queuedParticleSystems.clear();
 	queuedSounds.clear();
 	queuedUIObjectMap.clear();
 }
@@ -23,6 +24,10 @@ void Entity::onUpdate(int dt) {}
 
 void Entity::add(Object* object) {
 	queuedObjects.push_back(object);
+}
+
+void Entity::add(ParticleSystem* particleSystem) {
+	queuedParticleSystems.push_back(particleSystem);
 }
 
 void Entity::add(Sound* sound) {
@@ -39,6 +44,10 @@ int Entity::getAge() const {
 
 const std::vector<Object*>& Entity::getQueuedObjects() const {
 	return queuedObjects;
+}
+
+const std::vector<ParticleSystem*>& Entity::getQueuedParticleSystems() const {
+	return queuedParticleSystems;
 }
 
 const std::vector<Sound*>& Entity::getQueuedSounds() const {

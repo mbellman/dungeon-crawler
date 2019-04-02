@@ -2,6 +2,8 @@
 #include <random>
 #include <math.h>
 
+namespace Soft {
+
 namespace RNG {
 	namespace {
 		std::default_random_engine engine;
@@ -9,6 +11,8 @@ namespace RNG {
 	};
 
 	float random(float low, float high) {
-		return low + floor(floatDistribution(engine) * (high - low) + 1);
+		return low + floor(floatDistribution(engine) * (high - low + 1));
 	}
-};
+}
+
+} // namespace Soft

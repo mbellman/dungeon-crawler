@@ -77,14 +77,15 @@ protected:
 
 	void add(Entity* entity);
 	void add(Object* object);
+	void add(ParticleSystem* particleSystem);
 	void add(Sound* sound);
 	void add(const Sector& sector);
 	void add(const char* key, Entity* entity);
 	void add(const char* key, Object* object);
+	void add(const char* key, ParticleSystem* particleSystem);
 	void add(const char* key, ObjLoader* objLoader);
 	void add(const char* key, TextureBuffer* textureBuffer);
 	void add(const char* key, Sound* sound);
-	void add(const char* key, ParticleSystem* particleSystem);
 
 	template<class T>
 	T* getEntity(const char* key) {
@@ -108,6 +109,7 @@ protected:
 private:
 	std::vector<Entity*> entities;
 	std::vector<Object*> objects;
+	std::vector<ParticleSystem*> particleSystems;
 	std::vector<Light*> lights;
 	std::vector<Sound*> sounds;
 	std::vector<Sector> sectors;
@@ -135,6 +137,7 @@ private:
 	void removeEntity(Entity* entity);
 	void removeExpiredItems();
 	void removeObject(Object* object);
+	void removeParticleSystem(ParticleSystem* particleSystem);
 	void removeSound(Sound* sound);
 
 	template<class T>

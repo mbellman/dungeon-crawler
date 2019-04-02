@@ -34,24 +34,6 @@ void Scene::add(Entity* entity) {
 	initializeEntity(entity);
 }
 
-void Scene::add(const char* key, Entity* entity) {
-	entityMap.emplace(key, entity);
-	add(entity);
-}
-
-void Scene::add(const char* key, Object* object) {
-	if (object->lifetime > 0) {
-		char errorMessage[100];
-
-		sprintf(errorMessage, "Key-mapped Objects cannot have definite lifetimes (key: '%s')", key);
-		Alert::error(ALERT_ERROR, errorMessage);
-		exit(0);
-	}
-
-	objectMap.emplace(key, object);
-	add(object);
-}
-
 void Scene::add(Object* object) {
 	object->syncLODs();
 	object->recomputeSurfaceNormals();
@@ -63,12 +45,35 @@ void Scene::add(Object* object) {
 	}
 }
 
+void Scene::add(ParticleSystem* particleSystem) {
+	particleSystems.push_back(particleSystem);
+
+	for (auto* particle : particleSystem->getParticles()) {
+		objects.push_back(particle);
+	}
+}
+
 void Scene::add(Sound* sound) {
 	sounds.push_back(sound);
 }
 
 void Scene::add(const Sector& sector) {
 	sectors.push_back(sector);
+}
+
+void Scene::add(const char* key, Entity* entity) {
+	entityMap.emplace(key, entity);
+	add(entity);
+}
+
+void Scene::add(const char* key, Object* object) {
+	objectMap.emplace(key, object);
+	add(object);
+}
+
+void Scene::add(const char* key, ParticleSystem* particleSystem) {
+	particleSystemMap.emplace(key, particleSystem);
+	add(particleSystem);
 }
 
 void Scene::add(const char* key, ObjLoader* objLoader) {
@@ -81,16 +86,7 @@ void Scene::add(const char* key, TextureBuffer* textureBuffer) {
 
 void Scene::add(const char* key, Sound* sound) {
 	soundMap.emplace(key, sound);
-
 	add(sound);
-}
-
-void Scene::add(const char* key, ParticleSystem* particleSystem) {
-	particleSystemMap.emplace(key, particleSystem);
-
-	for (auto* particle : particleSystem->getParticles()) {
-		objects.push_back(particle);
-	}
 }
 
 void Scene::boot() {
@@ -214,6 +210,10 @@ void Scene::initializeEntity(Entity* entity) {
 		add(object);
 	}
 
+	for (auto* particleSystem : entity->getQueuedParticleSystems()) {
+		add(particleSystem);
+	}
+
 	for (auto* sound : entity->getQueuedSounds()) {
 		add(sound);
 	}
@@ -270,6 +270,10 @@ void Scene::removeEntity(Entity* entity) {
 		removeObject(object);
 	}
 
+	for (auto* particleSystem : entity->getQueuedParticleSystems()) {
+		removeParticleSystem(particleSystem);
+	}
+
 	for (auto* sound : entity->getQueuedSounds()) {
 		removeSound(sound);
 	}
@@ -322,6 +326,32 @@ void Scene::removeObject(Object* object) {
 	}
 
 	objectDisposalQueue.push_back(object);
+}
+
+/**
+ * Removes a ParticleSystem by erasing all of its Particle Objects
+ * from the Object pointer list, and defers the ParticleSystem
+ * itself for deletion, which ultimately frees the allocated Particles.
+ * Since all of a ParticleSystem's Particles are stored contiguously
+ * in the Object pointer list, we can erase all list elements from
+ * [N = first particle index, N + particle system size).
+ */
+void Scene::removeParticleSystem(ParticleSystem* particleSystem) {
+	particleSystems.erase(std::remove(particleSystems.begin(), particleSystems.end(), particleSystem), particleSystems.end());
+
+	const std::vector<Particle*>& particles = particleSystem->getParticles();
+	Particle* firstParticle = particles.at(0);
+	int idx = -1;
+
+	while (++idx < objects.size()) {
+		if (objects.at(idx) == firstParticle) {
+			objects.erase(objects.begin() + idx, objects.begin() + idx + particles.size());
+
+			break;
+		}
+	}
+
+	particleSystemDisposalQueue.push_back(particleSystem);
 }
 
 /**
@@ -384,33 +414,16 @@ void Scene::safelyFreeMappedObject(const char* key) {
 }
 
 /**
- * Removes a mapped ParticleSystem if the provided key matches
- * an entry. When a ParticleSystem is removed, all of its Particle
- * Objects must be removed from the Object pointer list, and the
- * ParticleSystem itself deleted, thus freeing the allocated
- * Particles. Since all of a ParticleSystem's Particles are stored
- * contiguously in the Object pointer list, we can erase all list
- * elements from [N = first particle index, N + particle system size).
+ * Removes a mapped ParticleSystem if the provided key matches an entry.
  */
 void Scene::safelyFreeMappedParticleSystem(const char* key) {
 	const auto& entry = particleSystemMap.find(key);
 
 	if (entry != particleSystemMap.end()) {
 		ParticleSystem* particleSystem = particleSystemMap.at(key);
-		const std::vector<Particle*>& particles = particleSystem->getParticles();
-		Particle* firstParticle = particles.at(0);
-		int idx = -1;
-
-		while (++idx < objects.size()) {
-			if (objects.at(idx) == firstParticle) {
-				objects.erase(objects.begin() + idx, objects.begin() + idx + particles.size());
-
-				break;
-			}
-		}
 
 		particleSystemMap.erase(key);
-		particleSystemDisposalQueue.push_back(particleSystem);
+		removeParticleSystem(particleSystem);
 	}
 }
 
@@ -456,7 +469,7 @@ void Scene::update(int dt) {
 		object->update(dt);
 	}
 
-	for (auto [key, particleSystem] : particleSystemMap) {
+	for (auto* particleSystem : particleSystems) {
 		particleSystem->update(dt);
 	}
 
@@ -489,6 +502,10 @@ void Scene::unload() {
 		}
 	}
 
+	for (auto* particleSystem : particleSystems) {
+		delete particleSystem;
+	}
+
 	for (auto* sound : sounds) {
 		delete sound;
 	}
@@ -499,10 +516,6 @@ void Scene::unload() {
 
 	for (auto& [key, textureBuffer] : textureBufferMap) {
 		delete textureBuffer;
-	}
-
-	for (auto& [key, particleSystem] : particleSystemMap) {
-		delete particleSystem;
 	}
 
 	delete inputManager;
@@ -520,6 +533,7 @@ void Scene::unload() {
 
 	entities.clear();
 	objects.clear();
+	particleSystems.clear();
 	lights.clear();
 	sounds.clear();
 	sectors.clear();

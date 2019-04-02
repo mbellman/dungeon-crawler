@@ -53,8 +53,8 @@ void SidedBlock::addSideVertices(Soft::Vec3 (&vertexPositions)[4], int subdivisi
 
 			for (int i = 0; i < 4; i++) {
 				// For every vertex in the side face, we have to bilinearly interpolate
-				// position and UV based on the number of subdivisions, and our current
-				// horizontal/vertical progress along the face.
+				// position and UV based on our current horizontal/vertical progress
+				// along the face.
 				float h_alpha = h_ratio + (i % 2 == 1 ? ratioStep : 0.0f);
 				float v_alpha = v_ratio + (i > 1 ? ratioStep : 0.0f);
 

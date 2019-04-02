@@ -14,6 +14,7 @@ private:
 	TorchData torchData;
 	Soft::Billboard* fire = nullptr;
 
+	void addEmbers();
 	Soft::Vec3 getTorchBasePosition();
 	Soft::Vec3 getTorchLightPosition();
 	float getRotationAngle();
