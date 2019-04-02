@@ -17,6 +17,7 @@ public:
 private:
 	LevelLayout* levelLayout = nullptr;
 	TTF_Font* uiFont = nullptr;
+	Soft::TextureBuffer* fireTextures[4];
 	SpawnPosition playerSpawnPosition;
 	int lastLightCastTime = 0;
 

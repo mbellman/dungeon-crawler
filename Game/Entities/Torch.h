@@ -5,16 +5,20 @@
 
 class Torch : public Soft::Entity {
 public:
-	Torch(const TorchData& torchData);
+	Torch(const TorchData& torchData, Soft::TextureBuffer* (&fireTextures)[4]);
 
 	void initialize() override;
 	void onUpdate(int dt) override;
 
 private:
 	TorchData torchData;
+	Soft::TextureBuffer* fireTextures[4];
 	Soft::Billboard* fire = nullptr;
 
 	void addEmbers();
+	void addFire();
+	void addTorchBase();
+	void addTorchLight();
 	Soft::Vec3 getTorchBasePosition();
 	Soft::Vec3 getTorchLightPosition();
 	float getRotationAngle();

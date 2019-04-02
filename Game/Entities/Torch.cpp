@@ -7,46 +7,25 @@
  * Torch
  * -----
  */
-Torch::Torch(const TorchData& torchData) {
+Torch::Torch(const TorchData& torchData, Soft::TextureBuffer* (&fireTextures)[4]) {
 	this->torchData = torchData;
+
+	for (int i = 0; i < 4; i++) {
+		this->fireTextures[i] = fireTextures[i];
+	}
 }
 
 void Torch::initialize() {
-	Soft::ObjLoader torchBaseLoader("./Assets/Models/torch-base.obj");
-
-	Soft::Model* torchBase = new Soft::Model(torchBaseLoader);
-
-	torchBase->rotateDeg({ 0.0f, getRotationAngle(), 0.0f });
-	torchBase->setColor({ 50, 50, 50 });
-	torchBase->scale(20.0f);
-	torchBase->position = getTorchBasePosition();
-	torchBase->fresnelFactor = 1.0f;
-
-	Soft::Light* torchLight = new Soft::Light();
-
-	torchLight->setColor({ 255, 120, 30 });
-	torchLight->position = getTorchLightPosition();
-	torchLight->range = 400.0f;
-
-	torchLight->onUpdate = [=](int dt) {
-		torchLight->power = 1.1f + sinf(getAge() / 50.0f) * 0.075f;
-	};
-
-	Soft::Billboard* fire = new Soft::Billboard(10.0f, 10.0f);
-	fire->position = torchLight->position;
-	fire->setColor({ 255, 0, 0 });
-	fire->rotateDeg({ 0.0f, getRotationAngle(), 0.0f });
-	fire->hasLighting = false;
-
-	add(torchBase);
-	add(torchLight);
-	add(fire);
-
+	addTorchBase();
+	addTorchLight();
+	addFire();
 	addEmbers();
 }
 
 void Torch::onUpdate(int dt) {
+	int fireTextureIndex = (getAge() / 65) % 4;
 
+	fire->texture = fireTextures[fireTextureIndex];
 }
 
 void Torch::addEmbers() {
@@ -74,6 +53,59 @@ void Torch::addEmbers() {
 	});
 
 	add(embers);
+}
+
+void Torch::addFire() {
+	fire = new Soft::Billboard(30.0f, 30.0f);
+	fire->position = getTorchLightPosition();
+	fire->setColor({ 255, 0, 0 });
+	fire->rotateDeg({ 0.0f, getRotationAngle(), 0.0f });
+	fire->hasLighting = false;
+
+	switch (torchData.direction) {
+		case MathUtils::Direction::FORWARD:
+			fire->position.z += 15.0f;
+			break;
+		case MathUtils::Direction::BACKWARD:
+			fire->position.z -= 15.0f;
+			break;
+		case MathUtils::Direction::LEFT:
+			fire->position.x -= 15.0f;
+			break;
+		case MathUtils::Direction::RIGHT:
+			fire->position.x += 15.0f;
+			break;
+	}
+
+	add(fire);
+}
+
+void Torch::addTorchBase() {
+	Soft::ObjLoader torchBaseLoader("./Assets/Models/torch-base.obj");
+
+	Soft::Model* torchBase = new Soft::Model(torchBaseLoader);
+
+	torchBase->rotateDeg({ 0.0f, getRotationAngle(), 0.0f });
+	torchBase->setColor({ 50, 50, 50 });
+	torchBase->scale(20.0f);
+	torchBase->position = getTorchBasePosition();
+	torchBase->fresnelFactor = 1.0f;
+
+	add(torchBase);
+}
+
+void Torch::addTorchLight() {
+	Soft::Light* torchLight = new Soft::Light();
+
+	torchLight->setColor({ 255, 120, 30 });
+	torchLight->position = getTorchLightPosition();
+	torchLight->range = 400.0f;
+
+	torchLight->onUpdate = [=](int dt) {
+		torchLight->power = 1.1f + sinf(getAge() / 50.0f) * 0.075f;
+	};
+
+	add(torchLight);
 }
 
 Soft::Vec3 Torch::getTorchBasePosition() {
