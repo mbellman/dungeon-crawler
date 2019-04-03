@@ -22,6 +22,7 @@ struct TextureBuffer {
 	void addFrame(const char* file);
 	void confirmTexture();
 	const ColorBuffer* getMipmap(int level) const;
+	int getTotalFrames() const;
 	void setCurrentFrame(int currentFrame);
 
 private:

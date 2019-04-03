@@ -104,6 +104,14 @@ const ColorBuffer* TextureBuffer::getMipmap(int level) const {
 }
 
 /**
+ * Returns the total number of animation frames in the texture,
+ * including the base frame, this TextureBuffer instance.
+ */
+int TextureBuffer::getTotalFrames() const {
+	return frames.size() + 1;
+}
+
+/**
  * A static method for returning a normalized ARGB 32-bit
  * integer representing to the color of a given pixel, by
  * index, in an SDL_Surface.
@@ -130,10 +138,7 @@ Uint32 TextureBuffer::readPixel(SDL_Surface* surface, int index) {
 void TextureBuffer::setCurrentFrame(int currentFrame) {
 	this->currentFrame = currentFrame;
 
-	// Only normalize the current frame to 0 if the specified
-	// frame exceeds the number of frames + the base frame, this
-	// TextureBuffer instance.
-	if (this->currentFrame > frames.size() + 1) {
+	if (this->currentFrame > getTotalFrames()) {
 		this->currentFrame = 0;
 	}
 }

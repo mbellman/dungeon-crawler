@@ -20,7 +20,7 @@ void Torch::initialize() {
 }
 
 void Torch::onUpdate(int dt) {
-	int fireTextureFrame = (getAge() / 70) % 4;
+	int fireTextureFrame = (getAge() / 70) % fire->texture->getTotalFrames();
 
 	fire->texture->setCurrentFrame(fireTextureFrame);
 }
