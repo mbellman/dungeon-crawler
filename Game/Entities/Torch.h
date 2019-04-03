@@ -19,7 +19,9 @@ private:
 	void addFire();
 	void addTorchBase();
 	void addTorchLight();
+	Soft::Vec3 getFirePosition();
 	Soft::Vec3 getTorchBasePosition();
+	Soft::Vec3 getTorchDirectionVector();
 	Soft::Vec3 getTorchLightPosition();
 	float getRotationAngle();
 };

@@ -27,22 +27,22 @@ void Torch::onUpdate(int dt) {
 
 void Torch::addEmbers() {
 	Soft::ParticleSystem* embers = new Soft::ParticleSystem(15);
-	Soft::Vec3 lightPosition = getTorchLightPosition();
+	Soft::Vec3 firePosition = getFirePosition();
 
-	embers->setParticleColor({ 255, 150, 10 });
-	embers->setParticleSize(2.0f, 2.0f);
+	embers->setParticleColor({ 255, 100, 10 });
+	embers->setParticleSize(1.5f, 1.5f);
 
 	embers->setSpawnRange(
-		{ lightPosition.x - 8.0f, lightPosition.x + 8.0f },
-		{ lightPosition.y, lightPosition.y },
-		{ lightPosition.z - 8.0f, lightPosition.z + 8.0f }
+		{ firePosition.x - 5.0f, firePosition.x + 5.0f },
+		{ firePosition.y, firePosition.y },
+		{ firePosition.z - 5.0f, firePosition.z + 5.0f }
 	);
 
 	embers->setParticleBehavior([=](Soft::Particle* particle, int dt) {
-		particle->position.y += 0.1f * dt;
+		particle->position.y += 0.05f * dt;
 
 		if (
-			particle->position.y - lightPosition.y > 30.0f &&
+			particle->position.y - firePosition.y > 30.0f &&
 			Soft::RNG::random(0.0f, 10.0f) < 1.0f
 		) {
 			particle->shouldReset = true;
@@ -54,25 +54,10 @@ void Torch::addEmbers() {
 
 void Torch::addFire() {
 	fire = new Soft::Billboard(25.0f, 25.0f);
-	fire->position = getTorchLightPosition();
+	fire->position = getFirePosition();
 	fire->rotateDeg({ 0.0f, getRotationAngle(), 0.0f });
 	fire->setTexture(fireTexture);
 	fire->hasLighting = false;
-
-	switch (torchData.direction) {
-		case MathUtils::Direction::FORWARD:
-			fire->position.z += 15.0f;
-			break;
-		case MathUtils::Direction::BACKWARD:
-			fire->position.z -= 15.0f;
-			break;
-		case MathUtils::Direction::LEFT:
-			fire->position.x -= 15.0f;
-			break;
-		case MathUtils::Direction::RIGHT:
-			fire->position.x += 15.0f;
-			break;
-	}
 
 	add(fire);
 }
@@ -105,49 +90,47 @@ void Torch::addTorchLight() {
 	add(torchLight);
 }
 
-Soft::Vec3 Torch::getTorchBasePosition() {
+Soft::Vec3 Torch::getFirePosition() {
 	Soft::Vec3 position = GameUtils::getGridPositionVec3(torchData.position);
+	Soft::Vec3 offset = getTorchDirectionVector() * (GameUtils::HALF_TILE_SIZE - 7.0f);
 
-	position.y += 20.0f;
-
-	switch (torchData.direction) {
-		case MathUtils::Direction::FORWARD:
-			position.z += GameUtils::HALF_TILE_SIZE;
-			break;
-		case MathUtils::Direction::BACKWARD:
-			position.z -= GameUtils::HALF_TILE_SIZE;
-			break;
-		case MathUtils::Direction::LEFT:
-			position.x -= GameUtils::HALF_TILE_SIZE;
-			break;
-		case MathUtils::Direction::RIGHT:
-			position.x += GameUtils::HALF_TILE_SIZE;
-			break;
-	}
+	position += offset;
+	position.y += 38.0f;
 
 	return position;
 }
 
-Soft::Vec3 Torch::getTorchLightPosition() {
-	Soft::Vec3 position = getTorchBasePosition();
-	float offset = 20.0f;
+Soft::Vec3 Torch::getTorchBasePosition() {
+	Soft::Vec3 position = GameUtils::getGridPositionVec3(torchData.position);
+	Soft::Vec3 offset = getTorchDirectionVector() * GameUtils::HALF_TILE_SIZE;
 
+	position += offset;
 	position.y += 20.0f;
 
+	return position;
+}
+
+Soft::Vec3 Torch::getTorchDirectionVector() {
 	switch (torchData.direction) {
 		case MathUtils::Direction::FORWARD:
-			position.z -= offset;
-			break;
+			return { 0.0f, 0.0f, 1.0f };
 		case MathUtils::Direction::BACKWARD:
-			position.z += offset;
-			break;
+			return { 0.0f, 0.0f, -1.0f };
 		case MathUtils::Direction::LEFT:
-			position.x += offset;
-			break;
+			return { -1.0f, 0.0f, 0.0f };
 		case MathUtils::Direction::RIGHT:
-			position.x -= offset;
-			break;
+			return { 1.0f, 0.0f, 0.0f };
+		default:
+			return { 0.0f, 0.0f, 1.0f };
 	}
+}
+
+Soft::Vec3 Torch::getTorchLightPosition() {
+	Soft::Vec3 position = GameUtils::getGridPositionVec3(torchData.position);
+	Soft::Vec3 offset = getTorchDirectionVector() * (GameUtils::HALF_TILE_SIZE - 25.0f);
+
+	position += offset;
+	position.y += 35.0f;
 
 	return position;
 }

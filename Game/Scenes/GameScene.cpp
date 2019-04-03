@@ -244,6 +244,10 @@ void GameScene::loadTextures() {
 	fireTexture->addFrame("./Assets/BlockTextures/Fire/2.png");
 	fireTexture->addFrame("./Assets/BlockTextures/Fire/3.png");
 	fireTexture->addFrame("./Assets/BlockTextures/Fire/4.png");
+	fireTexture->addFrame("./Assets/BlockTextures/Fire/5.png");
+	fireTexture->addFrame("./Assets/BlockTextures/Fire/6.png");
+	fireTexture->addFrame("./Assets/BlockTextures/Fire/7.png");
+	fireTexture->addFrame("./Assets/BlockTextures/Fire/8.png");
 
 	add("fireTexture", fireTexture);
 }
