@@ -22,6 +22,7 @@ public:
 	ColorBuffer* createDownsizedBuffer();
 	const Color& read(int index) const;
 	const Color& read(int x, int y) const;
+	const Color& sample(float u, float v) const;
 	void write(int x, int y, int R, int G, int B);
 
 private:

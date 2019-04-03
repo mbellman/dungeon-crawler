@@ -5,6 +5,7 @@
 #include <Graphics/ColorBuffer.h>
 #include <Helpers.h>
 #include <Constants.h>
+#include <UI/Alert.h>
 #include <stdio.h>
 #include <algorithm>
 #include <vector>
@@ -24,69 +25,82 @@ TextureBuffer::TextureBuffer(const char* file) {
 }
 
 TextureBuffer::~TextureBuffer() {
-	if (mipmaps.size() > 0) {
-		// Free software texture memory
-		for (const auto* mipmap : mipmaps) {
-			delete mipmap;
-		}
-
-		mipmaps.clear();
-	} else if (texture != NULL) {
-		// Free hardware texture memory
-		SDL_DestroyTexture(texture);
+	for (const auto* mipmap : mipmaps) {
+		delete mipmap;
 	}
+
+	for (auto* frame : frames) {
+		delete frame;
+	}
+
+	frames.clear();
+	mipmaps.clear();
 }
 
-void TextureBuffer::confirmTexture(SDL_Renderer* renderer, TextureMode mode) {
+void TextureBuffer::addFrame(const char* file) {
+	TextureBuffer* frame = new TextureBuffer(file);
+
+	frames.push_back(frame);
+	frame->shouldUseMipmaps = shouldUseMipmaps;
+}
+
+void TextureBuffer::confirmTexture() {
 	if (!isConfirmed) {
 		isConfirmed = true;
 
 		SDL_Surface* image = IMG_Load(file);
 
 		if (image == NULL) {
-			return;
+			char errorMessage[80];
+
+			sprintf(errorMessage, "Unable to load texture: %s", file);
+			Alert::error(ALERT_ASSET_ERROR, errorMessage);
+			exit(0);
 		}
 
-		// Cache texture width and height information so
-		// UV coordinates can be mapped to a pixel index
-		width = image->w;
-		height = image->h;
-		totalPixels = image->w * image->h;
+		int width = image->w;
+		int height = image->h;
+		int totalPixels = image->w * image->h;
+		SDL_PixelFormat* format = image->format;
+		ColorBuffer* colorBuffer = new ColorBuffer(width, height);
 
-		if (mode == TextureMode::HARDWARE) {
-			texture = SDL_CreateTextureFromSurface(renderer, image);
-		} else if (mode == TextureMode::SOFTWARE) {
-			SDL_PixelFormat* format = image->format;
-			ColorBuffer* colorBuffer = new ColorBuffer(width, height);
+		for (int i = 0; i < totalPixels; i++) {
+			Uint32 color = TextureBuffer::readPixel(image, i);
+			int x = i % width;
+			int y = (int)(i / width);
 
-			for (int i = 0; i < totalPixels; i++) {
-				Uint32 color = TextureBuffer::readPixel(image, i);
-				int x = i % width;
-				int y = (int)(i / width);
+			colorBuffer->write(x, y, (color & 0x00FF0000) >> 16, (color & 0x0000FF00) >> 8, color & 0x000000FF);
+		}
 
-				colorBuffer->write(x, y, (color & 0x00FF0000) >> 16, (color & 0x0000FF00) >> 8, color & 0x000000FF);
-			}
+		mipmaps.push_back(colorBuffer);
 
-			mipmaps.push_back(colorBuffer);
+		if (shouldUseMipmaps) {
+			int totalMipMaps = getTotalMipmaps(std::min(width, height));
+			ColorBuffer* mipmap = colorBuffer;
 
-			if (shouldUseMipmaps) {
-				int totalMipMaps = getTotalMipmaps(std::min(width, height));
-				ColorBuffer* mipmap = colorBuffer;
+			for (int i = 0; i < totalMipMaps; i++) {
+				mipmap = mipmap->createDownsizedBuffer();
 
-				for (int i = 0; i < totalMipMaps; i++) {
-					mipmap = mipmap->createDownsizedBuffer();
-
-					mipmaps.push_back(mipmap);
-				}
+				mipmaps.push_back(mipmap);
 			}
 		}
 
 		SDL_FreeSurface(image);
+
+		for (auto* frame : frames) {
+			frame->confirmTexture();
+		}
 	}
 }
 
 const ColorBuffer* TextureBuffer::getMipmap(int level) const {
-	return level >= mipmaps.size() ? mipmaps.back() : mipmaps.at(level);
+	if (currentFrame == 0) {
+		return level >= mipmaps.size() ? mipmaps.back() : mipmaps.at(level);
+	} else {
+		// Since frame 0 is this TextureBuffer instance, the access
+		// index for higher frames needs to be decremented by 1.
+		return frames.at(currentFrame - 1)->getMipmap(level);
+	}
 }
 
 /**
@@ -113,17 +127,15 @@ Uint32 TextureBuffer::readPixel(SDL_Surface* surface, int index) {
 	return ARGB(R, G, B);
 }
 
-const Color& TextureBuffer::sample(float u, float v, const ColorBuffer* mipmap) const {
-	// Modulo-free out-of-bounds UV wrapping
-	if (u >= 1.0f) u -= (int)u;
-	else if (u < 0.0f) u += (int)(-1.0f * (u - 1.0f));
+void TextureBuffer::setCurrentFrame(int currentFrame) {
+	this->currentFrame = currentFrame;
 
-	if (v >= 1.0f) v -= (int)v;
-	else if (v < 0.0f) v += (int)(-1.0f * (v - 1.0f));
-
-	int pixelIndex = (int)(v * mipmap->height) * mipmap->width + (int)(u * mipmap->width);
-
-	return mipmap->read(pixelIndex);
+	// Only normalize the current frame to 0 if the specified
+	// frame exceeds the number of frames + the base frame, this
+	// TextureBuffer instance.
+	if (this->currentFrame > frames.size() + 1) {
+		this->currentFrame = 0;
+	}
 }
 
 } // namespace Soft

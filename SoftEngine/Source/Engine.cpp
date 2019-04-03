@@ -696,7 +696,7 @@ void Engine::updateScreenProjection() {
 		debugStats.countVertices(lodObject->getVertexCount());
 
 		if (lodObject->texture != NULL) {
-			lodObject->texture->confirmTexture(renderer, TextureMode::SOFTWARE);
+			lodObject->texture->confirmTexture();
 		}
 
 		for (const auto* polygon : lodObject->getPolygons()) {

@@ -27,10 +27,6 @@ GameScene::~GameScene() {
 		delete levelLayout;
 	}
 
-	for (int i = 0; i < 4; i++) {
-		delete fireTextures[i];
-	}
-
 	TTF_CloseFont(uiFont);
 }
 
@@ -203,7 +199,7 @@ void GameScene::loadLevel() {
 	}
 
 	for (const auto& torchData : levelData.torches) {
-		Torch* torch = new Torch(torchData, fireTextures);
+		Torch* torch = new Torch(torchData, getTexture("fireTexture"));
 
 		add(torch);
 	}
@@ -242,17 +238,14 @@ void GameScene::loadTextures() {
 	add("staircase", new Soft::TextureBuffer("./Assets/BlockTextures/staircase.png"));
 	add("bridge", new Soft::TextureBuffer("./Assets/BlockTextures/bridge.png"));
 
-	for (int i = 0; i < 4; i++) {
-		char file[40];
+	Soft::TextureBuffer* fireTexture = new Soft::TextureBuffer("./Assets/BlockTextures/Fire/1.png");
+	fireTexture->shouldUseMipmaps = true;
 
-		sprintf(file, "./Assets/BlockTextures/Fire/%d.png", (i + 1));
+	fireTexture->addFrame("./Assets/BlockTextures/Fire/2.png");
+	fireTexture->addFrame("./Assets/BlockTextures/Fire/3.png");
+	fireTexture->addFrame("./Assets/BlockTextures/Fire/4.png");
 
-		Soft::TextureBuffer* texture = new Soft::TextureBuffer(file);
-		texture->shouldUseMipmaps = false;
-		texture->confirmTexture(nullptr, Soft::TextureMode::SOFTWARE);
-
-		fireTextures[i] = texture;
-	}
+	add("fireTexture", fireTexture);
 }
 
 void GameScene::loadUI() {

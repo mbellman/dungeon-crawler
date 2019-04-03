@@ -5,14 +5,14 @@
 
 class Torch : public Soft::Entity {
 public:
-	Torch(const TorchData& torchData, Soft::TextureBuffer* (&fireTextures)[4]);
+	Torch(const TorchData& torchData, Soft::TextureBuffer* fireTexture);
 
 	void initialize() override;
 	void onUpdate(int dt) override;
 
 private:
 	TorchData torchData;
-	Soft::TextureBuffer* fireTextures[4];
+	Soft::TextureBuffer* fireTexture = nullptr;
 	Soft::Billboard* fire = nullptr;
 
 	void addEmbers();

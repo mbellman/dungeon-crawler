@@ -59,6 +59,19 @@ const Color& ColorBuffer::read(int x, int y) const {
 	return read(getIndex(x, y));
 }
 
+const Color& ColorBuffer::sample(float u, float v) const {
+	// Modulo-free out-of-bounds UV wrapping
+	if (u >= 1.0f) u -= (int)u;
+	else if (u < 0.0f) u += (int)(-1.0f * (u - 1.0f));
+
+	if (v >= 1.0f) v -= (int)v;
+	else if (v < 0.0f) v += (int)(-1.0f * (v - 1.0f));
+
+	int pixelIndex = (int)(v * height) * width + (int)(u * width);
+
+	return read(pixelIndex);
+}
+
 void ColorBuffer::write(int x, int y, int R, int G, int B) {
 	Color color = { R, G, B };
 

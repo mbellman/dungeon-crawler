@@ -8,37 +8,28 @@
 namespace Soft {
 
 /**
- * TextureMode
- * -----------
- */
-enum TextureMode {
-	SOFTWARE,
-	HARDWARE
-};
-
-/**
  * TextureBuffer
  * -------------
  */
 struct TextureBuffer {
-	int width = 0;
-	int height = 0;
-	int totalPixels = 0;
 	bool shouldUseMipmaps = true;
 
 	TextureBuffer(const char* file);
 	~TextureBuffer();
 
 	static Uint32 readPixel(SDL_Surface* surface, int index);
-	void confirmTexture(SDL_Renderer* renderer, TextureMode mode);
+
+	void addFrame(const char* file);
+	void confirmTexture();
 	const ColorBuffer* getMipmap(int level) const;
-	const Color& sample(float u, float v, const ColorBuffer* mipmap) const;
+	void setCurrentFrame(int currentFrame);
 
 private:
 	bool isConfirmed = false;
 	const char* file;
+	int currentFrame = 0;
 	std::vector<const ColorBuffer*> mipmaps;
-	SDL_Texture* texture = NULL;
+	std::vector<TextureBuffer*> frames;
 
 	void savePixel(SDL_Surface* surface, int index);
 };

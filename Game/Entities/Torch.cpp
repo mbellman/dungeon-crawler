@@ -7,12 +7,9 @@
  * Torch
  * -----
  */
-Torch::Torch(const TorchData& torchData, Soft::TextureBuffer* (&fireTextures)[4]) {
+Torch::Torch(const TorchData& torchData, Soft::TextureBuffer* fireTexture) {
 	this->torchData = torchData;
-
-	for (int i = 0; i < 4; i++) {
-		this->fireTextures[i] = fireTextures[i];
-	}
+	this->fireTexture = fireTexture;
 }
 
 void Torch::initialize() {
@@ -23,9 +20,9 @@ void Torch::initialize() {
 }
 
 void Torch::onUpdate(int dt) {
-	int fireTextureIndex = (getAge() / 65) % 4;
+	int fireTextureFrame = (getAge() / 70) % 4;
 
-	fire->texture = fireTextures[fireTextureIndex];
+	fire->texture->setCurrentFrame(fireTextureFrame);
 }
 
 void Torch::addEmbers() {
@@ -56,10 +53,10 @@ void Torch::addEmbers() {
 }
 
 void Torch::addFire() {
-	fire = new Soft::Billboard(30.0f, 30.0f);
+	fire = new Soft::Billboard(25.0f, 25.0f);
 	fire->position = getTorchLightPosition();
-	fire->setColor({ 255, 0, 0 });
 	fire->rotateDeg({ 0.0f, getRotationAngle(), 0.0f });
+	fire->setTexture(fireTexture);
 	fire->hasLighting = false;
 
 	switch (torchData.direction) {

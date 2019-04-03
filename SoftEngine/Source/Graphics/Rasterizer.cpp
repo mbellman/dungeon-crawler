@@ -378,7 +378,7 @@ void Rasterizer::triangleScanline(
 					float depth = 1.0f / i_depth;
 					float u = Lerp::lerp(perspectiveUV.start.x, perspectiveUV.end.x, progress) * depth;
 					float v = Lerp::lerp(perspectiveUV.start.y, perspectiveUV.end.y, progress) * depth;
-					const Color& sample = texture->sample(u, v, mipmap);
+					const Color& sample = mipmap->sample(u, v);
 
 					isTransparent = sample.R == COLOR_TRANSPARENT.R && sample.G == COLOR_TRANSPARENT.G && sample.B == COLOR_TRANSPARENT.B;
 
