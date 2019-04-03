@@ -10,7 +10,7 @@
 MathUtils::Direction GameUtils::getYawDirection(float yaw) {
 	using namespace MathUtils;
 
-	float wrappedYaw = modf(yaw, DEG_360);
+	float wrappedYaw = Soft::Math::modf(yaw, DEG_360);
 
 	if (wrappedYaw < DEG_45 || wrappedYaw >= DEG_315) {
 		return Direction::FORWARD;

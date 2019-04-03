@@ -55,6 +55,8 @@ struct Object : public Positionable3d {
 
 	void addLOD(Object* lod);
 	void addMorphTarget(Object* morphTarget);
+	void alwaysFaceToward(const Positionable3d* faceTarget);
+	void faceToward(const Positionable3d* target);
 	const Object* getLOD(float distance) const;
 	const std::vector<Object*>& getLODs() const;
 	int getPolygonCount() const;
@@ -106,12 +108,15 @@ private:
 	Vec3 previousPosition;
 	std::vector<Polygon*> polygons;
 	std::vector<Object*> lods;
+	Soft::Vec3 orientation;
 	Morph morph;
 	int totalMorphTargets = 0;
+	const Positionable3d* faceTarget = nullptr;
 
 	static Vec3 computePolygonNormal(const Polygon& polygon);
 	static Vec3 computeVertexNormal(const Vertex3d& vertex);
 	void applyRotationMatrix(const RotationMatrix& matrix);
+	void updateOrientation(const Vec3& rotation);
 };
 
 /**

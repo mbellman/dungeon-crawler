@@ -6,6 +6,7 @@
 
 namespace Soft {
 
+constexpr static float TAU = M_PI * 2.0f;
 constexpr static float PI_HALF = M_PI / 2.0f;
 constexpr static float DEG_TO_RAD = M_PI / 180.0f;
 constexpr static float RAD_TO_DEG = 180.0f / M_PI;

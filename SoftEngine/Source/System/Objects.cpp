@@ -100,6 +100,10 @@ void Object::addVertex(const Vec3& vector, const Vec2& uv) {
 	vertices.push_back(vertex);
 }
 
+void Object::alwaysFaceToward(const Positionable3d* faceTarget) {
+	this->faceTarget = faceTarget;
+}
+
 void Object::applyRotationMatrix(const RotationMatrix& matrix) {
 	for (auto& vertex : vertices) {
 		vertex.vector -= transformOrigin;
@@ -156,6 +160,19 @@ Vec3 Object::computeVertexNormal(const Vertex3d& vertex) {
 	return averageNormal.unit();
 }
 
+void Object::faceToward(const Positionable3d* target) {
+	Soft::Vec3 targetDirection = target->position - position;
+	float faceTargetAngle = -(std::atan2(targetDirection.z, targetDirection.x) - PI_HALF);
+
+	faceTargetAngle = Math::modf(faceTargetAngle, TAU);
+
+	if (fabsf(faceTargetAngle - orientation.y) > 0.01f) {
+		float angleDelta = faceTargetAngle - orientation.y;
+
+		rotate({ 0.0f, angleDelta, 0.0f });
+	}
+}
+
 const Object* Object::getLOD(float distance) const {
 	if (lods.empty()) {
 		return this;
@@ -208,6 +225,7 @@ void Object::rotate(const Vec3& rotation) {
 	RotationMatrix rotationMatrix = RotationMatrix::fromVec3(rotation);
 
 	applyRotationMatrix(rotationMatrix);
+	updateOrientation(rotation);
 }
 
 void Object::rotateDeg(const Vec3& rotation) {
@@ -327,6 +345,10 @@ void Object::update(int dt) {
 
 	updatePosition(dt);
 
+	if (faceTarget != nullptr) {
+		faceToward(faceTarget);
+	}
+
 	if (morph.isActive) {
 		updateMorph(dt);
 	}
@@ -375,6 +397,20 @@ void Object::updateMorph(int dt) {
 	}
 
 	recomputeSurfaceNormals();
+}
+
+void Object::updateOrientation(const Vec3& rotation) {
+	orientation.x += rotation.x;
+	orientation.y += rotation.y;
+	orientation.z += rotation.z;
+
+	orientation.x = Math::modf(orientation.x, TAU);
+	orientation.y = Math::modf(orientation.y, TAU);
+	orientation.z = Math::modf(orientation.z, TAU);
+
+	for (auto* lod : lods) {
+		lod->updateOrientation(rotation);
+	}
 }
 
 /**

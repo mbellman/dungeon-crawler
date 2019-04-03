@@ -25,4 +25,10 @@ namespace RNG {
 	float random(float low, float high);
 }
 
+namespace Math {
+	inline float modf(float x, float y) {
+		return x - y * floorf(x / y);
+	}
+}
+
 } // namespace Soft

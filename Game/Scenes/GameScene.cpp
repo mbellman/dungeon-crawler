@@ -199,7 +199,7 @@ void GameScene::loadLevel() {
 	}
 
 	for (const auto& torchData : levelData.torches) {
-		Torch* torch = new Torch(torchData, getTexture("fireTexture"));
+		Torch* torch = new Torch(torchData, getTexture("fireTexture"), camera);
 
 		add(torch);
 	}

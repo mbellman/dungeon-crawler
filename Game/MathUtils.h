@@ -21,8 +21,4 @@ namespace MathUtils {
 		FORWARD = 1 << 4,
 		BACKWARD = 1 << 5
 	};
-
-	inline float modf(float x, float y) {
-		return x - y * floorf(x / y);
-	}
 }

@@ -7,9 +7,10 @@
  * Torch
  * -----
  */
-Torch::Torch(const TorchData& torchData, Soft::TextureBuffer* fireTexture) {
+Torch::Torch(const TorchData& torchData, Soft::TextureBuffer* fireTexture, const Soft::Camera* camera) {
 	this->torchData = torchData;
 	this->fireTexture = fireTexture;
+	this->camera = camera;
 }
 
 void Torch::initialize() {
@@ -29,7 +30,7 @@ void Torch::addEmbers() {
 	Soft::ParticleSystem* embers = new Soft::ParticleSystem(15);
 	Soft::Vec3 firePosition = getFirePosition();
 
-	embers->setParticleColor({ 255, 100, 10 });
+	embers->setParticleColor({ 180, 25, 0 });
 	embers->setParticleSize(1.5f, 1.5f);
 
 	embers->setSpawnRange(
@@ -54,9 +55,11 @@ void Torch::addEmbers() {
 
 void Torch::addFire() {
 	fire = new Soft::Billboard(25.0f, 25.0f);
-	fire->position = getFirePosition();
+
 	fire->rotateDeg({ 0.0f, getRotationAngle(), 0.0f });
 	fire->setTexture(fireTexture);
+	fire->alwaysFaceToward(camera);
+	fire->position = getFirePosition();
 	fire->hasLighting = false;
 
 	add(fire);
