@@ -67,7 +67,7 @@ MathUtils::Direction Player::getDirection() const {
 	return GameUtils::getYawDirection(camera->yaw);
 }
 
-GridPosition Player::getDirectionalGridPosition(MathUtils::Direction direction) {
+GridPosition Player::getDirectionalGridPosition(MathUtils::Direction direction) const {
 	GridPosition targetGridPosition = currentGridPosition;
 
 	switch (direction) {

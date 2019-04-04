@@ -21,9 +21,10 @@ struct TorchData {
 	MathUtils::Direction direction;
 };
 
-struct Actionable {
+struct ChestData {
 	GridPosition position;
 	MathUtils::Direction direction;
+	int itemType;
 };
 
 struct LayerData {
@@ -40,7 +41,7 @@ struct LevelData {
 	float brightness = 1.0f;
 	std::vector<LayerData> layers;
 	std::vector<TorchData> torches;
-	std::vector<Actionable> actionables;
+	std::vector<ChestData> chests;
 };
 
 class LevelLoader : Soft::Loader {
@@ -54,12 +55,12 @@ private:
 	LevelData levelData;
 
 	MathUtils::Direction getDirection(int code);
-	void parseActionable();
 	void parseAmbientLightSettings();
 	void parseBrightness();
+	void parseChestData();
 	void parseLayerSize();
 	void parseLayerData();
 	void parseSpawnPosition();
-	void parseTorch();
+	void parseTorchData();
 	void parseVisibility();
 };

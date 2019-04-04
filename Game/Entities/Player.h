@@ -13,6 +13,7 @@ public:
 	void onUpdate(int dt) override;
 	const GridPosition& getCurrentGridPosition() const;
 	MathUtils::Direction getDirection() const;
+	GridPosition getDirectionalGridPosition(MathUtils::Direction direction) const;
 	void move(MathUtils::Direction direction);
 	void spawn(const SpawnPosition& spawnPosition);
 
@@ -26,7 +27,6 @@ private:
 	void bobCamera();
 	bool canWalkUpStaircase(MathUtils::Direction direction);
 	bool canWalkDownStaircase(MathUtils::Direction direction);
-	GridPosition getDirectionalGridPosition(MathUtils::Direction direction);
 	bool isMoving();
 	void moveOffStaircase(MathUtils::Direction direction);
 	void moveUpOntoStaircase(MathUtils::Direction direction);

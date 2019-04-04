@@ -30,6 +30,9 @@ namespace GameUtils {
 		BRIDGE = 10
 	};
 
-	MathUtils::Direction getYawDirection(float yaw);
+	float getDirectionalRotationAngle(MathUtils::Direction direction);
+	Soft::Vec3 getDirectionVector(MathUtils::Direction direction);
 	Soft::Vec3 getGridPositionVec3(GridPosition position);
+	MathUtils::Direction getYawDirection(float yaw);
+	void rotateToDirection(Soft::Object* object, MathUtils::Direction direction);
 }

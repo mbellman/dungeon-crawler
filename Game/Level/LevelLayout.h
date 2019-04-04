@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Level/LevelLoader.h>
+#include <Entities/Chest.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
 #include <vector>
@@ -25,12 +26,13 @@ public:
 	LevelLayout(int totalLayers, const Soft::Area& area);
 	~LevelLayout();
 
-	void addActionable(const Actionable& actionable);
+	void addChest(Chest* chest);
 	int getBlockType(int layerIndex, int x, int z) const;
 	int getBlockType(GridPosition position) const;
 	const Soft::Area& getSize() const;
 	int getTotalLayers() const;
-	const Actionable* getMatchingActionable(GridPosition position, MathUtils::Direction direction) const;
+	Chest* getMatchingChest(GridPosition position) const;
+	bool hasImpassableObject(GridPosition position) const;
 	bool isEmptyBlock(int layerIndex, int x, int z) const;
 	bool isEmptyBlock(GridPosition position) const;
 	bool isStaircaseBlock(int layerIndex, int x, int z) const;
@@ -42,9 +44,6 @@ public:
 
 private:
 	int totalLayers = 0;
-	int startingLayerIndex = 0;
-	Soft::Coordinate startingBlockCoordinate;
-	MathUtils::Direction startingDirection = MathUtils::Direction::UP;
 	Layer* layers = nullptr;
-	std::vector<Actionable> actionables;
+	std::vector<Chest*> chests;
 };

@@ -27,6 +27,7 @@ private:
 	Soft::TextureBuffer* getBlockTexture(int blockType);
 	float getCastLightCooldownProgress();
 	void handleAction();
+	void handleChestAction(Chest* chest);
 	void handleKeyDown(const SDL_Keycode& code);
 	void loadLevel();
 	void loadTextures();

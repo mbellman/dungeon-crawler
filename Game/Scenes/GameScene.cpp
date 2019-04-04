@@ -4,6 +4,7 @@
 #include <Level/LevelLoader.h>
 #include <Entities/Player.h>
 #include <Entities/CastLight.h>
+#include <Entities/Chest.h>
 #include <Entities/Staff.h>
 #include <Entities/TextBox.h>
 #include <Entities/Torch.h>
@@ -160,11 +161,21 @@ void GameScene::handleAction() {
 		textBox->hide();
 	} else {
 		auto* player = getEntity<Player>("player");
-		const Actionable* actionable = levelLayout->getMatchingActionable(player->getCurrentGridPosition(), player->getDirection());
+		GridPosition nextPosition = player->getDirectionalGridPosition(player->getDirection());
+		Chest* chest = levelLayout->getMatchingChest(nextPosition);
 
-		if (actionable != nullptr) {
-			showText("Yep, there's an action here.");
+		if (chest != nullptr) {
+			handleChestAction(chest);
 		}
+	}
+}
+
+void GameScene::handleChestAction(Chest* chest) {
+	if (!chest->isOpen()) {
+		auto* player = getEntity<Player>("player");
+
+		chest->open(player->getDirection());
+		showText("Yep, there's a chest here.");
 	}
 }
 
@@ -204,8 +215,11 @@ void GameScene::loadLevel() {
 		add(torch);
 	}
 
-	for (const auto& actionable : levelData.actionables) {
-		levelLayout->addActionable(actionable);
+	for (const auto& chestData : levelData.chests) {
+		Chest* chest = new Chest(chestData);
+
+		levelLayout->addChest(chest);
+		add(chest);
 	}
 
 	BlockBuilder builder(levelLayout);

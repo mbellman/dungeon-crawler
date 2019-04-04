@@ -8,7 +8,7 @@ static std::string AMBIENT_LIGHT = "AL";
 static std::string VISIBILITY = "V";
 static std::string BRIGHTNESS = "B";
 static std::string TORCH = "T";
-static std::string ACTIONABLE = "A";
+static std::string CHEST = "CH";
 static std::string LAYER = "L";
 
 /**
@@ -42,9 +42,9 @@ LevelLoader::LevelLoader(const char* path) {
 		} else if (label == BRIGHTNESS) {
 			parseBrightness();
 		} else if (label == TORCH) {
-			parseTorch();
-		} else if (label == ACTIONABLE) {
-			parseActionable();
+			parseTorchData();
+		} else if (label == CHEST) {
+			parseChestData();
 		} else if (label == LAYER) {
 			parseLayerData();
 		}
@@ -56,7 +56,7 @@ LevelLoader::LevelLoader(const char* path) {
 LevelLoader::~LevelLoader() {
 	levelData.layers.clear();
 	levelData.torches.clear();
-	levelData.actionables.clear();
+	levelData.chests.clear();
 }
 
 MathUtils::Direction LevelLoader::getDirection(int code) {
@@ -78,19 +78,6 @@ const LevelData& LevelLoader::getLevelData() {
 	return levelData;
 }
 
-void LevelLoader::parseActionable() {
-	setChunkDelimiter(",");
-
-	Actionable actionable;
-
-	actionable.position.layer = std::stoi(readNextChunk());
-	actionable.position.x = std::stoi(readNextChunk());
-	actionable.position.z = std::stoi(readNextChunk());
-	actionable.direction = getDirection(std::stoi(readNextChunk()));
-
-	levelData.actionables.push_back(actionable);
-}
-
 void LevelLoader::parseAmbientLightSettings() {
 	setChunkDelimiter(",");
 
@@ -105,6 +92,18 @@ void LevelLoader::parseAmbientLightSettings() {
 
 void LevelLoader::parseBrightness() {
 	levelData.brightness = std::stof(readNextChunk());
+}
+
+void LevelLoader::parseChestData() {
+	ChestData chestData;
+
+	chestData.position.layer = std::stoi(readNextChunk());
+	chestData.position.x = std::stoi(readNextChunk());
+	chestData.position.z = std::stoi(readNextChunk());
+	chestData.direction = getDirection(std::stoi(readNextChunk()));
+	chestData.itemType = std::stoi(readNextChunk());
+
+	levelData.chests.push_back(chestData);
 }
 
 void LevelLoader::parseLayerSize() {
@@ -137,7 +136,7 @@ void LevelLoader::parseSpawnPosition() {
 	levelData.spawnPosition.direction = getDirection(std::stoi(readNextChunk()));
 }
 
-void LevelLoader::parseTorch() {
+void LevelLoader::parseTorchData() {
 	setChunkDelimiter(",");
 
 	TorchData torchData;

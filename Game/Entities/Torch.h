@@ -24,5 +24,4 @@ private:
 	Soft::Vec3 getTorchBasePosition();
 	Soft::Vec3 getTorchDirectionVector();
 	Soft::Vec3 getTorchLightPosition();
-	float getRotationAngle();
 };

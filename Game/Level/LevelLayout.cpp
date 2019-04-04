@@ -1,6 +1,7 @@
 #include <Level/LevelLayout.h>
 #include <Level/LevelLoader.h>
 #include <Level/BlockUtils.h>
+#include <Entities/Chest.h>
 #include <GameUtils.h>
 #include <SoftEngine.h>
 
@@ -30,11 +31,11 @@ LevelLayout::LevelLayout(int totalLayers, const Soft::Area& area) {
 LevelLayout::~LevelLayout() {
 	delete[] layers;
 
-	actionables.clear();
+	chests.clear();
 }
 
-void LevelLayout::addActionable(const Actionable& actionable) {
-	actionables.push_back(actionable);
+void LevelLayout::addChest(Chest* chest) {
+	chests.push_back(chest);
 }
 
 int LevelLayout::getBlockType(int layerIndex, int x, int z) const {
@@ -57,10 +58,10 @@ int LevelLayout::getBlockType(GridPosition position) const {
 	return getBlockType(position.layer, position.x, position.z);
 }
 
-const Actionable* LevelLayout::getMatchingActionable(GridPosition position, MathUtils::Direction direction) const {
-	for (auto& actionable : actionables) {
-		if (position == actionable.position && direction == actionable.direction) {
-			return &actionable;
+Chest* LevelLayout::getMatchingChest(GridPosition position) const {
+	for (auto* chest : chests) {
+		if (position == chest->getChestData().position) {
+			return chest;
 		}
 	}
 
@@ -73,6 +74,12 @@ const Soft::Area& LevelLayout::getSize() const {
 
 int LevelLayout::getTotalLayers() const {
 	return totalLayers;
+}
+
+bool LevelLayout::hasImpassableObject(GridPosition position) const {
+	const Chest* chest = getMatchingChest(position);
+
+	return chest != nullptr;
 }
 
 bool LevelLayout::isEmptyBlock(int layerIndex, int x, int z) const {
@@ -100,10 +107,12 @@ bool LevelLayout::isWalkableBlock(GridPosition position) const {
 }
 
 bool LevelLayout::isWalkablePosition(GridPosition position) const {
+	bool isBridged = getBlockType(position) == GameUtils::BlockTypes::BRIDGE;
+
 	return (
-		getBlockType(position) == GameUtils::BlockTypes::BRIDGE ||
-		isEmptyBlock(position) &&
-		isWalkableBlock(position.layer - 1, position.x, position.z)
+		!hasImpassableObject(position) &&
+		(isEmptyBlock(position) || isBridged) &&
+		(isWalkableBlock(position.layer - 1, position.x, position.z) || isBridged)
 	);
 }
 

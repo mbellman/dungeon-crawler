@@ -56,7 +56,7 @@ void Torch::addEmbers() {
 void Torch::addFire() {
 	fire = new Soft::Billboard(25.0f, 25.0f);
 
-	fire->rotateDeg({ 0.0f, getRotationAngle(), 0.0f });
+	GameUtils::rotateToDirection(fire, torchData.direction);
 	fire->setTexture(fireTexture);
 	fire->alwaysFaceToward(camera);
 	fire->position = getFirePosition();
@@ -70,7 +70,7 @@ void Torch::addTorchBase() {
 
 	Soft::Model* torchBase = new Soft::Model(torchBaseLoader);
 
-	torchBase->rotateDeg({ 0.0f, getRotationAngle(), 0.0f });
+	GameUtils::rotateToDirection(torchBase, torchData.direction);
 	torchBase->setColor({ 50, 50, 50 });
 	torchBase->scale(20.0f);
 	torchBase->position = getTorchBasePosition();
@@ -114,18 +114,7 @@ Soft::Vec3 Torch::getTorchBasePosition() {
 }
 
 Soft::Vec3 Torch::getTorchDirectionVector() {
-	switch (torchData.direction) {
-		case MathUtils::Direction::FORWARD:
-			return { 0.0f, 0.0f, 1.0f };
-		case MathUtils::Direction::BACKWARD:
-			return { 0.0f, 0.0f, -1.0f };
-		case MathUtils::Direction::LEFT:
-			return { -1.0f, 0.0f, 0.0f };
-		case MathUtils::Direction::RIGHT:
-			return { 1.0f, 0.0f, 0.0f };
-		default:
-			return { 0.0f, 0.0f, 1.0f };
-	}
+	return GameUtils::getDirectionVector(torchData.direction);
 }
 
 Soft::Vec3 Torch::getTorchLightPosition() {
@@ -136,17 +125,4 @@ Soft::Vec3 Torch::getTorchLightPosition() {
 	position.y += 35.0f;
 
 	return position;
-}
-
-float Torch::getRotationAngle() {
-	switch (torchData.direction) {
-		case MathUtils::Direction::LEFT:
-			return 90.0f;
-		case MathUtils::Direction::FORWARD:
-			return 180.0f;
-		case MathUtils::Direction::RIGHT:
-			return 270.0f;
-		default:
-			return 0.0f;
-	}
 }

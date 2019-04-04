@@ -7,6 +7,46 @@
  * GameUtils
  * ---------
  */
+float GameUtils::getDirectionalRotationAngle(MathUtils::Direction direction) {
+	switch (direction) {
+		case MathUtils::Direction::LEFT:
+			return 90.0f;
+		case MathUtils::Direction::FORWARD:
+			return 180.0f;
+		case MathUtils::Direction::RIGHT:
+			return 270.0f;
+		default:
+			return 0.0f;
+	}
+}
+
+Soft::Vec3 GameUtils::getDirectionVector(MathUtils::Direction direction) {
+	switch (direction) {
+		case MathUtils::Direction::FORWARD:
+			return { 0.0f, 0.0f, 1.0f };
+		case MathUtils::Direction::BACKWARD:
+			return { 0.0f, 0.0f, -1.0f };
+		case MathUtils::Direction::LEFT:
+			return { -1.0f, 0.0f, 0.0f };
+		case MathUtils::Direction::RIGHT:
+			return { 1.0f, 0.0f, 0.0f };
+		case MathUtils::Direction::UP:
+			return { 0.0f, 1.0f, 0.0f };
+		case MathUtils::Direction::DOWN:
+			return { 0.0f, -1.0f, 0.0f };
+		default:
+			return { 0.0f, 0.0f, 1.0f };
+	}
+}
+
+Soft::Vec3 GameUtils::getGridPositionVec3(GridPosition position) {
+	return {
+		position.x * TILE_SIZE,
+		position.layer * TILE_SIZE - HALF_TILE_SIZE,
+		-position.z * TILE_SIZE
+	};
+}
+
 MathUtils::Direction GameUtils::getYawDirection(float yaw) {
 	using namespace MathUtils;
 
@@ -25,10 +65,10 @@ MathUtils::Direction GameUtils::getYawDirection(float yaw) {
 	return Direction::UP;
 }
 
-Soft::Vec3 GameUtils::getGridPositionVec3(GridPosition position) {
-	return {
-		position.x * TILE_SIZE,
-		position.layer * TILE_SIZE - HALF_TILE_SIZE,
-		-position.z * TILE_SIZE
-	};
+void GameUtils::rotateToDirection(Soft::Object* object, MathUtils::Direction direction) {
+	object->rotateDeg({
+		0.0f,
+		getDirectionalRotationAngle(direction),
+		0.0f
+	});
 }
