@@ -32,6 +32,7 @@ private:
 	void loadLevel();
 	void loadTextures();
 	void loadUI();
+	void showItemObtainedText(const char* itemName);
 	void showText(const char* value);
 	void updateUI(int dt);
 };

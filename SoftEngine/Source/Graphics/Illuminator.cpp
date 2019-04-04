@@ -41,7 +41,7 @@ void Illuminator::computeLightColorIntensity(Light* light, const Vec3& vertexPos
 
 	if (
 		light->isDisabled ||
-		light->power <= 0 ||
+		light->power <= 0.001f ||
 		abs(lightPosition.x - vertexPosition.x) > light->range ||
 		abs(lightPosition.y - vertexPosition.y) > light->range ||
 		abs(lightPosition.z - vertexPosition.z) > light->range

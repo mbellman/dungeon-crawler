@@ -42,6 +42,10 @@ set(SOURCE_FILES
     Game/GameUtils.cpp
     Game/GameObjects.h
     Game/GameObjects.cpp
+    Game/Items.h
+    Game/Items.cpp
+    Game/Inventory.h
+    Game/Inventory.cpp
     Game/MathUtils.h
     Game/Entities/CastLight.h
     Game/Entities/CastLight.cpp

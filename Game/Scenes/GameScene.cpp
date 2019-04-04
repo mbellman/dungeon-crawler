@@ -13,6 +13,7 @@
 #include <GameUtils.h>
 #include <cmath>
 #include <math.h>
+#include <string>
 #include <SDL_ttf.h>
 
 /**
@@ -175,7 +176,7 @@ void GameScene::handleChestAction(Chest* chest) {
 		auto* player = getEntity<Player>("player");
 
 		chest->open(player->getDirection());
-		showText("Yep, there's a chest here.");
+		showItemObtainedText(chest->getItemData().name);
 	}
 }
 
@@ -255,7 +256,7 @@ void GameScene::loadTextures() {
 	add("chest_lid", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/lid.png"));
 
 	Soft::TextureBuffer* fireTexture = new Soft::TextureBuffer("./Assets/BlockTextures/Fire/1.png");
-	fireTexture->shouldUseMipmaps = true;
+	fireTexture->shouldUseMipmaps = false;
 
 	fireTexture->addFrame("./Assets/BlockTextures/Fire/2.png");
 	fireTexture->addFrame("./Assets/BlockTextures/Fire/3.png");
@@ -295,6 +296,13 @@ void GameScene::loadUI() {
 	ui->add("rightColumn", rightColumn);
 	ui->add("base", base);
 	ui->add("lightBar", lightBar);
+}
+
+void GameScene::showItemObtainedText(const char* itemName) {
+	char message[100];
+
+	sprintf(message, "Obtained %s!", itemName);
+	showText(message);
 }
 
 void GameScene::showText(const char* value) {
