@@ -8,29 +8,31 @@
  * Chest
  * -----
  */
-Chest::Chest(const ChestData& chestData) {
+Chest::Chest(const ChestData& chestData, Soft::TextureBuffer* boxTexture, Soft::TextureBuffer* lidTexture) {
 	this->chestData = chestData;
+	this->boxTexture = boxTexture;
+	this->lidTexture = lidTexture;
 }
 
 void Chest::initialize() {
-	Soft::ObjLoader baseLoader("./Assets/Models/chest-base.obj");
+	Soft::ObjLoader boxLoader("./Assets/Models/chest-box.obj");
 	Soft::ObjLoader lidLoader("./Assets/Models/chest-lid.obj");
 
-	Soft::Model* base = new Soft::Model(baseLoader);
+	Soft::Model* box = new Soft::Model(boxLoader);
 	lid = new Soft::Model(lidLoader);
 
-	GameUtils::rotateToDirection(base, chestData.direction);
-	base->setColor({ 150, 100, 25 });
-	base->scale(GameUtils::HALF_TILE_SIZE);
-	base->position = GameUtils::getGridPositionVec3(chestData.position);
-	base->position.y -= GameUtils::HALF_TILE_SIZE * 0.72f;
+	GameUtils::rotateToDirection(box, chestData.direction);
+	box->scale(GameUtils::HALF_TILE_SIZE);
+	box->setTexture(boxTexture);
+	box->position = GameUtils::getGridPositionVec3(chestData.position);
+	box->position.y -= GameUtils::HALF_TILE_SIZE * 0.72f;
 
 	GameUtils::rotateToDirection(lid, chestData.direction);
-	lid->setColor({ 150, 100, 25 });
 	lid->scale(GameUtils::HALF_TILE_SIZE);
-	lid->position = base->position;
+	lid->setTexture(lidTexture);
+	lid->position = box->position;
 
-	add(base);
+	add(box);
 	add(lid);
 }
 

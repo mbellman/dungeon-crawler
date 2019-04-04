@@ -216,7 +216,7 @@ void GameScene::loadLevel() {
 	}
 
 	for (const auto& chestData : levelData.chests) {
-		Chest* chest = new Chest(chestData);
+		Chest* chest = new Chest(chestData, getTexture("chest_box"), getTexture("chest_lid"));
 
 		levelLayout->addChest(chest);
 		add(chest);
@@ -251,6 +251,8 @@ void GameScene::loadTextures() {
 	add("column", new Soft::TextureBuffer("./Assets/BlockTextures/column.png"));
 	add("staircase", new Soft::TextureBuffer("./Assets/BlockTextures/staircase.png"));
 	add("bridge", new Soft::TextureBuffer("./Assets/BlockTextures/bridge.png"));
+	add("chest_box", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/box.png"));
+	add("chest_lid", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/lid.png"));
 
 	Soft::TextureBuffer* fireTexture = new Soft::TextureBuffer("./Assets/BlockTextures/Fire/1.png");
 	fireTexture->shouldUseMipmaps = true;

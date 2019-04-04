@@ -7,7 +7,7 @@
 
 class Chest : public Soft::Entity {
 public:
-	Chest(const ChestData& chestData);
+	Chest(const ChestData& chestData, Soft::TextureBuffer* boxTexture, Soft::TextureBuffer* lidTexture);
 
 	void initialize() override;
 	const ChestData& getChestData() const;
@@ -16,6 +16,8 @@ public:
 
 private:
 	ChestData chestData;
+	Soft::TextureBuffer* boxTexture = nullptr;
+	Soft::TextureBuffer* lidTexture = nullptr;
 	Soft::Object* lid = nullptr;
 	bool hasOpened = false;
 };
