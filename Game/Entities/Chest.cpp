@@ -25,7 +25,7 @@ void Chest::initialize() {
 	base->position = GameUtils::getGridPositionVec3(chestData.position);
 	base->position.y -= GameUtils::HALF_TILE_SIZE * 0.72f;
 
-	GameUtils::rotateToDirection(base, chestData.direction);
+	GameUtils::rotateToDirection(lid, chestData.direction);
 	lid->setColor({ 150, 100, 25 });
 	lid->scale(GameUtils::HALF_TILE_SIZE);
 	lid->position = base->position;
