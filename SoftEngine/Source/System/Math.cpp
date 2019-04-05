@@ -33,6 +33,10 @@ float Ease::sineWave(float t) {
 	return sinf(t * M_PI);
 }
 
+float Ease::inOutWave(float t) {
+	return t < 0.5f ? quadInOut(t * 2.0f) : 1.0f - quadInOut((t - 0.5f) * 2.0f);
+}
+
 /**
  * Coordinate
  * ----------

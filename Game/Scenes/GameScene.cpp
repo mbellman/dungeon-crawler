@@ -109,7 +109,7 @@ void GameScene::castLight() {
 		textBox->hide();
 	}
 
-	CastLight* castLight = new CastLight(camera->position, camera->getDirection());
+	CastLight* castLight = new CastLight(camera->position, camera->getDirection(), camera, getTexture("cast_light"));
 	castLight->lifetime = GameUtils::CAST_LIGHT_LIFETIME;
 
 	add(castLight);
@@ -254,6 +254,11 @@ void GameScene::loadTextures() {
 	add("bridge", new Soft::TextureBuffer("./Assets/BlockTextures/bridge.png"));
 	add("chest_box", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/box.png"));
 	add("chest_lid", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/lid.png"));
+
+	Soft::TextureBuffer* castLightTexture = new Soft::TextureBuffer("./Assets/BlockTextures/CastLight/green.png");
+	castLightTexture->shouldUseMipmaps = false;
+
+	add("cast_light", castLightTexture);
 
 	Soft::TextureBuffer* fireTexture = new Soft::TextureBuffer("./Assets/BlockTextures/Fire/1.png");
 	fireTexture->shouldUseMipmaps = false;

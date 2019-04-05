@@ -36,6 +36,7 @@ void Chest::initialize() {
 
 	itemLight->setColor({ 255, 255, 255 });
 	itemLight->power = 0.0f;
+	itemLight->range = 200.0f;
 	itemLight->position = box->position;
 
 	add(box);
@@ -72,9 +73,9 @@ void Chest::open(MathUtils::Direction direction) {
 
 void Chest::showItemLight() {
 	itemLightPowerTween.value.start = 0.0f;
-	itemLightPowerTween.value.end = 0.5f;
+	itemLightPowerTween.value.end = 4.0f;
 	itemLightPowerTween.duration = 2000;
-	itemLightPowerTween.easing = Soft::Ease::sineWave;
+	itemLightPowerTween.easing = Soft::Ease::inOutWave;
 	itemLightPowerTween.isActive = true;
 }
 

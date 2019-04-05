@@ -18,6 +18,7 @@ namespace Ease {
 	float quadOut(float t);
 	float quadInOut(float t);
 	float sineWave(float t);
+	float inOutWave(float t);
 };
 
 /**

@@ -6,9 +6,11 @@
  * CastLight
  * ---------
  */
-CastLight::CastLight(const Soft::Vec3& spawnPosition, const Soft::Vec3& direction) {
+CastLight::CastLight(const Soft::Vec3& spawnPosition, const Soft::Vec3& direction, const Soft::Camera* camera, Soft::TextureBuffer* texture) {
 	this->spawnPosition = spawnPosition;
 	this->direction = direction;
+	this->camera = camera;
+	this->texture = texture;
 }
 
 void CastLight::initialize() {
@@ -16,18 +18,20 @@ void CastLight::initialize() {
 
 	light->setColor({ 0, 255, 0 });
 	light->position = spawnPosition + direction * 100.0f;
+	light->power = 1.5f;
 	light->range = GameUtils::CAST_LIGHT_RANGE;
 
 	light->onUpdate = [=](int dt) {
 		light->position += direction * (float)dt * 1.5f;
 	};
 
-	Soft::Cube* lightCube = new Soft::Cube(3.0f);
+	Soft::Billboard* orb = new Soft::Billboard(15.0f, 15.0f);
 
-	lightCube->setColor({ 0, 255, 0 });
-	lightCube->hasLighting = false;
-	lightCube->lockTo(light);
+	orb->lockTo(light);
+	orb->alwaysFaceToward(camera);
+	orb->setTexture(texture);
+	orb->hasLighting = false;
 
 	add(light);
-	add(lightCube);
+	add(orb);
 }
