@@ -885,6 +885,12 @@ void Light::setColor(const Color& color) {
 	setColor(color.R, color.G, color.B);
 }
 
+void Light::update(int dt) {
+	Object::update(dt);
+
+	power.update(dt);
+}
+
 /**
  * DirectionalLight
  * ----------------

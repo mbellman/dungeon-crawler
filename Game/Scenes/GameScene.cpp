@@ -39,7 +39,6 @@ void GameScene::load() {
 
 	addPlayer();
 	addStaff();
-	addCameraLight();
 
 	inputManager->onMouseUp([=]() {
 		castLight();
@@ -69,17 +68,6 @@ void GameScene::onUpdate(int dt) {
 	}
 
 	updateUI(dt);
-}
-
-void GameScene::addCameraLight() {
-	Soft::Light* light = new Soft::Light();
-
-	light->range = 750.0f;
-	light->power = 0.5f;
-	light->setColor({ 255, 150, 50 });
-	light->lockTo(camera);
-
-	add(light);
 }
 
 void GameScene::addPlayer() {
@@ -114,7 +102,10 @@ void GameScene::castLight() {
 
 	add(castLight);
 
-	getEntity<Staff>("staff")->swing();
+	auto* staff = getEntity<Staff>("staff");
+
+	staff->swing();
+	staff->dispelLight();
 
 	lastLightCastTime = getRunningTime();
 }

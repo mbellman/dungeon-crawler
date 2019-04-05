@@ -256,4 +256,49 @@ Vec3 Vec3::operator /=(float scalar) {
 	return *this;
 }
 
+/**
+ * TweenableFloat
+ * --------------
+ */
+TweenableFloat::TweenableFloat(float value) {
+	tween.value.start = value;
+	currentValue = value;
+}
+
+TweenableFloat TweenableFloat::operator =(float value) {
+	currentValue = value;
+
+	return *this;
+}
+
+bool TweenableFloat::isTweening() const {
+	return tween.isActive;
+}
+
+void TweenableFloat::tweenTo(float value, int duration, Ease::EaseFunction easing) {
+	tween.value.start = currentValue;
+	tween.value.end = value;
+	tween.time = 0;
+	tween.duration = duration;
+	tween.easing = easing;
+	tween.isActive = true;
+}
+
+void TweenableFloat::update(int dt) {
+	if (tween.isActive) {
+		tween.time += dt;
+
+		if (tween.time >= tween.duration) {
+			tween.time = tween.duration;
+			tween.isActive = false;
+		}
+
+		currentValue = Lerp::lerp(tween.value.start, tween.value.end, tween.alpha());
+	}
+}
+
+float TweenableFloat::value() const {
+	return currentValue;
+}
+
 } // namespace Soft

@@ -85,7 +85,7 @@ struct Object : public Positionable3d {
 	void startMorph(int duration, bool shouldLoop);
 	void stopMorph();
 	void syncLODs();
-	void update(int dt);
+	virtual void update(int dt);
 	void updateMorph(int dt);
 
 protected:
@@ -201,7 +201,7 @@ private:
  * -----
  */
 struct Light : Object {
-	float power = 1.0f;
+	TweenableFloat power = 1.0f;
 	float range = 500.0f;
 	bool isDisabled = false;
 
@@ -209,6 +209,7 @@ struct Light : Object {
 	const Vec3& getColorRatios() const;
 	void setColor(int R, int G, int B);
 	void setColor(const Color& color);
+	void update(int dt) override;
 
 private:
 	Color color = { 255, 255, 255 };
@@ -222,6 +223,7 @@ private:
 struct DirectionalLight : Light {
 	const Vec3& getDirection() const;
 	void setDirection(const Vec3& direction);
+
 private:
 	Vec3 direction = { 0, -1, 0 };
 };

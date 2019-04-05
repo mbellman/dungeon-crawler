@@ -44,12 +44,6 @@ void Chest::initialize() {
 	add(itemLight);
 }
 
-void Chest::onUpdate(int dt) {
-	if (itemLightPowerTween.isActive) {
-		updateItemLight(dt);
-	}
-}
-
 const ChestData& Chest::getChestData() const {
 	return chestData;
 }
@@ -66,25 +60,7 @@ void Chest::open(MathUtils::Direction direction) {
 	Soft::Vec3 lidOpenOffset = GameUtils::getDirectionVector(direction) * GameUtils::HALF_TILE_SIZE * 0.25f;
 
 	lid->tweenTo(lid->position + lidOpenOffset, 750, Soft::Ease::quadInOut);
-	showItemLight();
+	itemLight->power.tweenTo(4.0f, 2000, Soft::Ease::inOutWave);
 
 	hasOpened = true;
-}
-
-void Chest::showItemLight() {
-	itemLightPowerTween.value.start = 0.0f;
-	itemLightPowerTween.value.end = 4.0f;
-	itemLightPowerTween.duration = 2000;
-	itemLightPowerTween.easing = Soft::Ease::inOutWave;
-	itemLightPowerTween.isActive = true;
-}
-
-void Chest::updateItemLight(int dt) {
-	itemLightPowerTween.time += dt;
-
-	itemLight->power = itemLightPowerTween.alpha() * itemLightPowerTween.value.end;
-
-	if (itemLightPowerTween.progress() >= 1.0f) {
-		itemLightPowerTween.isActive = false;
-	}
 }

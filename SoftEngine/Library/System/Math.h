@@ -141,4 +141,24 @@ struct Tween {
 	}
 };
 
+/**
+ * TweenableFloat
+ * --------------
+ */
+class TweenableFloat {
+public:
+	TweenableFloat(float value);
+
+	TweenableFloat operator =(float value);
+
+	bool isTweening() const;
+	void tweenTo(float value, int duration, Ease::EaseFunction easing);
+	void update(int dt);
+	float value() const;
+
+private:
+	Tween<float> tween;
+	float currentValue;
+};
+
 } // namespace Soft

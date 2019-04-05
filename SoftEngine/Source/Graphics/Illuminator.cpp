@@ -41,7 +41,7 @@ void Illuminator::computeLightColorIntensity(Light* light, const Vec3& vertexPos
 
 	if (
 		light->isDisabled ||
-		light->power <= 0.001f ||
+		light->power.value() <= 0.001f ||
 		abs(lightPosition.x - vertexPosition.x) > light->range ||
 		abs(lightPosition.y - vertexPosition.y) > light->range ||
 		abs(lightPosition.z - vertexPosition.z) > light->range
@@ -89,7 +89,7 @@ void Illuminator::computeLightColorIntensity(Light* light, const Vec3& vertexPos
 
 	float incidence = cosf((1 + normalDot) * PI_HALF) * (isDirectional ? powf(directionalDot, 4) : 1.0f);
 	float illuminance = pow(1.0f - lightDistance / light->range, 2);
-	float intensity = light->power * incidence * illuminance * (1.0f + fresnelFactor);
+	float intensity = light->power.value() * incidence * illuminance * (1.0f + fresnelFactor);
 	const Vec3& colorRatios = light->getColorRatios();
 
 	colorIntensity.x *= (1.0f + (intensity * colorRatios.x) / settings.brightness);

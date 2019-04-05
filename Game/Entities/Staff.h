@@ -8,6 +8,7 @@ public:
 
 	void initialize() override;
 	void onUpdate(int dt) override;
+	void dispelLight();
 	void swing();
 
 private:
@@ -24,6 +25,7 @@ private:
 
 	const Soft::Camera* camera = nullptr;
 	Soft::Model* model = nullptr;
+	Soft::Light* staffLight = nullptr;
 	float lastCameraYaw = 0.0f;
 	float lastCameraPitch = 0.0f;
 	Soft::Vec3 swingPitchAxis;

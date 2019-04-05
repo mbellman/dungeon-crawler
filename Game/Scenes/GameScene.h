@@ -20,7 +20,6 @@ private:
 	SpawnPosition playerSpawnPosition;
 	int lastLightCastTime = 0;
 
-	void addCameraLight();
 	void addPlayer();
 	void addStaff();
 	void castLight();
