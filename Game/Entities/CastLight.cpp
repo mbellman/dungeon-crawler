@@ -28,6 +28,7 @@ void CastLight::initialize() {
 	Soft::Billboard* orb = new Soft::Billboard(15.0f, 15.0f);
 
 	orb->lockTo(light);
+	orb->rotate({ camera->pitch, 0.0f, 0.0f });
 	orb->alwaysFaceToward(camera);
 	orb->setTexture(texture);
 	orb->hasLighting = false;
