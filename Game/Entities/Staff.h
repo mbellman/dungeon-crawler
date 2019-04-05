@@ -18,6 +18,7 @@ private:
 	constexpr static float VERTICAL_OFFSET = -30.0f;
 	constexpr static float CAMERA_PITCH_VERTICAL_DRIFT = 40.0f;
 	constexpr static float SWING_PITCH_DEGREES = 40.0f;
+	constexpr static float STAFF_LIGHT_POWER = 0.75f;
 	constexpr static int SWING_DURATION = 250;
 
 	static Soft::Vec3 DEFAULT_TRANSFORM_ORIGIN;

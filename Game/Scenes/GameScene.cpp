@@ -246,7 +246,7 @@ void GameScene::loadTextures() {
 	add("chest_box", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/box.png"));
 	add("chest_lid", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/lid.png"));
 
-	Soft::TextureBuffer* castLightTexture = new Soft::TextureBuffer("./Assets/BlockTextures/CastLight/green.png");
+	Soft::TextureBuffer* castLightTexture = new Soft::TextureBuffer("./Assets/BlockTextures/CastLight/blue.png");
 	castLightTexture->shouldUseMipmaps = false;
 
 	add("cast_light", castLightTexture);

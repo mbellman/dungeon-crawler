@@ -16,9 +16,9 @@ CastLight::CastLight(const Soft::Vec3& spawnPosition, const Soft::Vec3& directio
 void CastLight::initialize() {
 	Soft::Light* light = new Soft::Light();
 
-	light->setColor({ 0, 255, 0 });
+	light->setColor({ 0, 0, 255 });
 	light->position = spawnPosition + direction * 100.0f;
-	light->power = 1.5f;
+	light->power = 4.0f;
 	light->range = GameUtils::CAST_LIGHT_RANGE;
 
 	light->onUpdate = [=](int dt) {

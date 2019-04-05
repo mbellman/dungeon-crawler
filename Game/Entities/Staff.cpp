@@ -16,14 +16,14 @@ void Staff::initialize() {
 
 	model = new Soft::Model(loader);
 
-	model->setColor(180, 100, 10);
+	model->setColor({ 180, 125, 50 });
 	model->scale(Staff::SCALE);
 	model->transformOrigin = Staff::DEFAULT_TRANSFORM_ORIGIN;
 
 	staffLight = new Soft::Light();
 
-	staffLight->setColor({ 0, 150, 0 });
-	staffLight->range = 250.0f;
+	staffLight->setColor({ 0, 0, 255 });
+	staffLight->power = Staff::STAFF_LIGHT_POWER;
 
 	staffLight->follow(model, [=](const Soft::Vec3& staffPosition, Soft::Vec3& lightPosition) {
 		lightPosition = staffPosition;
@@ -46,7 +46,7 @@ void Staff::onUpdate(int dt) {
 
 void Staff::dispelLight() {
 	staffLight->power = 0.0f;
-	staffLight->power.tweenTo(1.0f, GameUtils::CAST_LIGHT_COOLDOWN_TIME, Soft::Ease::quadInOut);
+	staffLight->power.tweenTo(Staff::STAFF_LIGHT_POWER, GameUtils::CAST_LIGHT_COOLDOWN_TIME, Soft::Ease::quadInOut);
 }
 
 Soft::Vec3 Staff::getPitchAxis() const {
