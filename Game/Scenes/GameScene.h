@@ -2,6 +2,7 @@
 
 #include <SoftEngine.h>
 #include <MathUtils.h>
+#include <Inventory.h>
 #include <Level/LevelLayout.h>
 #include <Level/LevelLoader.h>
 #include <SDL_ttf.h>
@@ -15,6 +16,7 @@ public:
 	void onUpdate(int dt) override;
 
 private:
+	Inventory* inventory = nullptr;
 	LevelLayout* levelLayout = nullptr;
 	TTF_Font* uiFont = nullptr;
 	SpawnPosition playerSpawnPosition;
@@ -27,10 +29,13 @@ private:
 	float getCastLightCooldownProgress();
 	void handleAction();
 	void handleChestAction(Chest* chest);
-	void handleKeyDown(const SDL_Keycode& code);
+	void handleGameKeyDown(const SDL_Keycode& code);
+	void handleItemMenuKeyDown(const SDL_Keycode& code);
+	bool isItemMenuOpen();
 	void loadLevel();
 	void loadTextures();
 	void loadUI();
+	void showItemMenu();
 	void showItemObtainedText(const char* itemName);
 	void showText(const char* value);
 	void updateUI(int dt);

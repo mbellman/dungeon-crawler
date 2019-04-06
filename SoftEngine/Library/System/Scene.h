@@ -148,7 +148,7 @@ private:
 			return entry->second;
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	void safelyFreeMappedEntity(const char* key);

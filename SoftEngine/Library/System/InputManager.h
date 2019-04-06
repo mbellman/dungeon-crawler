@@ -28,6 +28,7 @@ enum Keys {
  */
 class InputManager {
 public:
+	void focusWindow();
 	void handleEvent(const SDL_Event& event);
 	bool isKeyPressed(Keys key);
 	void onEvent(EventHandler handler);

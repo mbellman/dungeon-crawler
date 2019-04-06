@@ -49,7 +49,7 @@ const ChestData& Chest::getChestData() const {
 }
 
 const ItemData& Chest::getItemData() const {
-	return items[chestData.itemType];
+	return ItemMap[chestData.itemType];
 }
 
 bool Chest::isOpen() const {

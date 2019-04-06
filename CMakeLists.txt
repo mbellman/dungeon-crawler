@@ -51,6 +51,8 @@ set(SOURCE_FILES
     Game/Entities/CastLight.cpp
     Game/Entities/Chest.h
     Game/Entities/Chest.cpp
+    Game/Entities/ItemMenu.h
+    Game/Entities/ItemMenu.cpp
     Game/Entities/Player.h
     Game/Entities/Player.cpp
     Game/Entities/Staff.h

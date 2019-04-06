@@ -6,6 +6,7 @@
 #include <Helpers.h>
 #include <vector>
 #include <map>
+#include <string>
 
 namespace Soft {
 
@@ -34,7 +35,7 @@ void Entity::add(Sound* sound) {
 	queuedSounds.push_back(sound);
 }
 
-void Entity::add(const char* key, UIObject* uiObject) {
+void Entity::add(std::string key, UIObject* uiObject) {
 	queuedUIObjectMap.emplace(key, uiObject);
 }
 
@@ -54,7 +55,7 @@ const std::vector<Sound*>& Entity::getQueuedSounds() const {
 	return queuedSounds;
 }
 
-const std::map<const char*, UIObject*>& Entity::getQueuedUIObjectMap() const {
+const std::map<std::string, UIObject*>& Entity::getQueuedUIObjectMap() const {
 	return queuedUIObjectMap;
 }
 

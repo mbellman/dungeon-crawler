@@ -8,6 +8,10 @@ namespace Soft {
  * InputManager
  * ------------
  */
+void InputManager::focusWindow() {
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+}
+
 void InputManager::handleEvent(const SDL_Event& event) {
 	if (eventHandler != nullptr) {
 		eventHandler(event);
@@ -57,10 +61,6 @@ void InputManager::handleKeyDown(const SDL_Keycode& code) {
 }
 
 void InputManager::handleKeyUp(const SDL_Keycode& code) {
-	if (keyUpHandler != nullptr) {
-		keyUpHandler(code);
-	}
-
 	switch (code) {
 		case SDLK_w:
 			keyState &= ~Keys::W;
@@ -81,12 +81,16 @@ void InputManager::handleKeyUp(const SDL_Keycode& code) {
 			SDL_SetRelativeMouseMode(SDL_FALSE);
 			break;
 	}
+
+	if (keyUpHandler != nullptr) {
+		keyUpHandler(code);
+	}
 }
 
 void InputManager::handleMouseDown(const SDL_MouseButtonEvent& event) {
 	switch (event.button) {
 		case SDL_BUTTON_LEFT: {
-			SDL_SetRelativeMouseMode(SDL_TRUE);
+			focusWindow();
 
 			lastMouseDownTime = (int)SDL_GetTicks();
 

@@ -7,6 +7,7 @@
 #include <Entities/Chest.h>
 #include <Entities/Staff.h>
 #include <Entities/TextBox.h>
+#include <Entities/ItemMenu.h>
 #include <Entities/Torch.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
@@ -22,6 +23,7 @@
  */
 GameScene::GameScene() {
 	uiFont = TTF_OpenFont("./Assets/Fonts/FreeMono.ttf", 20);
+	inventory = new Inventory();
 }
 
 GameScene::~GameScene() {
@@ -30,6 +32,8 @@ GameScene::~GameScene() {
 	}
 
 	TTF_CloseFont(uiFont);
+
+	delete inventory;
 }
 
 void GameScene::load() {
@@ -45,7 +49,11 @@ void GameScene::load() {
 	});
 
 	inputManager->onKeyDown([=](const SDL_Keycode& code) {
-		handleKeyDown(code);
+		if (isItemMenuOpen()) {
+			handleItemMenuKeyDown(code);
+		} else {
+			handleGameKeyDown(code);
+		}
 	});
 
 	camera->fov = 110;
@@ -165,18 +173,51 @@ void GameScene::handleAction() {
 void GameScene::handleChestAction(Chest* chest) {
 	if (!chest->isOpen()) {
 		auto* player = getEntity<Player>("player");
+		const ItemData& itemData = chest->getItemData();
 
 		chest->open(player->getDirection());
-		showItemObtainedText(chest->getItemData().name);
+		inventory->addItem(itemData);
+
+		showItemObtainedText(itemData.name);
 	}
 }
 
-void GameScene::handleKeyDown(const SDL_Keycode& code) {
+void GameScene::handleGameKeyDown(const SDL_Keycode& code) {
 	switch (code) {
 		case SDLK_SPACE:
 			handleAction();
 			break;
+		case SDLK_e:
+			showItemMenu();
+			break;
 	}
+}
+
+void GameScene::handleItemMenuKeyDown(const SDL_Keycode& code) {
+	auto* itemMenu = getEntity<ItemMenu>("itemMenu");
+
+	switch (code) {
+		case SDLK_DOWN:
+			itemMenu->scrollDown();
+			break;
+		case SDLK_UP:
+			itemMenu->scrollUp();
+			break;
+		case SDLK_RETURN:
+			itemMenu->confirm();
+			break;
+		case SDLK_e:
+			itemMenu->cancel();
+			break;
+	}
+
+	if (itemMenu->isClosed()) {
+		remove("itemMenu");
+	}
+}
+
+bool GameScene::isItemMenuOpen() {
+	return getEntity<ItemMenu>("itemMenu") != nullptr;
 }
 
 void GameScene::loadLevel() {
@@ -284,7 +325,7 @@ void GameScene::loadUI() {
 
 	Soft::UIRect* lightBar = new Soft::UIRect();
 	lightBar->setSize(200, 24);
-	lightBar->setColor({ 0, 255, 0 });
+	lightBar->setColor({ 0, 0, 255 });
 	lightBar->setAlpha(0.5f);
 	lightBar->position = { 92, baseY + 27 };
 
@@ -292,6 +333,12 @@ void GameScene::loadUI() {
 	ui->add("rightColumn", rightColumn);
 	ui->add("base", base);
 	ui->add("lightBar", lightBar);
+}
+
+void GameScene::showItemMenu() {
+	ItemMenu* itemMenu = new ItemMenu(inventory, uiFont);
+
+	add("itemMenu", itemMenu);
 }
 
 void GameScene::showItemObtainedText(const char* itemName) {

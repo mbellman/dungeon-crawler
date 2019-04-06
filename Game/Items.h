@@ -21,4 +21,4 @@ struct ItemData {
 	float value;
 };
 
-extern std::map<int, ItemData> items;
+extern std::map<int, ItemData> ItemMap;

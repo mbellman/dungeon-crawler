@@ -1,6 +1,7 @@
 #include <UI/UI.h>
-#include <algorithm>
 #include <SDL.h>
+#include <algorithm>
+#include <string>
 
 namespace Soft {
 
@@ -21,14 +22,14 @@ UI::~UI() {
 	uiObjects.clear();
 }
 
-void UI::add(const char* key, UIObject* uiObject) {
+void UI::add(std::string key, UIObject* uiObject) {
 	uiObject->setRenderer(renderer);
 
 	uiObjects.push_back(uiObject);
 	uiObjectMap.emplace(key, uiObject);
 }
 
-UIObject* UI::get(const char* key) {
+UIObject* UI::get(std::string key) {
 	const auto& uiObject = uiObjectMap.find(key);
 
 	if (uiObject != uiObjectMap.end()) {
@@ -38,7 +39,7 @@ UIObject* UI::get(const char* key) {
 	return nullptr;
 }
 
-void UI::remove(const char* key) {
+void UI::remove(std::string key) {
 	const auto& entry = uiObjectMap.find(key);
 
 	if (entry != uiObjectMap.end()) {

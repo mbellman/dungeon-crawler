@@ -16,7 +16,7 @@ static ItemData shield = {
 	"Shield", 25.0f
 };
 
-std::map<int, ItemData> items = {
+std::map<int, ItemData> ItemMap = {
 	{ Items::POTION, potion },
 	{ Items::SCEPTER, scepter },
 	{ Items::SHIELD, shield }
