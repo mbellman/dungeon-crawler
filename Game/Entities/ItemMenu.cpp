@@ -1,4 +1,5 @@
 #include <Entities/ItemMenu.h>
+#include <Entities/Frame.h>
 #include <Inventory.h>
 #include <SoftEngine.h>
 #include <vector>
@@ -17,13 +18,12 @@ ItemMenu::~ItemMenu() {
 }
 
 void ItemMenu::initialize() {
-	Soft::UIRect* background = new Soft::UIRect();
+	Frame* frame = new Frame({
+		ItemMenu::OFFSET.x, ItemMenu::OFFSET.y,
+		800, 400
+	});
 
-	background->setColor({ 0, 20, 40 });
-	background->setSize(800, 400);
-	background->position = ItemMenu::OFFSET;
-
-	add("itemMenu-bg", background);
+	add(frame);
 
 	addItemTextSlots();
 	populateItemTextSlots();
@@ -41,11 +41,7 @@ void ItemMenu::addItemTextSlots() {
 		};
 
 		itemTextSlots.push_back(text);
-
-		char key[10];
-		sprintf(key, "slot-%d", i);
-
-		add(key, text);
+		add(text);
 	}
 }
 

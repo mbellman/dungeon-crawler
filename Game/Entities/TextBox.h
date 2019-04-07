@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Entities/Frame.h>
 #include <SoftEngine.h>
 #include <SDL_ttf.h>
 #include <string>
@@ -35,7 +36,7 @@ private:
 	constexpr static int SHOWN_TOP_OFFSET = 500;
 	constexpr static int HIDDEN_TOP_OFFSET = 750;
 
-	Soft::UIRect* background = nullptr;
+	Frame* frame = nullptr;
 	Soft::UIText* text = nullptr;
 	TTF_Font* font = nullptr;
 	std::string fullValue = "";

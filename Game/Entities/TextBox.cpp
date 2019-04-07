@@ -1,4 +1,5 @@
 #include <Entities/TextBox.h>
+#include <Entities/Frame.h>
 #include <SoftEngine.h>
 #include <SDL_ttf.h>
 #include <algorithm>
@@ -12,18 +13,18 @@ TextBox::TextBox(TTF_Font* font) {
 }
 
 void TextBox::initialize() {
-	background = new Soft::UIRect();
-	background->setColor({ 0, 20, 40 });
-	background->setSize(800, 100);
-	background->position = { 200, TextBox::HIDDEN_TOP_OFFSET };
+	frame = new Frame({
+		200, TextBox::HIDDEN_TOP_OFFSET,
+		800, 100
+	});
 
 	text = new Soft::UIText();
 	text->setFont(font);
 	text->setColor({ 255, 255, 255 });
-	text->position = { 250, TextBox::HIDDEN_TOP_OFFSET + 15 };
+	text->position = { 235, TextBox::HIDDEN_TOP_OFFSET + 25 };
 
-	add("textbox-bg", background);
-	add("textbox-text", text);
+	add(frame);
+	add(text);
 }
 
 void TextBox::onUpdate(int dt) {
@@ -52,7 +53,7 @@ int TextBox::getTotalWritingTime(TextSpeed speed) {
 }
 
 bool TextBox::isShown() const {
-	return background->position.y < 750;
+	return frame->getPosition().y < 750;
 }
 
 bool TextBox::isWriting() const {
@@ -70,11 +71,11 @@ void TextBox::write(const char* value, TextSpeed speed) {
 }
 
 void TextBox::show() {
-	background->tweenTo({ 200, TextBox::SHOWN_TOP_OFFSET }, 400, Soft::Ease::linear);
-	text->tweenTo({ 250, TextBox::SHOWN_TOP_OFFSET + 15 }, 400, Soft::Ease::linear);
+	frame->tweenTo({ 200, TextBox::SHOWN_TOP_OFFSET }, 400, Soft::Ease::linear);
+	text->tweenTo({ 235, TextBox::SHOWN_TOP_OFFSET + 25 }, 400, Soft::Ease::linear);
 }
 
 void TextBox::hide() {
-	background->tweenTo({ 200, TextBox::HIDDEN_TOP_OFFSET }, 400, Soft::Ease::linear);
-	text->tweenTo({ 250, TextBox::HIDDEN_TOP_OFFSET + 15 }, 400, Soft::Ease::linear);
+	frame->tweenTo({ 200, TextBox::HIDDEN_TOP_OFFSET }, 400, Soft::Ease::linear);
+	text->tweenTo({ 235, TextBox::HIDDEN_TOP_OFFSET + 25 }, 400, Soft::Ease::linear);
 }

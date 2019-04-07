@@ -1,5 +1,6 @@
 #include <System/Entity.h>
 #include <System/Objects.h>
+#include <System/Scene.h>
 #include <Sound/Sound.h>
 #include <UI/UI.h>
 #include <UI/UIObjects.h>
@@ -16,12 +17,17 @@ namespace Soft {
  */
 Entity::~Entity() {
 	queuedObjects.clear();
+	queuedEntities.clear();
 	queuedParticleSystems.clear();
 	queuedSounds.clear();
-	queuedUIObjectMap.clear();
+	queuedUIObjects.clear();
 }
 
 void Entity::onUpdate(int dt) {}
+
+void Entity::add(Entity* entity) {
+	queuedEntities.push_back(entity);
+}
 
 void Entity::add(Object* object) {
 	queuedObjects.push_back(object);
@@ -35,12 +41,16 @@ void Entity::add(Sound* sound) {
 	queuedSounds.push_back(sound);
 }
 
-void Entity::add(std::string key, UIObject* uiObject) {
-	queuedUIObjectMap.emplace(key, uiObject);
+void Entity::add(UIObject* uiObject) {
+	queuedUIObjects.push_back(uiObject);
 }
 
 int Entity::getAge() const {
 	return age;
+}
+
+const std::vector<Entity*>& Entity::getQueuedEntities() const {
+	return queuedEntities;
 }
 
 const std::vector<Object*>& Entity::getQueuedObjects() const {
@@ -55,8 +65,8 @@ const std::vector<Sound*>& Entity::getQueuedSounds() const {
 	return queuedSounds;
 }
 
-const std::map<std::string, UIObject*>& Entity::getQueuedUIObjectMap() const {
-	return queuedUIObjectMap;
+const std::vector<UIObject*>& Entity::getQueuedUIObjects() const {
+	return queuedUIObjects;
 }
 
 void Entity::update(int dt) {

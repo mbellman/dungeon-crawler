@@ -206,6 +206,10 @@ void Scene::handleWASDControl(int dt) {
 void Scene::initializeEntity(Entity* entity) {
 	entity->initialize();
 
+	for (auto* entity : entity->getQueuedEntities()) {
+		add(entity);
+	}
+
 	for (auto* object : entity->getQueuedObjects()) {
 		add(object);
 	}
@@ -218,8 +222,8 @@ void Scene::initializeEntity(Entity* entity) {
 		add(sound);
 	}
 
-	for (auto& [key, uiObject] : entity->getQueuedUIObjectMap()) {
-		ui->add(key, uiObject);
+	for (auto* uiObject : entity->getQueuedUIObjects()) {
+		ui->add(uiObject);
 	}
 }
 
@@ -266,6 +270,10 @@ void Scene::remove(const char* key) {
 }
 
 void Scene::removeEntity(Entity* entity) {
+	for (auto* entity : entity->getQueuedEntities()) {
+		removeEntity(entity);
+	}
+
 	for (auto* object : entity->getQueuedObjects()) {
 		removeObject(object);
 	}
@@ -278,8 +286,8 @@ void Scene::removeEntity(Entity* entity) {
 		removeSound(sound);
 	}
 
-	for (auto& [key, uiObject] : entity->getQueuedUIObjectMap()) {
-		ui->remove(key);
+	for (auto* uiObject : entity->getQueuedUIObjects()) {
+		ui->remove(uiObject);
 	}
 
 	entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());

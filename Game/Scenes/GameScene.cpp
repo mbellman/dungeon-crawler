@@ -329,9 +329,9 @@ void GameScene::loadUI() {
 	lightBar->setAlpha(0.5f);
 	lightBar->position = { 92, baseY + 27 };
 
-	ui->add("leftColumn", leftColumn);
-	ui->add("rightColumn", rightColumn);
-	ui->add("base", base);
+	ui->add(leftColumn);
+	ui->add(rightColumn);
+	ui->add(base);
 	ui->add("lightBar", lightBar);
 }
 

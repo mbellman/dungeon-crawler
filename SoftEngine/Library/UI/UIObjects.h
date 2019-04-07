@@ -1,10 +1,10 @@
 #pragma once
 
-#include <string>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <System/Positionable.h>
 #include <Graphics/Color.h>
+#include <string>
 
 namespace Soft {
 
@@ -14,10 +14,12 @@ namespace Soft {
  */
 class UIObject : public Positionable2d {
 public:
-	~UIObject();
+	UIObject();
+	virtual ~UIObject();
 
 	void clip(int w, int h);
 	int getHeight() const;
+	const std::string& getKey() const;
 	int getWidth() const;
 	void setAlpha(float alpha);
 	void setPosition(int x, int y);
@@ -39,6 +41,7 @@ protected:
 
 private:
 	float alpha = 1.0f;
+	std::string key;
 
 	Uint8 getAlphaMod();
 };

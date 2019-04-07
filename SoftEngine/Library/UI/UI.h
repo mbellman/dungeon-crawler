@@ -17,8 +17,10 @@ public:
 	UI(SDL_Renderer* renderer);
 	~UI();
 
-	void add(std::string key, UIObject* object);
+	void add(UIObject* uiObject);
+	void add(std::string key, UIObject* uiObject);
 	UIObject* get(std::string key);
+	void remove(UIObject* uiObject);
 	void remove(std::string key);
 	void update(int dt);
 

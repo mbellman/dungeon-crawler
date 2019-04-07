@@ -13,6 +13,10 @@ namespace Soft {
  * UIObject
  * --------
  */
+UIObject::UIObject() {
+	key = RNG::uuid();
+}
+
 UIObject::~UIObject() {
 	if (m_texture != NULL) {
 		SDL_DestroyTexture(m_texture);
@@ -33,6 +37,10 @@ Uint8 UIObject::getAlphaMod() {
 
 int UIObject::getHeight() const {
 	return height;
+}
+
+const std::string& UIObject::getKey() const {
+	return key;
 }
 
 int UIObject::getWidth() const {

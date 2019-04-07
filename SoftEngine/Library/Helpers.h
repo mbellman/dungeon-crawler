@@ -1,6 +1,7 @@
 #pragma once
 
 #include <random>
+#include <string>
 #include <math.h>
 #include <SDL.h>
 
@@ -22,7 +23,9 @@ namespace Lerp {
 }
 
 namespace RNG {
+	float random();
 	float random(float low, float high);
+	std::string uuid();
 }
 
 namespace Math {

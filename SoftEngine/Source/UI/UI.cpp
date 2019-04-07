@@ -22,6 +22,10 @@ UI::~UI() {
 	uiObjects.clear();
 }
 
+void UI::add(UIObject* uiObject) {
+	add(uiObject->getKey(), uiObject);
+}
+
 void UI::add(std::string key, UIObject* uiObject) {
 	uiObject->setRenderer(renderer);
 
@@ -37,6 +41,10 @@ UIObject* UI::get(std::string key) {
 	}
 
 	return nullptr;
+}
+
+void UI::remove(UIObject* uiObject) {
+	remove(uiObject->getKey());
 }
 
 void UI::remove(std::string key) {
