@@ -8,6 +8,7 @@
 #include <Entities/Staff.h>
 #include <Entities/TextBox.h>
 #include <Entities/ItemMenu.h>
+#include <Entities/HUD.h>
 #include <Entities/Torch.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
@@ -39,7 +40,9 @@ GameScene::~GameScene() {
 void GameScene::load() {
 	loadTextures();
 	loadLevel();
-	loadUI();
+
+	add("textBox", new TextBox(uiFont));
+	add("hud", new HUD({ controller->getWindowWidth(), controller->getWindowHeight() }));
 
 	addPlayer();
 	addStaff();
@@ -74,8 +77,6 @@ void GameScene::onUpdate(int dt) {
 	} else if (inputManager->isKeyPressed(Soft::Keys::D)) {
 		player->move(getYawDirection(camera->yaw + MathUtils::DEG_270));
 	}
-
-	updateUI(dt);
 }
 
 void GameScene::addPlayer() {
@@ -93,11 +94,15 @@ void GameScene::addStaff() {
 }
 
 void GameScene::castLight() {
-	if (getCastLightCooldownProgress() < 1.0f) {
+	auto* hud = getEntity<HUD>("hud");
+
+	if (hud->getCastLightCooldownProgress() < 1.0f) {
 		showText("Hey! Hold on a second.");
 
 		return;
 	}
+
+	hud->trackCastLightTime();
 
 	auto* textBox = getEntity<TextBox>("textBox");
 
@@ -114,8 +119,6 @@ void GameScene::castLight() {
 
 	staff->swing();
 	staff->dispelLight();
-
-	lastLightCastTime = getRunningTime();
 }
 
 Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
@@ -140,16 +143,6 @@ Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
 		default:
 			return nullptr;
 	}
-}
-
-float GameScene::getCastLightCooldownProgress() {
-	if (lastLightCastTime == 0) {
-		return 1.0f;
-	}
-
-	float progress = (float)(getRunningTime() - lastLightCastTime) / GameUtils::CAST_LIGHT_COOLDOWN_TIME;
-
-	return progress > 1.0f ? 1.0f : progress;
 }
 
 void GameScene::handleAction() {
@@ -306,35 +299,6 @@ void GameScene::loadTextures() {
 	add("fireTexture", fireTexture);
 }
 
-void GameScene::loadUI() {
-	int windowWidth = controller->getWindowWidth();
-	int windowHeight = controller->getWindowHeight();
-	int baseHeight = windowHeight - (windowHeight * GameUtils::RASTER_REGION.height / 100.0f);
-	int baseY = windowHeight - baseHeight;
-
-	add("textBox", new TextBox(uiFont));
-
-	Soft::UIGraphic* leftColumn = new Soft::UIGraphic("./Assets/UI/column.png");
-	leftColumn->position = { -30, 0 };
-
-	Soft::UIGraphic* rightColumn = new Soft::UIGraphic("./Assets/UI/column.png");
-	rightColumn->position = { windowWidth - rightColumn->getWidth() + 30, 0 };
-
-	Soft::UIGraphic* base = new Soft::UIGraphic("./Assets/UI/hud.png");
-	base->position = { 0, baseY };
-
-	Soft::UIRect* lightBar = new Soft::UIRect();
-	lightBar->setSize(200, 24);
-	lightBar->setColor({ 0, 0, 255 });
-	lightBar->setAlpha(0.5f);
-	lightBar->position = { 92, baseY + 27 };
-
-	ui->add(leftColumn);
-	ui->add(rightColumn);
-	ui->add(base);
-	ui->add("lightBar", lightBar);
-}
-
 void GameScene::showItemMenu() {
 	ItemMenu* itemMenu = new ItemMenu(inventory, uiFont);
 
@@ -353,10 +317,4 @@ void GameScene::showText(const char* value) {
 
 	textBox->write(value, TextSpeed::NORMAL);
 	textBox->show();
-}
-
-void GameScene::updateUI(int dt) {
-	Soft::UIObject* lightBar = ui->get("lightBar");
-
-	lightBar->clip(lightBar->getWidth() * getCastLightCooldownProgress(), lightBar->getHeight());
 }

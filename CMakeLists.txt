@@ -53,6 +53,8 @@ set(SOURCE_FILES
     Game/Entities/Chest.cpp
     Game/Entities/Frame.h
     Game/Entities/Frame.cpp
+    Game/Entities/HUD.h
+    Game/Entities/HUD.cpp
     Game/Entities/ItemMenu.h
     Game/Entities/ItemMenu.cpp
     Game/Entities/Player.h
