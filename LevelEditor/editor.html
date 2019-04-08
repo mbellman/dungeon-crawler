@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+	<meta charset="UTF-8">
+	<head>
+		<script src="./editor.js"></script>
+		<link rel="stylesheet" type="text/css" href="./editor.css">
+	</head>
+	<body>
+		<div class="content-area">
+			<div class="editor inline-block">
+				<fieldset>
+					<legend>Settings</legend>
+					<div>
+						Size: <input id="settings-width" size="1" /> x <input id="settings-height" size="1" />
+					</div>
+					<div>
+						Spawn: <button class="ui-button" id="spawn-button">Set</button>
+						L <input id="spawn-layer" size="1" /> x <input id="spawn-x" size="1" /> z <input id="spawn-z" size="1" />
+					</div>
+					<div>
+						Ambient light:
+						R <input id="settings-al-r" size="1" /> G <input id="settings-al-g" size="1" /> B <input id="settings-al-b" size="1" />
+						x <input id="settings-al-x" size="1" /> y <input id="settings-al-y" size="1" /> z <input id="settings-al-z" size="1" />
+						Power <input id="settings-al-p" size="1" />
+					</div>
+					<div>
+						Visibility: <input id="settings-v" size="4" />
+					</div>
+					<div>
+						Brightness: <input id="settings-b" size="1" />
+					</div>
+				</fieldset>
+
+				<fieldset>
+					<legend>Layout</legend>
+					<div>
+						<button class="ui-button" id="button-layer-up">UP</button>
+						<button class="ui-button" id="button-layer-down">DOWN</button>
+					</div>
+					<canvas class="layout-canvas" id="layout-canvas"></canvas>
+				</fieldset>
+
+				<fieldset>
+					<legend>Blocks</legend>
+					<div id="block-buttons"></div>
+				</fieldset>
+
+				<fieldset>
+					<legend>Entities</legend>
+					<div id="entity-buttons"></div>
+				</fieldset>
+			</div>
+
+			<div class="output inline-block">
+				<fieldset>
+					<legend>Output</legend>
+					<textarea id="output-textarea"></textarea>
+				</fieldset>
+			</div>
+		</div>
+
+		<script> initializeEditor(); </script>
+	</body>
+</html>
