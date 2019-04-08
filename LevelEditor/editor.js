@@ -192,6 +192,77 @@
 		}
 	}
 
+	function updateOutput() {
+		var output = '';
+
+		function newline() {
+			output += '\n';
+		}
+
+		function write(string) {
+			output += string;
+		}
+
+		write(`LS ${appState.layerSize.width}, ${appState.layerSize.height}`);
+		newline();
+		write(`SP ${appState.spawn.layer}, ${appState.spawn.x}, ${appState.spawn.z}, ${appState.spawn.direction}`);
+		newline();
+		write(`AL ${appState.ambientLight.color.R}, ${appState.ambientLight.color.G}, ${appState.ambientLight.color.B}, `);
+		write(`${appState.ambientLight.vector.x}, ${appState.ambientLight.vector.y}, ${appState.ambientLight.vector.z}, `);
+		write(`${appState.ambientLight.power}`);
+		newline();
+		write(`V ${appState.visibility}`);
+		newline();
+		write(`B ${appState.brightness}`);
+		newline();
+		newline();
+
+		for (var i = 0; i < appState.torches.length; i++) {
+			var torch = appState.torches[i];
+
+			write(`T ${torch.layer}, ${torch.x}, ${torch.z}, ${torch.direction}`)
+			newline();
+		}
+
+		newline();
+
+		for (var i = 0; i < appState.chests.length; i++) {
+			var chest = appState.chests[i];
+
+			write(`T ${chest.layer}, ${chest.x}, ${chest.z}, ${chest.direction}, ${chest.itemType}`)
+			newline();
+		}
+
+		newline();
+
+		for (var i = 0; i < appState.layers.length; i++) {
+			var layer = appState.layers[i];
+
+			write('L');
+			newline();
+
+			for (var z = 0; z < layer.length; z++) {
+				var row = layer[z];
+
+				for (var x = 0; x < row.length; x++) {
+					write(`${row[x]}`);
+
+					if (x < row.length - 1) {
+						write(', ');
+					}
+				}
+
+				newline();
+			}
+
+			if (i < appState.layers.length - 1) {
+				newline();
+			}
+		}
+
+		$('#output-textarea').value = output;
+	}
+
 	function syncSettingsInputs() {
 		$('#settings-width').value = appState.layerSize.width;
 		$('#settings-height').value = appState.layerSize.height;
@@ -228,6 +299,20 @@
 	function bindEvents() {
 		$('#layout-layer-up').addEventListener('click', upLayer);
 		$('#layout-layer-down').addEventListener('click', downLayer);
+
+		$('#layout-layer-add').addEventListener('click', function(){
+			addLayer();
+			updateLayout();
+			updateOutput();
+		});
+
+		$('#output-textarea').addEventListener('click', function(){
+			$('#output-textarea').setSelectionRange(0, $('#output-textarea').value.length);
+
+			setTimeout(function(){
+				$('#output-textarea').scrollTop = 0;
+			}, 20);
+		});
 	}
 
 	function initializeEditor() {
@@ -240,6 +325,8 @@
 		createBlockButtons();
 		createEntityButtons();
 		bindEvents();
+
+		updateOutput();
 	}
 
 	window.initializeEditor = initializeEditor;
