@@ -1,4 +1,6 @@
 (function(){
+	var blockAssets = [];
+
 	var blockMap = {
 		0: { name: 'Empty', file: null },
 		1: { name: 'Solid 1', file: 'solid_1.png' },
@@ -6,7 +8,7 @@
 		3: { name: 'Column B', file: 'column_bottom.png' },
 		4: { name: 'Column M', file: 'column_middle.png' },
 		5: { name: 'Column T', file: 'column_top.png' },
-		6: { name: 'Staircase F', file: 'stairface_forward.png' },
+		6: { name: 'Staircase F', file: 'staircase_forward.png' },
 		7: { name: 'Staircase B', file: 'staircase_backward.png' },
 		8: { name: 'Staircase L', file: 'staircase_left.png' },
 		9: { name: 'Staircase R', file: 'staircase_right.png' },
@@ -51,10 +53,6 @@
 		currentBlockType: 0,
 		currentEntityType: 0,
 	};
-
-	function clamp(value, low, high) {
-		return value > high ? high : value < low ? low : value;
-	}
 
 	function $(selector) {
 		return document.querySelector(selector);
@@ -153,12 +151,13 @@
 	}
 
 	function renderBlockType(context, blockType, rect) {
-		var color = blockType === 0 ? '#000' : '#b61';
+		if (blockType === 0) {
+			return;
+		}
 
-		context.beginPath();
-		context.rect(rect.x, rect.y, rect.width, rect.height);
-		context.fillStyle = color;
-		context.fill();
+		var asset = blockAssets[blockType];
+
+		context.drawImage(asset, rect.x, rect.y, rect.width, rect.height);
 	}
 
 	function updateLayout() {
@@ -168,14 +167,16 @@
 		var canvas = $canvas.getContext('2d');
 		var blockWidth = $canvas.clientWidth / appState.layerSize.width;
 		var blockHeight = $canvas.clientHeight / appState.layerSize.height;
-		var currentLayer = appState.layers[appState.currentLayer];
+		var activeLayer = appState.layers[appState.currentLayer];
 
 		$canvas.setAttribute('width', $canvas.clientWidth);
 		$canvas.setAttribute('height', $canvas.clientHeight);
-		canvas.clearRect(0, 0, $canvas.clientWidth, $canvas.clientHeight);
 
-		for (var z = 0; z < currentLayer.length; z++) {
-			var row = currentLayer[z];
+		canvas.fillStyle = '#000';
+		canvas.fillRect(0, 0, $canvas.clientWidth, $canvas.clientHeight);
+
+		for (var z = 0; z < activeLayer.length; z++) {
+			var row = activeLayer[z];
 
 			for (var x = 0; x < row.length; x++) {
 				var blockType = row[x];
@@ -188,6 +189,16 @@
 				};
 
 				renderBlockType(canvas, blockType, rect);
+
+				if (blockType === 0 && appState.currentLayer > 0) {
+					canvas.save();
+					canvas.globalAlpha = 0.3;
+
+					var belowBlockType = appState.layers[appState.currentLayer - 1][z][x];
+
+					renderBlockType(canvas, belowBlockType, rect);
+					canvas.restore();
+				}
 			}
 		}
 	}
@@ -296,6 +307,18 @@
 		updateLayout();
 	}
 
+	function getTileCoordinate(mouseX, mouseY) {
+		var $canvas = $('#layout-canvas');
+		var canvasBounds = $canvas.getBoundingClientRect();
+		var x = mouseX - canvasBounds.x;
+		var y = mouseY - canvasBounds.y;
+
+		return {
+			x: Math.floor(x / ($canvas.clientWidth / appState.layerSize.width)),
+			z: Math.floor(y / ($canvas.clientHeight / appState.layerSize.height))
+		};
+	}
+
 	function bindEvents() {
 		$('#layout-layer-up').addEventListener('click', upLayer);
 		$('#layout-layer-down').addEventListener('click', downLayer);
@@ -314,18 +337,59 @@
 			}, 20);
 		});
 
+		$('#layout-canvas').addEventListener('mousemove', function(e) {
+			var tile = getTileCoordinate(e.clientX, e.clientY);
+
+			$('#layout-current-coords').value = `${tile.x}, ${tile.z}`;
+		});
+
+		$('#layout-canvas').addEventListener('mouseleave', function() {
+			$('#layout-current-coords').value = '';
+		});
+
 		$('#layout-canvas').addEventListener('click', function(e) {
-			var $canvas = $('#layout-canvas');
-			var canvasBounds = $canvas.getBoundingClientRect();
-			var x = e.clientX - canvasBounds.x;
-			var y = e.clientY - canvasBounds.y;
-			var tileX = Math.floor(x / ($canvas.clientWidth / appState.layerSize.width));
-			var tileZ = Math.floor(y / ($canvas.clientHeight / appState.layerSize.height));
-			var row = appState.layers[appState.currentLayer][tileZ][tileX] = appState.currentBlockType;
+			var tile = getTileCoordinate(e.clientX, e.clientY);
+
+			appState.layers[appState.currentLayer][tile.z][tile.x] = appState.currentBlockType;
 
 			updateLayout();
 			updateOutput();
 		});
+	}
+
+	function preloadBlockAssets() {
+		var blocks = Object.keys(blockMap);
+
+		// Add a null slot for empty blocks
+		blockAssets.push(null);
+
+		var totalLoaded = 0;
+
+		// Start from index 1, skipping the empty block
+		for (var i = 1; i < blocks.length; i++) {
+			var block = blockMap[i];
+			var filePath = `./BlockAssets/${block.file}`;
+
+			var image = new Image();
+			image.src = filePath;
+			image.onload = function() {
+				totalLoaded++;
+			};
+
+			blockAssets.push(image);
+		}
+
+		return {
+			then: function(callback) {
+				var checkInterval = setInterval(function(){
+					// Count against all blocks except the empty block
+					if (totalLoaded === blocks.length - 1) {
+						callback();
+						clearInterval(checkInterval);
+					}
+				}, 100);
+			}
+		};
 	}
 
 	function initializeEditor() {
@@ -337,8 +401,11 @@
 		createBlockButtons();
 		createEntityButtons();
 		bindEvents();
-		updateLayout();
-		updateOutput();
+
+		preloadBlockAssets().then(function(){
+			updateLayout();
+			updateOutput();
+		});
 
 		$$('.block-button')[0].click();
 	}

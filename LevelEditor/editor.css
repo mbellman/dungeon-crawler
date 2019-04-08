@@ -20,9 +20,14 @@ body {
 	background-color: #ccc;
 }
 
-.ui-button:active,
-.ui-button.selected {
+.ui-button:active {
 	box-shadow: 0px 1px 4px #555 inset;
+}
+
+.ui-button.selected {
+	box-shadow: 0px 1px 4px #000 inset;
+	background-color: #444;
+	color: #fff;
 }
 
 .content-area {
