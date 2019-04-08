@@ -195,12 +195,12 @@
 	function updateOutput() {
 		var output = '';
 
-		function newline() {
-			output += '\n';
-		}
-
 		function write(string) {
 			output += string;
+		}
+
+		function newline() {
+			write('\n');
 		}
 
 		write(`LS ${appState.layerSize.width}, ${appState.layerSize.height}`);
