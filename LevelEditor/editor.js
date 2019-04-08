@@ -18,16 +18,43 @@
 		{ name: 'Chest', file: 'chest.png' }
 	];
 
+	var Direction = {
+		FORWARD: 0,
+		LEFT: 1,
+		BACKWARD: 2,
+		RIGHT: 3
+	};
+
 	var appState = {
 		layerSize: {
-			width: 10,
-			height: 10
+			width: 25,
+			height: 25
 		},
-		layers: 2,
+		spawn: {
+			layer: 1,
+			x: 1,
+			z: 1,
+			direction: Direction.FORWARD
+		},
+		ambientLight: {
+			color: { R: 0, G: 0, B: 0 },
+			vector: { x: 0.0, y: -1.0, z: 0.0 },
+			power: 0.0
+		},
+		visibility: 5000,
+		brightness: 1.0,
+		torches: [],
+		chests: [],
+		layers: [],
+		currentLayer: 0,
 		currentPlacementType: 'block',
 		currentBlockType: 0,
 		currentEntityType: 0,
 	};
+
+	function clamp(value, low, high) {
+		return value > high ? high : value < low ? low : value;
+	}
 
 	function $(selector) {
 		return document.querySelector(selector);
@@ -109,9 +136,110 @@
 		}
 	}
 
+	function addLayer() {
+		var layer = [];
+
+		for (var z = 0; z < appState.layerSize.height; z++) {
+			var row = [];
+
+			layer.push(row);
+
+			for (var x = 0; x < appState.layerSize.width; x++) {
+				row.push(Math.random() < 0.5 ? 1 : 0);
+			}
+		}
+
+		appState.layers.push(layer);
+	}
+
+	function renderBlockType(context, blockType, rect) {
+		var color = blockType === 0 ? '#000' : '#b61';
+
+		context.beginPath();
+		context.rect(rect.x, rect.y, rect.width, rect.height);
+		context.fillStyle = color;
+		context.fill();
+	}
+
+	function updateLayout() {
+		$('#layout-current-layer').value = appState.currentLayer + '/' + (appState.layers.length - 1);
+
+		var $canvas = $('#layout-canvas');
+		var canvas = $canvas.getContext('2d');
+		var blockWidth = $canvas.clientWidth / appState.layerSize.width;
+		var blockHeight = $canvas.clientHeight / appState.layerSize.height;
+		var currentLayer = appState.layers[appState.currentLayer];
+
+		$canvas.setAttribute('width', $canvas.clientWidth);
+		$canvas.setAttribute('height', $canvas.clientHeight);
+		canvas.clearRect(0, 0, $canvas.clientWidth, $canvas.clientHeight);
+
+		for (var z = 0; z < currentLayer.length; z++) {
+			var row = currentLayer[z];
+
+			for (var x = 0; x < row.length; x++) {
+				var blockType = row[x];
+
+				var rect = {
+					x: blockWidth * x,
+					y: blockHeight * z,
+					width: blockWidth,
+					height: blockHeight
+				};
+
+				renderBlockType(canvas, blockType, rect);
+			}
+		}
+	}
+
+	function syncSettingsInputs() {
+		$('#settings-width').value = appState.layerSize.width;
+		$('#settings-height').value = appState.layerSize.height;
+
+		$('#settings-spawn-layer').value = appState.spawn.layer;
+		$('#settings-spawn-x').value = appState.spawn.x;
+		$('#settings-spawn-z').value = appState.spawn.z;
+		$('#settings-spawn-d').value = appState.spawn.direction;
+
+		$('#settings-al-r').value = appState.ambientLight.color.R;
+		$('#settings-al-g').value = appState.ambientLight.color.G;
+		$('#settings-al-b').value = appState.ambientLight.color.B;
+		$('#settings-al-x').value = appState.ambientLight.vector.x;
+		$('#settings-al-y').value = appState.ambientLight.vector.y;
+		$('#settings-al-z').value = appState.ambientLight.vector.z;
+		$('#settings-al-power').value = appState.ambientLight.power;
+
+		$('#settings-visibility').value = appState.visibility;
+		$('#settings-brightness').value = appState.brightness;
+	}
+
+	function upLayer() {
+		appState.currentLayer = Math.min(appState.currentLayer + 1, appState.layers.length - 1);
+
+		updateLayout();
+	}
+
+	function downLayer() {
+		appState.currentLayer = Math.max(appState.currentLayer - 1, 0);
+
+		updateLayout();
+	}
+
+	function bindEvents() {
+		$('#layout-layer-up').addEventListener('click', upLayer);
+		$('#layout-layer-down').addEventListener('click', downLayer);
+	}
+
 	function initializeEditor() {
+		for (var i = 0; i < 2; i++) {
+			addLayer();
+		}
+
+		syncSettingsInputs();
+		updateLayout();
 		createBlockButtons();
 		createEntityButtons();
+		bindEvents();
 	}
 
 	window.initializeEditor = initializeEditor;

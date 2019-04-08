@@ -15,27 +15,29 @@
 					</div>
 					<div>
 						Spawn: <button class="ui-button" id="spawn-button">Set</button>
-						L <input id="spawn-layer" size="1" /> x <input id="spawn-x" size="1" /> z <input id="spawn-z" size="1" />
+						L <input id="settings-spawn-layer" size="1" /> x <input id="settings-spawn-x" size="1" /> z <input id="settings-spawn-z" size="1" />
+						Direction <input id="settings-spawn-d" size="1" />
 					</div>
 					<div>
 						Ambient light:
 						R <input id="settings-al-r" size="1" /> G <input id="settings-al-g" size="1" /> B <input id="settings-al-b" size="1" />
 						x <input id="settings-al-x" size="1" /> y <input id="settings-al-y" size="1" /> z <input id="settings-al-z" size="1" />
-						Power <input id="settings-al-p" size="1" />
+						Power <input id="settings-al-power" size="1" />
 					</div>
 					<div>
-						Visibility: <input id="settings-v" size="4" />
+						Visibility: <input id="settings-visibility" size="4" />
 					</div>
 					<div>
-						Brightness: <input id="settings-b" size="1" />
+						Brightness: <input id="settings-brightness" size="1" />
 					</div>
 				</fieldset>
 
 				<fieldset>
 					<legend>Layout</legend>
 					<div>
-						<button class="ui-button" id="button-layer-up">UP</button>
-						<button class="ui-button" id="button-layer-down">DOWN</button>
+						<button class="ui-button" id="layout-layer-up">UP</button>
+						<button class="ui-button" id="layout-layer-down">DOWN</button>
+						<input id="layout-current-layer" size="1" disabled />
 					</div>
 					<canvas class="layout-canvas" id="layout-canvas"></canvas>
 				</fieldset>
