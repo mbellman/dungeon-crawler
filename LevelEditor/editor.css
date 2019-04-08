@@ -42,6 +42,7 @@ body {
 .editor .layout-canvas {
 	height: 400px;
 	width: 100%;
+	cursor: pointer;
 }
 
 .output {

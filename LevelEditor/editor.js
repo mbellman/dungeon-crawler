@@ -313,6 +313,19 @@
 				$('#output-textarea').scrollTop = 0;
 			}, 20);
 		});
+
+		$('#layout-canvas').addEventListener('click', function(e) {
+			var $canvas = $('#layout-canvas');
+			var canvasBounds = $canvas.getBoundingClientRect();
+			var x = e.clientX - canvasBounds.x;
+			var y = e.clientY - canvasBounds.y;
+			var tileX = Math.floor(x / ($canvas.clientWidth / appState.layerSize.width));
+			var tileZ = Math.floor(y / ($canvas.clientHeight / appState.layerSize.height));
+			var row = appState.layers[appState.currentLayer][tileZ][tileX] = appState.currentBlockType;
+
+			updateLayout();
+			updateOutput();
+		});
 	}
 
 	function initializeEditor() {
@@ -321,12 +334,13 @@
 		}
 
 		syncSettingsInputs();
-		updateLayout();
 		createBlockButtons();
 		createEntityButtons();
 		bindEvents();
-
+		updateLayout();
 		updateOutput();
+
+		$$('.block-button')[0].click();
 	}
 
 	window.initializeEditor = initializeEditor;
