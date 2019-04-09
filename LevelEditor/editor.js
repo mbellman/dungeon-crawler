@@ -1,5 +1,6 @@
 (function(){
 	var blockAssets = [];
+	var entityAssets = [];
 
 	var blockMap = {
 		0: { name: 'Empty', file: null },
@@ -19,6 +20,32 @@
 		{ name: 'Torch', file: 'torch.png' },
 		{ name: 'Chest', file: 'chest.png' }
 	];
+
+	var directions = [
+		'Forward',
+		'Left',
+		'Backward',
+		'Right'
+	];
+
+	var BlockTypes = {
+		EMPTY: 0,
+		SOLID_1: 1,
+		SOLID_2: 2,
+		COLUMN_B: 3,
+		COLUMN_M: 4,
+		COLUMN_T: 5,
+		STAIRCASE_F: 6,
+		STAIRCASE_B: 7,
+		STAIRCASE_L: 8,
+		STAIRCASE_R: 9,
+		BRIDGE: 10
+	};
+
+	var EntityTypes = {
+		TORCH: 0,
+		CHEST: 1
+	};
 
 	var Direction = {
 		FORWARD: 0,
@@ -52,6 +79,7 @@
 		currentPlacementType: 'block',
 		currentBlockType: 0,
 		currentEntityType: 0,
+		currentEntityOptions: null
 	};
 
 	function $(selector) {
@@ -79,6 +107,8 @@
 
 			appState.currentBlockType = blockType;
 			appState.currentPlacementType = 'block';
+
+			clearEntityOptions();
 		};
 	}
 
@@ -104,13 +134,105 @@
 		}
 	}
 
+	function clearEntityOptions() {
+		$('#entity-options').innerHTML = '';
+
+		appState.currentEntityOptions = {};
+	}
+
+	function showEntityDirectionOptions() {
+		for (var i = 0; i < 4; i++) {
+			var $directionButton = document.createElement('input');
+
+			$directionButton.setAttribute('type', 'button');
+			$directionButton.setAttribute('class', 'ui-button direction-button');
+			$directionButton.setAttribute('data-index', i);
+			$directionButton.value = directions[i];
+
+			$directionButton.addEventListener('click', function(e){
+				unfocusButtonGroup('direction-button');
+
+				e.currentTarget.setAttribute('class', 'ui-button direction-button selected');
+
+				appState.currentEntityOptions.direction = parseInt(e.currentTarget.getAttribute('data-index'));
+			});
+
+			$('#entity-options').appendChild($directionButton);
+		}
+
+		$$('.direction-button')[0].click();
+	}
+
+	function addEntityOptionField(label, defaultValue, changeHandler) {
+		var $container = document.createElement('div');
+		var $label = document.createElement('label');
+		var $input = document.createElement('input');
+
+		$label.innerHTML = `${label}: `;
+
+		$input.setAttribute('size', '1');
+		$input.value = defaultValue;
+		$input.addEventListener('change', function() {
+			changeHandler($input.value);
+		});
+
+		changeHandler(defaultValue);
+
+		$container.appendChild($label);
+		$container.appendChild($input);
+
+		$('#entity-options').appendChild($container);
+	}
+
+	function showChestEntityOptions() {
+		showEntityDirectionOptions();
+
+		addEntityOptionField('Item', 0, function(value) {
+			appState.currentEntityOptions.itemType = parseInt(value);
+		});
+	}
+
+	function showEntityOptions(entityType) {
+		clearEntityOptions();
+
+		switch (entityType) {
+			case EntityTypes.TORCH:
+				showEntityDirectionOptions();
+				break;
+			case EntityTypes.CHEST:
+				showChestEntityOptions();
+				break;
+		}
+	}
+
 	function createEntityButtonClickHandler(entityType) {
 		return function(e) {
 			e.currentTarget.setAttribute('class', 'ui-button entity-button selected');
 
-			appState.currentEntity = entityType;
+			appState.currentEntityType = entityType;
 			appState.currentPlacementType = 'entity';
+
+			showEntityOptions(entityType);
 		};
+	}
+
+	function createEntityClearButton() {
+		var button = document.createElement('input');
+
+		button.setAttribute('type', 'button');
+		button.value = 'Clear';
+		button.setAttribute('class', 'ui-button entity-button');
+		button.addEventListener('mousedown', unfocusPlacementButtons);
+		button.addEventListener('click', function(e) {
+			e.currentTarget.setAttribute('class', 'ui-button entity-button selected');
+
+			appState.currentEntityType = -1;
+			appState.currentPlacementType = 'entity';
+
+			clearEntityOptions();
+		});
+
+		return button;
 	}
 
 	function createEntityButton(entityType) {
@@ -128,6 +250,8 @@
 
 	function createEntityButtons() {
 		var $container = $('#entity-buttons');
+
+		$container.appendChild(createEntityClearButton());
 
 		for (var i = 0; i < entities.length; i++) {
 			$container.appendChild(createEntityButton(i));
@@ -151,13 +275,51 @@
 	}
 
 	function renderBlockType(context, blockType, rect) {
-		if (blockType === 0) {
+		if (blockType === BlockTypes.EMPTY) {
 			return;
 		}
 
 		var asset = blockAssets[blockType];
 
 		context.drawImage(asset, rect.x, rect.y, rect.width, rect.height);
+	}
+
+	function getTorchOffset(torch, blockWidth, blockHeight) {
+		switch (torch.direction) {
+			case Direction.FORWARD:
+				return { x: blockWidth / 2 - 2, y: 0 };
+			case Direction.LEFT:
+				return { x: 0, y: blockHeight / 2 - 2 };
+			case Direction.BACKWARD:
+				return { x: blockWidth / 2 - 2, y: blockHeight - 5 };
+			case Direction.RIGHT:
+				return { x: blockWidth - 5, y: blockHeight / 2 - 2 };
+		}
+	}
+
+	function getChestRect(chest, blockWidth, blockHeight) {
+		switch (chest.direction) {
+			case Direction.FORWARD:
+			case Direction.BACKWARD:
+				return {
+					x: chest.x * blockWidth + blockWidth * 0.15,
+					y: chest.z * blockHeight + blockHeight * 0.25,
+					width: blockWidth * 0.7,
+					height: blockHeight * 0.5
+				};
+			case Direction.LEFT:
+			case Direction.RIGHT:
+				return {
+					x: chest.x * blockWidth + blockWidth * 0.25,
+					y: chest.z * blockHeight + blockHeight * 0.15,
+					width: blockWidth * 0.5,
+					height: blockHeight * 0.7
+				};
+		}
+	}
+
+	function activeLayerEntityFilter(entity) {
+		return entity.layer === appState.currentLayer;
 	}
 
 	function updateLayout() {
@@ -190,13 +352,13 @@
 
 				renderBlockType(canvas, blockType, rect);
 
-				if (blockType === 0 && appState.currentLayer > 0) {
+				if (blockType === BlockTypes.EMPTY && appState.currentLayer > 0) {
 					canvas.save();
 					canvas.globalAlpha = 0.3;
 
 					var belowBlockType = appState.layers[appState.currentLayer - 1][z][x];
 
-					if (belowBlockType === 0 && appState.currentLayer > 1) {
+					if (belowBlockType === BlockTypes.EMPTY && appState.currentLayer > 1) {
 						belowBlockType = appState.layers[appState.currentLayer - 2][z][x];
 						canvas.globalAlpha = 0.1;
 					}
@@ -206,6 +368,27 @@
 				}
 			}
 		}
+
+		appState.chests.filter(activeLayerEntityFilter).forEach(function(chest) {
+			var asset = entityAssets[EntityTypes.CHEST];
+			var rect = getChestRect(chest, blockWidth, blockHeight);
+
+			canvas.drawImage(asset, rect.x, rect.y, rect.width, rect.height);
+		});
+
+		appState.torches.filter(activeLayerEntityFilter).forEach(function(torch) {
+			var asset = entityAssets[EntityTypes.TORCH];
+			var offset = getTorchOffset(torch, blockWidth, blockHeight);
+
+			var rect = {
+				x: blockWidth * torch.x + offset.x,
+				y: blockHeight * torch.z + offset.y,
+				width: 5,
+				height: 5
+			};
+
+			canvas.drawImage(asset, rect.x, rect.y, rect.width, rect.height);
+		});
 	}
 
 	function updateOutput() {
@@ -245,7 +428,7 @@
 		for (var i = 0; i < appState.chests.length; i++) {
 			var chest = appState.chests[i];
 
-			write(`T ${chest.layer}, ${chest.x}, ${chest.z}, ${chest.direction}, ${chest.itemType}`)
+			write(`CH ${chest.layer}, ${chest.x}, ${chest.z}, ${chest.direction}, ${chest.itemType}`)
 			newline();
 		}
 
@@ -277,6 +460,12 @@
 		}
 
 		$('#output-textarea').value = output;
+	}
+
+	function resetLevelData() {
+		appState.layers.length = 0;
+		appState.torches.length = 0;
+		appState.chests.length = 0;
 	}
 
 	function parseOutput() {
@@ -319,6 +508,29 @@
 			appState.brightness = parseFloat(data);
 		}
 
+		function parseTorch(data) {
+			var values = data.split(',');
+
+			appState.torches.push({
+				layer: parseInt(values[0]),
+				x: parseInt(values[1]),
+				z: parseInt(values[2]),
+				direction: parseInt(values[3])
+			});
+		}
+
+		function parseChest(data) {
+			var values = data.split(',');
+
+			appState.chests.push({
+				layer: parseInt(values[0]),
+				x: parseInt(values[1]),
+				z: parseInt(values[2]),
+				direction: parseInt(values[3]),
+				itemType: parseInt(values[4])
+			});
+		}
+
 		function parseLayerRow(data, activeLayer, rowIndex) {
 			if (activeLayer >= appState.layers.length) {
 				addLayer();
@@ -331,6 +543,8 @@
 				row[i] = parseInt(blocks[i]);
 			}
 		}
+
+		resetLevelData();
 
 		var i = 0;
 		var activeLayer = 0;
@@ -355,6 +569,12 @@
 					break;
 				case 'B':
 					parseBrightness(data);
+					break;
+				case 'T':
+					parseTorch(data);
+					break;
+				case 'CH':
+					parseChest(data);
 					break;
 				case 'L':
 					for (var n = 1; n <= appState.layerSize.height; n++) {
@@ -420,6 +640,46 @@
 		};
 	}
 
+	function clearEntities(tile) {
+		function predicate(entity) {
+			return entity.layer != appState.currentLayer || entity.x != tile.x || entity.z != tile.z;
+		}
+
+		appState.torches = appState.torches.filter(predicate);
+		appState.chests = appState.chests.filter(predicate);
+	}
+
+	function placeCurrentEntity(tile) {
+		var entityType = appState.currentEntityType;
+
+		if (entityType === -1) {
+			clearEntities(tile);
+			return;
+		}
+
+		var options = appState.currentEntityOptions;
+
+		switch (entityType) {
+			case EntityTypes.TORCH:
+				appState.torches.push({
+					layer: appState.currentLayer,
+					x: tile.x,
+					z: tile.z,
+					direction: options.direction
+				});
+				break;
+			case EntityTypes.CHEST:
+				appState.chests.push({
+					layer: appState.currentLayer,
+					x: tile.x,
+					z: tile.z,
+					direction: options.direction,
+					itemType: options.itemType
+				});
+				break;
+		}
+	}
+
 	function bindEvents() {
 		$('#layout-layer-up').addEventListener('click', upLayer);
 		$('#layout-layer-down').addEventListener('click', downLayer);
@@ -451,7 +711,11 @@
 		$('#layout-canvas').addEventListener('click', function(e) {
 			var tile = getTileCoordinate(e.clientX, e.clientY);
 
-			appState.layers[appState.currentLayer][tile.z][tile.x] = appState.currentBlockType;
+			if (appState.currentPlacementType === 'block') {
+				appState.layers[appState.currentLayer][tile.z][tile.x] = appState.currentBlockType;
+			} else {
+				placeCurrentEntity(tile);
+			}
 
 			updateLayout();
 			updateOutput();
@@ -465,7 +729,7 @@
 		});
 	}
 
-	function preloadBlockAssets() {
+	function preloadAssets() {
 		var blocks = Object.keys(blockMap);
 
 		// Add a null slot for empty blocks
@@ -487,11 +751,24 @@
 			blockAssets.push(image);
 		}
 
+		for (var i = 0; i < entities.length; i++) {
+			var entity = entities[i];
+			var filePath = `./EntityAssets/${entity.file}`;
+
+			var image = new Image();
+			image.src = filePath;
+			image.onload = function() {
+				totalLoaded++;
+			};
+
+			entityAssets.push(image);
+		}
+
 		return {
 			then: function(callback) {
 				var checkInterval = setInterval(function(){
-					// Count against all blocks except the empty block
-					if (totalLoaded === blocks.length - 1) {
+					// Count toward all blocks except the empty block + all entities
+					if (totalLoaded === (blocks.length - 1) + entities.length) {
 						callback();
 						clearInterval(checkInterval);
 					}
@@ -510,7 +787,7 @@
 		createEntityButtons();
 		bindEvents();
 
-		preloadBlockAssets().then(function(){
+		preloadAssets().then(function(){
 			updateLayout();
 			updateOutput();
 		});
