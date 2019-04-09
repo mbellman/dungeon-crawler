@@ -2,6 +2,15 @@
 	var blockAssets = [];
 	var entityAssets = [];
 
+	var miscAssetFileMap = {
+		SPAWN_FORWARD: 'spawn_forward.png',
+		SPAWN_BACKWARD: 'spawn_backward.png',
+		SPAWN_LEFT: 'spawn_left.png',
+		SPAWN_RIGHT: 'spawn_right.png',
+	};
+
+	var miscAssetMap = {};
+
 	var blockMap = {
 		0: { name: 'Empty', file: null },
 		1: { name: 'Solid 1', file: 'solid_1.png' },
@@ -99,6 +108,8 @@
 	function unfocusPlacementButtons() {
 		unfocusButtonGroup('block-button');
 		unfocusButtonGroup('entity-button');
+
+		$('.spawn-button').setAttribute('class', 'ui-button spawn-button');
 	}
 
 	function createBlockButtonClickHandler(blockType) {
@@ -284,6 +295,30 @@
 		context.drawImage(asset, rect.x, rect.y, rect.width, rect.height);
 	}
 
+	function getSpawnAsset() {
+		switch (appState.spawn.direction) {
+			case Direction.FORWARD:
+				return miscAssetMap.SPAWN_FORWARD;
+			case Direction.BACKWARD:
+				return miscAssetMap.SPAWN_BACKWARD;
+			case Direction.LEFT:
+				return miscAssetMap.SPAWN_LEFT;
+			case Direction.RIGHT:
+				return miscAssetMap.SPAWN_RIGHT;
+		}
+	}
+
+	function renderSpawnPoint(context, blockWidth, blockHeight) {
+		var rect = {
+			x: appState.spawn.x * blockWidth,
+			y: appState.spawn.z * blockHeight,
+			width: blockWidth,
+			height: blockHeight
+		};
+
+		context.drawImage(getSpawnAsset(), rect.x, rect.y, rect.width, rect.height);
+	}
+
 	function getTorchOffset(torch, blockWidth, blockHeight) {
 		switch (torch.direction) {
 			case Direction.FORWARD:
@@ -389,6 +424,10 @@
 
 			canvas.drawImage(asset, rect.x, rect.y, rect.width, rect.height);
 		});
+
+		if (appState.currentLayer === appState.spawn.layer) {
+			renderSpawnPoint(canvas, blockWidth, blockHeight);
+		}
 	}
 
 	function updateOutput() {
@@ -466,6 +505,10 @@
 		appState.layers.length = 0;
 		appState.torches.length = 0;
 		appState.chests.length = 0;
+
+		for (var i = 0; i < 3; i++) {
+			addLayer();
+		}
 	}
 
 	function parseOutput() {
@@ -680,7 +723,94 @@
 		}
 	}
 
+	function bindInput($input, changeHandler) {
+		$input.addEventListener('keyup', function(e) {
+			var value = e.currentTarget.value;
+
+			changeHandler(value);
+			updateOutput();
+		});
+	}
+
 	function bindEvents() {
+		bindInput($('#settings-width'), function(value) {
+			appState.layerSize.width = parseInt(value);
+
+			resetLevelData();
+			updateLayout();
+		});
+
+		bindInput($('#settings-height'), function(value) {
+			appState.layerSize.height = parseInt(value);
+
+			resetLevelData();
+			updateLayout();
+		});
+
+		$('#spawn-button').addEventListener('click', function(e) {
+			unfocusPlacementButtons();
+
+			e.currentTarget.setAttribute('class', 'ui-button spawn-button selected');
+
+			appState.currentPlacementType = 'spawn';
+		});
+
+		bindInput($('#settings-spawn-layer'), function(value) {
+			appState.spawn.layer = parseInt(value);
+			updateLayout();
+		});
+
+		bindInput($('#settings-spawn-x'), function(value) {
+			appState.spawn.x = parseInt(value);
+			updateLayout();
+		});
+
+		bindInput($('#settings-spawn-z'), function(value) {
+			appState.spawn.z = parseInt(value);
+			updateLayout();
+		});
+
+		bindInput($('#settings-spawn-d'), function(value) {
+			appState.spawn.direction = parseInt(value);
+			updateLayout();
+		});
+
+		bindInput($('#settings-al-r'), function(value) {
+			appState.ambientLight.color.R = parseInt(value);
+		});
+
+		bindInput($('#settings-al-g'), function(value) {
+			appState.ambientLight.color.G = parseInt(value);
+		});
+
+		bindInput($('#settings-al-b'), function(value) {
+			appState.ambientLight.color.B = parseInt(value);
+		});
+
+		bindInput($('#settings-al-x'), function(value) {
+			appState.ambientLight.vector.x = parseFloat(value);
+		});
+
+		bindInput($('#settings-al-y'), function(value) {
+			appState.ambientLight.vector.y = parseFloat(value);
+		});
+
+		bindInput($('#settings-al-z'), function(value) {
+			appState.ambientLight.vector.z = parseFloat(value);
+		});
+
+		bindInput($('#settings-al-power'), function(value) {
+			appState.ambientLight.power = parseFloat(value);
+		});
+
+		bindInput($('#settings-visibility'), function(value) {
+			appState.visibility = parseInt(value);
+		});
+
+		bindInput($('#settings-brightness'), function(value) {
+			appState.brightness = parseFloat(value);
+		});
+
 		$('#layout-layer-up').addEventListener('click', upLayer);
 		$('#layout-layer-down').addEventListener('click', downLayer);
 
@@ -711,10 +841,20 @@
 		$('#layout-canvas').addEventListener('click', function(e) {
 			var tile = getTileCoordinate(e.clientX, e.clientY);
 
-			if (appState.currentPlacementType === 'block') {
-				appState.layers[appState.currentLayer][tile.z][tile.x] = appState.currentBlockType;
-			} else {
-				placeCurrentEntity(tile);
+			switch (appState.currentPlacementType) {
+				case 'block':
+					appState.layers[appState.currentLayer][tile.z][tile.x] = appState.currentBlockType;
+					break;
+				case 'entity':
+					placeCurrentEntity(tile);
+					break;
+				case 'spawn':
+					appState.spawn.layer = appState.currentLayer;
+					appState.spawn.x = tile.x;
+					appState.spawn.z = tile.z;
+
+					syncSettingsInputs();
+					break;
 			}
 
 			updateLayout();
@@ -764,11 +904,25 @@
 			entityAssets.push(image);
 		}
 
+		var miscAssetKeys = Object.keys(miscAssetFileMap);
+
+		for (var i = 0; i < miscAssetKeys.length; i++) {
+			var key = miscAssetKeys[i];
+			var image = new Image();
+			image.src = `./MiscAssets/${miscAssetFileMap[key]}`;
+			image.onload = function() {
+				totalLoaded++;
+			};
+
+			miscAssetMap[key] = image;
+		}
+
 		return {
 			then: function(callback) {
 				var checkInterval = setInterval(function(){
-					// Count toward all blocks except the empty block + all entities
-					if (totalLoaded === (blocks.length - 1) + entities.length) {
+					// Count toward all blocks except the empty
+					// block + all entities + all misc. assets
+					if (totalLoaded === (blocks.length - 1) + entities.length + miscAssetKeys.length) {
 						callback();
 						clearInterval(checkInterval);
 					}
@@ -778,10 +932,7 @@
 	}
 
 	function initializeEditor() {
-		for (var i = 0; i < 3; i++) {
-			addLayer();
-		}
-
+		resetLevelData();
 		syncSettingsInputs();
 		createBlockButtons();
 		createEntityButtons();
