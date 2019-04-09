@@ -54,6 +54,12 @@ body {
 	cursor: pointer;
 }
 
+.editor .placement-indicator {
+	background-color: #fff;
+	pointer-events: none;
+	position: absolute;
+}
+
 .entity-options {
 	margin: 10px 5px;
 }

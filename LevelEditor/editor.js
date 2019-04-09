@@ -357,6 +357,35 @@
 		return entity.layer === appState.currentLayer;
 	}
 
+	function updatePlacementIndicatorSize() {
+		var $indicator = $('.placement-indicator');
+		var $canvas = $('#layout-canvas');
+		var blockWidth = $canvas.clientWidth / appState.layerSize.width;
+		var blockHeight = $canvas.clientHeight / appState.layerSize.height;
+
+		$indicator.style.width = `${blockWidth}px`;
+		$indicator.style.height = `${blockHeight}px`;
+	}
+
+	function hidePlacementIndicator() {
+		$('.placement-indicator').style.opacity = 0;
+	}
+
+	function showPlacementIndicator() {
+		$('.placement-indicator').style.opacity = 0.3;
+	}
+
+	function updatePlacementIndicatorPosition(tile) {
+		var $canvas = $('#layout-canvas');
+		var $indicator = $('.placement-indicator');
+		var canvasBounds = $canvas.getBoundingClientRect();
+		var blockWidth = $canvas.clientWidth / appState.layerSize.width;
+		var blockHeight = $canvas.clientHeight / appState.layerSize.height;
+
+		$indicator.style.top = `${canvasBounds.y + tile.z * blockHeight}px`;
+		$indicator.style.left = `${canvasBounds.x + tile.x * blockWidth}px`;
+	}
+
 	function updateLayout() {
 		$('#layout-current-layer').value = appState.currentLayer + '/' + (appState.layers.length - 1);
 
@@ -428,6 +457,8 @@
 		if (appState.currentLayer === appState.spawn.layer) {
 			renderSpawnPoint(canvas, blockWidth, blockHeight);
 		}
+
+		updatePlacementIndicatorSize();
 	}
 
 	function updateOutput() {
@@ -642,9 +673,6 @@
 		$('#settings-width').value = appState.layerSize.width;
 		$('#settings-height').value = appState.layerSize.height;
 
-		$('#settings-spawn-layer').value = appState.spawn.layer;
-		$('#settings-spawn-x').value = appState.spawn.x;
-		$('#settings-spawn-z').value = appState.spawn.z;
 		$('#settings-spawn-d').value = appState.spawn.direction;
 
 		$('#settings-al-r').value = appState.ambientLight.color.R;
@@ -755,21 +783,6 @@
 			appState.currentPlacementType = 'spawn';
 		});
 
-		bindInput($('#settings-spawn-layer'), function(value) {
-			appState.spawn.layer = parseInt(value);
-			updateLayout();
-		});
-
-		bindInput($('#settings-spawn-x'), function(value) {
-			appState.spawn.x = parseInt(value);
-			updateLayout();
-		});
-
-		bindInput($('#settings-spawn-z'), function(value) {
-			appState.spawn.z = parseInt(value);
-			updateLayout();
-		});
-
 		bindInput($('#settings-spawn-d'), function(value) {
 			appState.spawn.direction = parseInt(value);
 			updateLayout();
@@ -828,14 +841,20 @@
 			}, 20);
 		});
 
+		$('#layout-canvas').addEventListener('mouseenter', showPlacementIndicator);
+
 		$('#layout-canvas').addEventListener('mousemove', function(e) {
 			var tile = getTileCoordinate(e.clientX, e.clientY);
 
 			$('#layout-current-coords').value = `${tile.x}, ${tile.z}`;
+
+			updatePlacementIndicatorPosition(tile);
 		});
 
 		$('#layout-canvas').addEventListener('mouseleave', function() {
 			$('#layout-current-coords').value = '';
+
+			hidePlacementIndicator();
 		});
 
 		$('#layout-canvas').addEventListener('click', function(e) {
@@ -866,6 +885,10 @@
 				parseOutput();
 				$('#output-textarea').scrollTop = 0;
 			}, 20);
+		});
+
+		window.addEventListener('resize', function() {
+			updatePlacementIndicatorSize();
 		});
 	}
 
@@ -937,6 +960,7 @@
 		createBlockButtons();
 		createEntityButtons();
 		bindEvents();
+		hidePlacementIndicator();
 
 		preloadAssets().then(function(){
 			updateLayout();
