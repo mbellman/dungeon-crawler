@@ -1,4 +1,6 @@
 body {
+	font-family: Arial;
+	font-size: 13px;
 	margin: 0;
 }
 
@@ -14,6 +16,7 @@ body {
 	cursor: pointer;
 	margin: 2px;
 	padding: 2px 8px;
+	transition: all 0.1s;
 }
 
 .ui-button:hover {
@@ -25,8 +28,9 @@ body {
 }
 
 .ui-button.selected {
-	box-shadow: 0px 1px 4px #000 inset;
 	background-color: #444;
+	border-color: #000;
+	box-shadow: 0px 1px 4px #000 inset;
 	color: #fff;
 }
 

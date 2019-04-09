@@ -143,7 +143,7 @@
 			layer.push(row);
 
 			for (var x = 0; x < appState.layerSize.width; x++) {
-				row.push(Math.random() < 0.5 ? 1 : 0);
+				row.push(1);
 			}
 		}
 
@@ -195,6 +195,11 @@
 					canvas.globalAlpha = 0.3;
 
 					var belowBlockType = appState.layers[appState.currentLayer - 1][z][x];
+
+					if (belowBlockType === 0 && appState.currentLayer > 1) {
+						belowBlockType = appState.layers[appState.currentLayer - 2][z][x];
+						canvas.globalAlpha = 0.1;
+					}
 
 					renderBlockType(canvas, belowBlockType, rect);
 					canvas.restore();
@@ -272,6 +277,102 @@
 		}
 
 		$('#output-textarea').value = output;
+	}
+
+	function parseOutput() {
+		var value = $('#output-textarea').value;
+		var lines = value.split('\n');
+
+		function parseLayerSize(data) {
+			var values = data.split(',');
+
+			appState.layerSize.width = parseInt(values[0]);
+			appState.layerSize.height = parseInt(values[1]);
+		}
+
+		function parseSpawnPosition(data) {
+			var values = data.split(',');
+
+			appState.spawn.layer = parseInt(values[0]);
+			appState.spawn.x = parseInt(values[1]);
+			appState.spawn.z = parseInt(values[2]);
+			appState.spawn.direction = parseInt(values[3]);
+		}
+
+		function parseAmbientLight(data) {
+			var values = data.split(',');
+
+			appState.ambientLight.color.R = parseInt(values[0]);
+			appState.ambientLight.color.G = parseInt(values[1]);
+			appState.ambientLight.color.B = parseInt(values[2]);
+			appState.ambientLight.vector.x = parseFloat(values[3]);
+			appState.ambientLight.vector.y = parseFloat(values[4]);
+			appState.ambientLight.vector.z = parseFloat(values[5]);
+			appState.ambientLight.power = parseFloat(values[6]);
+		}
+
+		function parseVisibility(data) {
+			appState.visibility = parseInt(data);
+		}
+
+		function parseBrightness(data) {
+			appState.brightness = parseFloat(data);
+		}
+
+		function parseLayerRow(data, activeLayer, rowIndex) {
+			if (activeLayer >= appState.layers.length) {
+				addLayer();
+			}
+
+			var row = appState.layers[activeLayer][rowIndex];
+			var blocks = data.split(',');
+
+			for (var i = 0; i < blocks.length; i++) {
+				row[i] = parseInt(blocks[i]);
+			}
+		}
+
+		var i = 0;
+		var activeLayer = 0;
+
+		while (i < lines.length) {
+			var parts = lines[i].split(/\s(.+)/);
+			var label = parts[0];
+			var data = parts[1];
+
+			switch (label) {
+				case 'LS':
+					parseLayerSize(data);
+					break;
+				case 'SP':
+					parseSpawnPosition(data);
+					break;
+				case 'AL':
+					parseAmbientLight(data);
+					break;
+				case 'V':
+					parseVisibility(data);
+					break;
+				case 'B':
+					parseBrightness(data);
+					break;
+				case 'L':
+					for (var n = 1; n <= appState.layerSize.height; n++) {
+						var data = lines[i + n];
+
+						parseLayerRow(data, activeLayer, n - 1);
+					}
+
+					activeLayer++;
+					i += appState.layerSize.height;
+					break;
+			}
+
+			i++;
+		}
+
+		syncSettingsInputs();
+		updateLayout();
 	}
 
 	function syncSettingsInputs() {
@@ -355,6 +456,13 @@
 			updateLayout();
 			updateOutput();
 		});
+
+		$('#output-textarea').addEventListener('paste', function(){
+			setTimeout(function(){
+				parseOutput();
+				$('#output-textarea').scrollTop = 0;
+			}, 20);
+		});
 	}
 
 	function preloadBlockAssets() {
@@ -393,7 +501,7 @@
 	}
 
 	function initializeEditor() {
-		for (var i = 0; i < 2; i++) {
+		for (var i = 0; i < 3; i++) {
 			addLayer();
 		}
 
