@@ -382,7 +382,7 @@
 		var blockWidth = $canvas.clientWidth / appState.layerSize.width;
 		var blockHeight = $canvas.clientHeight / appState.layerSize.height;
 
-		$indicator.style.top = `${canvasBounds.y + tile.z * blockHeight}px`;
+		$indicator.style.top = `${canvasBounds.y + tile.z * blockHeight + window.scrollY}px`;
 		$indicator.style.left = `${canvasBounds.x + tile.x * blockWidth}px`;
 	}
 

@@ -13,4 +13,6 @@ private:
 	Soft::Vec3 direction;
 	const Soft::Camera* camera = nullptr;
 	Soft::TextureBuffer* texture = nullptr;
+
+	float getSpeedFactor();
 };
