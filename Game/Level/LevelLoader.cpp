@@ -9,6 +9,7 @@ static std::string VISIBILITY = "V";
 static std::string BRIGHTNESS = "B";
 static std::string TORCH = "T";
 static std::string CHEST = "CH";
+static std::string DOOR = "D";
 static std::string LAYER = "L";
 
 /**
@@ -45,6 +46,8 @@ LevelLoader::LevelLoader(const char* path) {
 			parseTorchData();
 		} else if (label == CHEST) {
 			parseChestData();
+		} else if (label == DOOR) {
+			parseDoorData();
 		} else if (label == LAYER) {
 			parseLayerData();
 		}
@@ -57,6 +60,11 @@ LevelLoader::~LevelLoader() {
 	levelData.layers.clear();
 	levelData.torches.clear();
 	levelData.chests.clear();
+	levelData.doors.clear();
+}
+
+MathUtils::Axis LevelLoader::getAxis(int code) {
+	return code == 0 ? MathUtils::Axis::Z : MathUtils::Axis::X;
 }
 
 MathUtils::Direction LevelLoader::getDirection(int code) {
@@ -95,6 +103,8 @@ void LevelLoader::parseBrightness() {
 }
 
 void LevelLoader::parseChestData() {
+	setChunkDelimiter(",");
+
 	ChestData chestData;
 
 	chestData.position.layer = std::stoi(readNextChunk());
@@ -104,6 +114,19 @@ void LevelLoader::parseChestData() {
 	chestData.itemType = std::stoi(readNextChunk());
 
 	levelData.chests.push_back(chestData);
+}
+
+void LevelLoader::parseDoorData() {
+	setChunkDelimiter(",");
+
+	DoorData doorData;
+
+	doorData.position.layer = std::stoi(readNextChunk());
+	doorData.position.x = std::stoi(readNextChunk());
+	doorData.position.z = std::stoi(readNextChunk());
+	doorData.axis = getAxis(std::stoi(readNextChunk()));
+
+	levelData.doors.push_back(doorData);
 }
 
 void LevelLoader::parseLayerSize() {

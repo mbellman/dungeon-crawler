@@ -27,7 +27,8 @@
 
 	var entities = [
 		{ name: 'Torch', file: 'torch.png' },
-		{ name: 'Chest', file: 'chest.png' }
+		{ name: 'Chest', file: 'chest.png' },
+		{ name: 'Door', file: 'door.png' }
 	];
 
 	var directions = [
@@ -53,7 +54,8 @@
 
 	var EntityTypes = {
 		TORCH: 0,
-		CHEST: 1
+		CHEST: 1,
+		DOOR: 2
 	};
 
 	var Direction = {
@@ -61,6 +63,12 @@
 		LEFT: 1,
 		BACKWARD: 2,
 		RIGHT: 3
+	};
+
+	var Axis = {
+		X: 0,
+		Y: 1,
+		Z: 2
 	};
 
 	var appState = {
@@ -83,6 +91,7 @@
 		brightness: 1.0,
 		torches: [],
 		chests: [],
+		doors: [],
 		layers: [],
 		currentLayer: 0,
 		currentPlacementType: 'block',
@@ -174,6 +183,32 @@
 		$$('.direction-button')[0].click();
 	}
 
+	function showDoorAxisOptions() {
+		var options = [
+			{ axis: 2, label: 'Z' },
+			{ axis: 0, label: 'X' }
+		];
+
+		for (var i = 0; i < options.length; i++) {
+			var $axisButton = document.createElement('input');
+
+			$axisButton.setAttribute('type', 'button');
+			$axisButton.setAttribute('class', 'ui-button axis-button');
+			$axisButton.setAttribute('data-index', i);
+			$axisButton.value = options[i].label;
+
+			$axisButton.addEventListener('click', function(e){
+				unfocusButtonGroup('axis-button');
+
+				e.currentTarget.setAttribute('class', 'ui-button axis-button selected');
+
+				appState.currentEntityOptions.axis = parseInt(e.currentTarget.getAttribute('data-index'));
+			});
+
+			$('#entity-options').appendChild($axisButton);
+		}
+	}
+
 	function addEntityOptionField(label, defaultValue, changeHandler) {
 		var $container = document.createElement('div');
 		var $label = document.createElement('label');
@@ -203,6 +238,10 @@
 		});
 	}
 
+	function showDoorEntityOptions() {
+		showDoorAxisOptions();
+	}
+
 	function showEntityOptions(entityType) {
 		clearEntityOptions();
 
@@ -212,6 +251,9 @@
 				break;
 			case EntityTypes.CHEST:
 				showChestEntityOptions();
+				break;
+			case EntityTypes.DOOR:
+				showDoorEntityOptions();
 				break;
 		}
 	}
@@ -454,6 +496,29 @@
 			canvas.drawImage(asset, rect.x, rect.y, rect.width, rect.height);
 		});
 
+		appState.doors.filter(activeLayerEntityFilter).forEach(function(door) {
+			var asset = entityAssets[EntityTypes.DOOR];
+
+			var rect = {
+				x: blockWidth * door.x,
+				y: blockHeight * door.z,
+				width: blockWidth,
+				height: blockHeight
+			};
+
+			canvas.save();
+
+			if (door.axis === Axis.X) {
+				canvas.translate(rect.x + blockWidth / 2, rect.y + blockHeight / 2);
+				canvas.rotate(-90 * Math.PI / 180);
+				canvas.drawImage(asset, -rect.width/2, -rect.height/2, rect.width, rect.height);
+			} else {
+				canvas.drawImage(asset, rect.x, rect.y, rect.width, rect.height);
+			}
+
+			canvas.restore();
+		});
+
 		if (appState.currentLayer === appState.spawn.layer) {
 			renderSpawnPoint(canvas, blockWidth, blockHeight);
 		}
@@ -499,6 +564,15 @@
 			var chest = appState.chests[i];
 
 			write(`CH ${chest.layer}, ${chest.x}, ${chest.z}, ${chest.direction}, ${chest.itemType}`)
+			newline();
+		}
+
+		newline();
+
+		for (var i = 0; i < appState.doors.length; i++) {
+			var door = appState.doors[i];
+
+			write(`D ${door.layer}, ${door.x}, ${door.z}, ${door.axis}`);
 			newline();
 		}
 
@@ -605,6 +679,17 @@
 			});
 		}
 
+		function parseDoor(data) {
+			var values = data.split(',');
+
+			appState.doors.push({
+				layer: parseInt(values[0]),
+				x: parseInt(values[1]),
+				z: parseInt(values[2]),
+				axis: parseInt(values[3])
+			});
+		}
+
 		function parseLayerRow(data, activeLayer, rowIndex) {
 			if (activeLayer >= appState.layers.length) {
 				addLayer();
@@ -649,6 +734,9 @@
 					break;
 				case 'CH':
 					parseChest(data);
+					break;
+				case 'D':
+					parseDoor(data);
 					break;
 				case 'L':
 					for (var n = 1; n <= appState.layerSize.height; n++) {
@@ -746,6 +834,14 @@
 					z: tile.z,
 					direction: options.direction,
 					itemType: options.itemType
+				});
+				break;
+			case EntityTypes.DOOR:
+				appState.doors.push({
+					layer: appState.currentLayer,
+					x: tile.x,
+					z: tile.z,
+					axis: options.axis
 				});
 				break;
 		}
@@ -882,6 +978,7 @@
 
 		$('#output-textarea').addEventListener('paste', function(){
 			setTimeout(function(){
+				resetLevelData();
 				parseOutput();
 				$('#output-textarea').scrollTop = 0;
 			}, 20);

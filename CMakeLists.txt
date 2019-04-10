@@ -51,6 +51,8 @@ set(SOURCE_FILES
     Game/Entities/CastLight.cpp
     Game/Entities/Chest.h
     Game/Entities/Chest.cpp
+    Game/Entities/Door.h
+    Game/Entities/Door.cpp
     Game/Entities/Frame.h
     Game/Entities/Frame.cpp
     Game/Entities/HUD.h

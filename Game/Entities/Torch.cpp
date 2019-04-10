@@ -66,12 +66,12 @@ void Torch::addFire() {
 }
 
 void Torch::addTorchBase() {
-	Soft::ObjLoader torchBaseLoader("./Assets/Models/torch-base.obj");
-	Soft::ObjLoader torchBaseLodLoader("./Assets/Models/torch-base-lod.obj");
+	Soft::ObjLoader baseLoader("./Assets/Models/torch-base.obj");
+	Soft::ObjLoader baseLodLoader("./Assets/Models/torch-base-lod.obj");
 
-	Soft::Model* torchBase = new Soft::Model(torchBaseLoader);
+	Soft::Model* torchBase = new Soft::Model(baseLoader);
 
-	torchBase->addLOD(new Soft::Model(torchBaseLodLoader));
+	torchBase->addLOD(new Soft::Model(baseLodLoader));
 	GameUtils::rotateToDirection(torchBase, torchData.direction);
 	torchBase->setColor({ 50, 50, 50 });
 	torchBase->scale(20.0f);

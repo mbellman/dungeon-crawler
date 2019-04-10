@@ -2,6 +2,7 @@
 #include <Level/LevelLoader.h>
 #include <Level/BlockUtils.h>
 #include <Entities/Chest.h>
+#include <Entities/Door.h>
 #include <GameUtils.h>
 #include <SoftEngine.h>
 
@@ -32,10 +33,15 @@ LevelLayout::~LevelLayout() {
 	delete[] layers;
 
 	chests.clear();
+	doors.clear();
 }
 
 void LevelLayout::addChest(Chest* chest) {
 	chests.push_back(chest);
+}
+
+void LevelLayout::addDoor(Door* door) {
+	doors.push_back(door);
 }
 
 int LevelLayout::getBlockType(int layerIndex, int x, int z) const {
@@ -68,6 +74,16 @@ Chest* LevelLayout::getMatchingChest(GridPosition position) const {
 	return nullptr;
 }
 
+Door* LevelLayout::getMatchingDoor(GridPosition position) const {
+	for (auto* door : doors) {
+		if (position == door->getDoorData().position) {
+			return door;
+		}
+	}
+
+	return nullptr;
+}
+
 const Soft::Area& LevelLayout::getSize() const {
 	return layers[0].area;
 }
@@ -78,8 +94,9 @@ int LevelLayout::getTotalLayers() const {
 
 bool LevelLayout::hasImpassableObject(GridPosition position) const {
 	const Chest* chest = getMatchingChest(position);
+	const Door* door = getMatchingDoor(position);
 
-	return chest != nullptr;
+	return chest != nullptr || (door != nullptr && !door->isOpen());
 }
 
 bool LevelLayout::isEmptyBlock(int layerIndex, int x, int z) const {

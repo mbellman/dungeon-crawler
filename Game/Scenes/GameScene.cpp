@@ -4,12 +4,13 @@
 #include <Level/LevelLoader.h>
 #include <Entities/Player.h>
 #include <Entities/CastLight.h>
-#include <Entities/Chest.h>
 #include <Entities/Staff.h>
 #include <Entities/TextBox.h>
 #include <Entities/ItemMenu.h>
 #include <Entities/HUD.h>
 #include <Entities/Torch.h>
+#include <Entities/Chest.h>
+#include <Entities/Door.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
 #include <GameUtils.h>
@@ -156,9 +157,12 @@ void GameScene::handleAction() {
 		auto* player = getEntity<Player>("player");
 		GridPosition nextPosition = player->getDirectionalGridPosition(player->getDirection());
 		Chest* chest = levelLayout->getMatchingChest(nextPosition);
+		Door* door = levelLayout->getMatchingDoor(nextPosition);
 
 		if (chest != nullptr) {
 			handleChestAction(chest);
+		} else if (door != nullptr) {
+			handleDoorAction(door);
 		}
 	}
 }
@@ -172,6 +176,12 @@ void GameScene::handleChestAction(Chest* chest) {
 		inventory->addItem(itemData);
 
 		showItemObtainedText(itemData.name);
+	}
+}
+
+void GameScene::handleDoorAction(Door* door) {
+	if (!door->isOpen()) {
+		door->open();
 	}
 }
 
@@ -246,6 +256,13 @@ void GameScene::loadLevel() {
 
 		levelLayout->addChest(chest);
 		add(chest);
+	}
+
+	for (const auto& doorData : levelData.doors) {
+		Door* door = new Door(doorData);
+
+		levelLayout->addDoor(door);
+		add(door);
 	}
 
 	BlockBuilder builder(levelLayout);

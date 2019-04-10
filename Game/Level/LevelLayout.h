@@ -2,6 +2,7 @@
 
 #include <Level/LevelLoader.h>
 #include <Entities/Chest.h>
+#include <Entities/Door.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
 #include <vector>
@@ -27,11 +28,13 @@ public:
 	~LevelLayout();
 
 	void addChest(Chest* chest);
+	void addDoor(Door* door);
 	int getBlockType(int layerIndex, int x, int z) const;
 	int getBlockType(GridPosition position) const;
 	const Soft::Area& getSize() const;
 	int getTotalLayers() const;
 	Chest* getMatchingChest(GridPosition position) const;
+	Door* getMatchingDoor(GridPosition position) const;
 	bool hasImpassableObject(GridPosition position) const;
 	bool isEmptyBlock(int layerIndex, int x, int z) const;
 	bool isEmptyBlock(GridPosition position) const;
@@ -46,4 +49,5 @@ private:
 	int totalLayers = 0;
 	Layer* layers = nullptr;
 	std::vector<Chest*> chests;
+	std::vector<Door*> doors;
 };

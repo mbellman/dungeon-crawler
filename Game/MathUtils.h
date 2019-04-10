@@ -21,4 +21,10 @@ namespace MathUtils {
 		FORWARD = 1 << 4,
 		BACKWARD = 1 << 5
 	};
+
+	enum Axis {
+		X,
+		Y,
+		Z
+	};
 }

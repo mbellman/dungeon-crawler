@@ -27,6 +27,11 @@ struct ChestData {
 	int itemType;
 };
 
+struct DoorData {
+	GridPosition position;
+	MathUtils::Axis axis;
+};
+
 struct LayerData {
 	std::vector<int> blockTypes;
 };
@@ -42,6 +47,7 @@ struct LevelData {
 	std::vector<LayerData> layers;
 	std::vector<TorchData> torches;
 	std::vector<ChestData> chests;
+	std::vector<DoorData> doors;
 };
 
 class LevelLoader : Soft::Loader {
@@ -54,10 +60,12 @@ public:
 private:
 	LevelData levelData;
 
+	MathUtils::Axis getAxis(int code);
 	MathUtils::Direction getDirection(int code);
 	void parseAmbientLightSettings();
 	void parseBrightness();
 	void parseChestData();
+	void parseDoorData();
 	void parseLayerSize();
 	void parseLayerData();
 	void parseSpawnPosition();
