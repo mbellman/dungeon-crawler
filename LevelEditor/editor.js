@@ -806,6 +806,7 @@
 
 		appState.torches = appState.torches.filter(predicate);
 		appState.chests = appState.chests.filter(predicate);
+		appState.doors = appState.doors.filter(predicate);
 	}
 
 	function placeCurrentEntity(tile) {
