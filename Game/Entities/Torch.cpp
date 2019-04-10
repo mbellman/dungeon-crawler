@@ -67,14 +67,17 @@ void Torch::addFire() {
 
 void Torch::addTorchBase() {
 	Soft::ObjLoader torchBaseLoader("./Assets/Models/torch-base.obj");
+	Soft::ObjLoader torchBaseLodLoader("./Assets/Models/torch-base-lod.obj");
 
 	Soft::Model* torchBase = new Soft::Model(torchBaseLoader);
 
+	torchBase->addLOD(new Soft::Model(torchBaseLodLoader));
 	GameUtils::rotateToDirection(torchBase, torchData.direction);
 	torchBase->setColor({ 50, 50, 50 });
 	torchBase->scale(20.0f);
 	torchBase->position = getTorchBasePosition();
 	torchBase->fresnelFactor = 1.0f;
+	torchBase->lodDistanceThreshold = 1500.0f;
 
 	add(torchBase);
 }
