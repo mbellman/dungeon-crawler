@@ -6,7 +6,7 @@
 
 class Door : public Soft::Entity {
 public:
-	Door(const DoorData& doorData);
+	Door(const DoorData& doorData, Soft::TextureBuffer* frameTexture, Soft::TextureBuffer* slabTexture);
 
 	void initialize() override;
 	const DoorData& getDoorData() const;
@@ -16,5 +16,7 @@ public:
 private:
 	DoorData doorData;
 	Soft::Object* slab = nullptr;
+	Soft::TextureBuffer* frameTexture = nullptr;
+	Soft::TextureBuffer* slabTexture = nullptr;
 	bool hasOpened = false;
 };

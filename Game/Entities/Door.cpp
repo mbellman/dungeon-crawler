@@ -8,8 +8,10 @@
  * Door
  * ----
  */
-Door::Door(const DoorData& doorData) {
+Door::Door(const DoorData& doorData, Soft::TextureBuffer* frameTexture, Soft::TextureBuffer* slabTexture) {
 	this->doorData = doorData;
+	this->frameTexture = frameTexture;
+	this->slabTexture = slabTexture;
 }
 
 void Door::initialize() {
@@ -18,11 +20,13 @@ void Door::initialize() {
 
 	Soft::Model* frame = new Soft::Model(frameLoader);
 
-	frame->setColor({ 180, 120, 50 });
+	frame->setTexture(frameTexture);
 	frame->scale(GameUtils::HALF_TILE_SIZE);
 	frame->position = GameUtils::getGridPositionVec3(doorData.position);
 
 	slab = new Soft::Model(slabLoader);
+
+	slab->setTexture(slabTexture);
 	slab->setColor({ 180, 120, 50 });
 	slab->scale(GameUtils::HALF_TILE_SIZE);
 	slab->position = frame->position;

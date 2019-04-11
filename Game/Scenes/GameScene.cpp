@@ -111,7 +111,7 @@ void GameScene::castLight() {
 		textBox->hide();
 	}
 
-	CastLight* castLight = new CastLight(camera->position, camera->getDirection(), camera, getTexture("cast_light"));
+	CastLight* castLight = new CastLight(camera->position, camera->getDirection(), camera, getTexture("castLight"));
 	castLight->lifetime = GameUtils::CAST_LIGHT_LIFETIME;
 
 	add(castLight);
@@ -252,14 +252,14 @@ void GameScene::loadLevel() {
 	}
 
 	for (const auto& chestData : levelData.chests) {
-		Chest* chest = new Chest(chestData, getTexture("chest_box"), getTexture("chest_lid"));
+		Chest* chest = new Chest(chestData, getTexture("chestBox"), getTexture("chestLid"));
 
 		levelLayout->addChest(chest);
 		add(chest);
 	}
 
 	for (const auto& doorData : levelData.doors) {
-		Door* door = new Door(doorData);
+		Door* door = new Door(doorData, getTexture("doorFrame"), getTexture("doorSlab"));
 
 		levelLayout->addDoor(door);
 		add(door);
@@ -294,13 +294,15 @@ void GameScene::loadTextures() {
 	add("column", new Soft::TextureBuffer("./Assets/BlockTextures/column.png"));
 	add("staircase", new Soft::TextureBuffer("./Assets/BlockTextures/staircase.png"));
 	add("bridge", new Soft::TextureBuffer("./Assets/BlockTextures/bridge.png"));
-	add("chest_box", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/box.png"));
-	add("chest_lid", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/lid.png"));
+	add("chestBox", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/box.png"));
+	add("chestLid", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/lid.png"));
+	add("doorFrame", new Soft::TextureBuffer("./Assets/BlockTextures/Door/frame.png"));
+	add("doorSlab", new Soft::TextureBuffer("./Assets/BlockTextures/Door/slab.png"));
 
 	Soft::TextureBuffer* castLightTexture = new Soft::TextureBuffer("./Assets/BlockTextures/CastLight/blue.png");
 	castLightTexture->shouldUseMipmaps = false;
 
-	add("cast_light", castLightTexture);
+	add("castLight", castLightTexture);
 
 	Soft::TextureBuffer* fireTexture = new Soft::TextureBuffer("./Assets/BlockTextures/Fire/1.png");
 	fireTexture->shouldUseMipmaps = false;
