@@ -29,9 +29,20 @@ SidedBlock::SidedBlock(int sidesMask, int subdivisions) {
 		addSideVertices(SidedBlock::sideVertexPositions[4], subdivisions);
 	}
 
-	for (int i = 0; i < vertices.size(); i += 4) {
-		addPolygon(i, i + 1, i + 2);
-		addPolygon(i + 1, i + 3, i + 2);
+	int verticesPerLine = 2 + subdivisions;
+	int verticesPerSide = verticesPerLine * verticesPerLine;
+
+	for (int i = 0; i < totalSides; i++) {
+		int vertexOffset = i * verticesPerSide;
+
+		for (int v = 0; v < verticesPerLine - 1; v++) {
+			for (int h = 0; h < verticesPerLine - 1; h++) {
+				int n = vertexOffset + v * verticesPerLine + h;
+
+				addPolygon(n, n + 1, n + verticesPerLine);
+				addPolygon(n + 1, n + 1 + verticesPerLine, n + verticesPerLine);
+			}
+		}
 	}
 }
 
@@ -42,35 +53,32 @@ SidedBlock::SidedBlock(int sidesMask, int subdivisions) {
 void SidedBlock::addSideVertices(Soft::Vec3 (&vertexPositions)[4], int subdivisions) {
 	using namespace Soft;
 
-	int s = subdivisions + 1;
-	float ratioStep = 1.0f / s;
+	totalSides++;
 
-	for (int v = 0; v < s; v++) {
-		float v_ratio = (float)v / s;
+	int verticesPerLine = 2 + subdivisions;
+	float ratioStep = 1.0f / (verticesPerLine - 1);
 
-		for (int h = 0; h < s; h++) {
-			float h_ratio = (float)h / s;
+	for (int v = 0; v < verticesPerLine; v++) {
+		float v_ratio = v * ratioStep;
 
-			for (int i = 0; i < 4; i++) {
-				// For every vertex in the side face, we have to bilinearly interpolate
-				// position and UV based on our current horizontal/vertical progress
-				// along the face.
-				float h_alpha = h_ratio + (i % 2 == 1 ? ratioStep : 0.0f);
-				float v_alpha = v_ratio + (i > 1 ? ratioStep : 0.0f);
+		for (int h = 0; h < verticesPerLine; h++) {
+			float h_ratio = h * ratioStep;
 
-				addVertex(
-					Vec3::lerp(
-						Vec3::lerp(vertexPositions[0], vertexPositions[1], h_alpha),
-						Vec3::lerp(vertexPositions[2], vertexPositions[3], h_alpha),
-						v_alpha
-					),
-					Vec2::lerp(
-						Vec2::lerp(SidedBlock::sideUvs[0], SidedBlock::sideUvs[1], h_alpha),
-						Vec2::lerp(SidedBlock::sideUvs[2], SidedBlock::sideUvs[3], h_alpha),
-						v_alpha
-					)
-				);
-			}
+			// For every vertex in the side face, we have to bilinearly interpolate
+			// position and UV based on our current horizontal/vertical progress
+			// along the face.
+			addVertex(
+				Vec3::lerp(
+					Vec3::lerp(vertexPositions[0], vertexPositions[1], h_ratio),
+					Vec3::lerp(vertexPositions[2], vertexPositions[3], h_ratio),
+					v_ratio
+				),
+				Vec2::lerp(
+					Vec2::lerp(SidedBlock::sideUvs[0], SidedBlock::sideUvs[1], h_ratio),
+					Vec2::lerp(SidedBlock::sideUvs[2], SidedBlock::sideUvs[3], h_ratio),
+					v_ratio
+				)
+			);
 		}
 	}
 }

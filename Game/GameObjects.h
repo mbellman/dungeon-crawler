@@ -8,6 +8,7 @@ struct SidedBlock : public Soft::Object {
 private:
 	static Soft::Vec3 sideVertexPositions[6][4];
 	static Soft::Vec2 sideUvs[4];
+	int totalSides = 0;
 
 	void addSideVertices(Soft::Vec3 (&vertexPositions)[4], int subdivisions);
 };
