@@ -14,9 +14,11 @@ public:
 	void open();
 
 private:
+	constexpr static int OPEN_ANIMATION_DURATION = 2000;
+
 	DoorData doorData;
 	Soft::Object* slab = nullptr;
 	Soft::TextureBuffer* frameTexture = nullptr;
 	Soft::TextureBuffer* slabTexture = nullptr;
-	bool hasOpened = false;
+	int openTime = 0;
 };

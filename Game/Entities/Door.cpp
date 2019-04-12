@@ -45,13 +45,13 @@ const DoorData& Door::getDoorData() const {
 }
 
 bool Door::isOpen() const {
-	return hasOpened;
+	return openTime > 0 && (getAge() - openTime) > Door::OPEN_ANIMATION_DURATION;
 }
 
 void Door::open() {
 	Soft::Vec3 offset = { 0.0f, GameUtils::TILE_SIZE * 0.8f, 0.0f };
 
-	slab->tweenTo(slab->position + offset, 1000, Soft::Ease::quadInOut);
+	slab->tweenTo(slab->position + offset, Door::OPEN_ANIMATION_DURATION, Soft::Ease::quadInOut);
 
-	hasOpened = true;
+	openTime = getAge();
 }
