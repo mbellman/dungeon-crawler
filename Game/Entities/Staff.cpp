@@ -7,8 +7,9 @@
  * Staff
  * -----
  */
-Staff::Staff(const Soft::Camera* camera) {
+Staff::Staff(const Soft::Camera* camera, Soft::TextureBuffer* modelTexture) {
 	this->camera = camera;
+	this->modelTexture = modelTexture;
 }
 
 void Staff::initialize() {
@@ -16,7 +17,7 @@ void Staff::initialize() {
 
 	model = new Soft::Model(loader);
 
-	model->setColor({ 180, 125, 50 });
+	model->setTexture(modelTexture);
 	model->scale(Staff::SCALE);
 	model->transformOrigin = Staff::DEFAULT_TRANSFORM_ORIGIN;
 

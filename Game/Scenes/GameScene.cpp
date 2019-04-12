@@ -89,7 +89,7 @@ void GameScene::addPlayer() {
 }
 
 void GameScene::addStaff() {
-	Staff* staff = new Staff(camera);
+	Staff* staff = new Staff(camera, getTexture("staff"));
 
 	add("staff", staff);
 }
@@ -289,6 +289,7 @@ void GameScene::loadLevel() {
 }
 
 void GameScene::loadTextures() {
+	add("staff", new Soft::TextureBuffer("./Assets/BlockTextures/staff.png"));
 	add("solid_1", new Soft::TextureBuffer("./Assets/BlockTextures/solid_1.png"));
 	add("solid_2", new Soft::TextureBuffer("./Assets/BlockTextures/solid_2.png"));
 	add("column", new Soft::TextureBuffer("./Assets/BlockTextures/column.png"));

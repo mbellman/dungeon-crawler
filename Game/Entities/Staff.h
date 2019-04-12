@@ -4,7 +4,7 @@
 
 class Staff : public Soft::Entity {
 public:
-	Staff(const Soft::Camera* camera);
+	Staff(const Soft::Camera* camera, Soft::TextureBuffer* modelTexture);
 
 	void initialize() override;
 	void onUpdate(int dt) override;
@@ -25,6 +25,7 @@ private:
 	static Soft::Vec3 SWING_TRANSFORM_ORIGIN;
 
 	const Soft::Camera* camera = nullptr;
+	Soft::TextureBuffer* modelTexture = nullptr;
 	Soft::Model* model = nullptr;
 	Soft::Light* staffLight = nullptr;
 	float lastCameraYaw = 0.0f;
