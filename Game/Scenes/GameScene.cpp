@@ -299,32 +299,32 @@ void GameScene::loadParty() {
 }
 
 void GameScene::loadTextures() {
-	add("staff", new Soft::TextureBuffer("./Assets/BlockTextures/staff.png"));
-	add("solid_1", new Soft::TextureBuffer("./Assets/BlockTextures/solid_1.png"));
-	add("solid_2", new Soft::TextureBuffer("./Assets/BlockTextures/solid_2.png"));
-	add("column", new Soft::TextureBuffer("./Assets/BlockTextures/column.png"));
-	add("staircase", new Soft::TextureBuffer("./Assets/BlockTextures/staircase.png"));
-	add("bridge", new Soft::TextureBuffer("./Assets/BlockTextures/bridge.png"));
-	add("chestBox", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/box.png"));
-	add("chestLid", new Soft::TextureBuffer("./Assets/BlockTextures/Chest/lid.png"));
-	add("doorFrame", new Soft::TextureBuffer("./Assets/BlockTextures/Door/frame.png"));
-	add("doorSlab", new Soft::TextureBuffer("./Assets/BlockTextures/Door/slab.png"));
+	add("staff", new Soft::TextureBuffer("./Assets/Textures/staff.png"));
+	add("solid_1", new Soft::TextureBuffer("./Assets/Textures/Blocks/solid_1.png"));
+	add("solid_2", new Soft::TextureBuffer("./Assets/Textures/Blocks/solid_2.png"));
+	add("column", new Soft::TextureBuffer("./Assets/Textures/Blocks/column.png"));
+	add("staircase", new Soft::TextureBuffer("./Assets/Textures/Blocks/staircase.png"));
+	add("bridge", new Soft::TextureBuffer("./Assets/Textures/Blocks/bridge.png"));
+	add("chestBox", new Soft::TextureBuffer("./Assets/Textures/Chest/box.png"));
+	add("chestLid", new Soft::TextureBuffer("./Assets/Textures/Chest/lid.png"));
+	add("doorFrame", new Soft::TextureBuffer("./Assets/Textures/Door/frame.png"));
+	add("doorSlab", new Soft::TextureBuffer("./Assets/Textures/Door/slab.png"));
 
-	Soft::TextureBuffer* castLightTexture = new Soft::TextureBuffer("./Assets/BlockTextures/CastLight/blue.png");
+	Soft::TextureBuffer* castLightTexture = new Soft::TextureBuffer("./Assets/Textures/CastLight/blue.png");
 	castLightTexture->shouldUseMipmaps = false;
 
 	add("castLight", castLightTexture);
 
-	Soft::TextureBuffer* fireTexture = new Soft::TextureBuffer("./Assets/BlockTextures/Fire/1.png");
+	Soft::TextureBuffer* fireTexture = new Soft::TextureBuffer("./Assets/Textures/Fire/1.png");
 	fireTexture->shouldUseMipmaps = false;
 
-	fireTexture->addFrame("./Assets/BlockTextures/Fire/2.png");
-	fireTexture->addFrame("./Assets/BlockTextures/Fire/3.png");
-	fireTexture->addFrame("./Assets/BlockTextures/Fire/4.png");
-	fireTexture->addFrame("./Assets/BlockTextures/Fire/5.png");
-	fireTexture->addFrame("./Assets/BlockTextures/Fire/6.png");
-	fireTexture->addFrame("./Assets/BlockTextures/Fire/7.png");
-	fireTexture->addFrame("./Assets/BlockTextures/Fire/8.png");
+	fireTexture->addFrame("./Assets/Textures/Fire/2.png");
+	fireTexture->addFrame("./Assets/Textures/Fire/3.png");
+	fireTexture->addFrame("./Assets/Textures/Fire/4.png");
+	fireTexture->addFrame("./Assets/Textures/Fire/5.png");
+	fireTexture->addFrame("./Assets/Textures/Fire/6.png");
+	fireTexture->addFrame("./Assets/Textures/Fire/7.png");
+	fireTexture->addFrame("./Assets/Textures/Fire/8.png");
 
 	add("fireTexture", fireTexture);
 }
