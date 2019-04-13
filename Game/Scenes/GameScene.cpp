@@ -11,9 +11,10 @@
 #include <Entities/Torch.h>
 #include <Entities/Chest.h>
 #include <Entities/Door.h>
-#include <SoftEngine.h>
 #include <MathUtils.h>
 #include <GameUtils.h>
+#include <Party.h>
+#include <SoftEngine.h>
 #include <cmath>
 #include <math.h>
 #include <string>
@@ -25,6 +26,7 @@
  */
 GameScene::GameScene() {
 	uiFont = TTF_OpenFont("./Assets/Fonts/FreeMono.ttf", 20);
+	party = new Party();
 	inventory = new Inventory();
 }
 
@@ -36,14 +38,16 @@ GameScene::~GameScene() {
 	TTF_CloseFont(uiFont);
 
 	delete inventory;
+	delete party;
 }
 
 void GameScene::load() {
 	loadTextures();
 	loadLevel();
+	loadParty();
 
 	add("textBox", new TextBox(uiFont));
-	add("hud", new HUD({ controller->getWindowWidth(), controller->getWindowHeight() }));
+	add("hud", new HUD({ controller->getWindowWidth(), controller->getWindowHeight() }, party));
 
 	addPlayer();
 	addStaff();
@@ -286,6 +290,12 @@ void GameScene::loadLevel() {
 	settings.ambientLightFactor = levelData.ambientLightFactor;
 	settings.visibility = levelData.visibility;
 	settings.brightness = levelData.brightness;
+}
+
+void GameScene::loadParty() {
+	for (int i = 0; i < 4; i++) {
+		party->addMember(new PartyMember("Member"));
+	}
 }
 
 void GameScene::loadTextures() {

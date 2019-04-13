@@ -47,6 +47,8 @@ set(SOURCE_FILES
     Game/Inventory.h
     Game/Inventory.cpp
     Game/MathUtils.h
+    Game/Party.h
+    Game/Party.cpp
     Game/Entities/CastLight.h
     Game/Entities/CastLight.cpp
     Game/Entities/Chest.h

@@ -48,6 +48,8 @@ struct Settings {
  */
 class Scene {
 public:
+	friend class Entity;
+
 	InputManager* inputManager = NULL;
 	UI* ui = NULL;
 	Settings settings;
@@ -133,7 +135,6 @@ private:
 	void handleControl(int dt);
 	void handleMouseMotion(int dx, int dy);
 	void handleWASDControl(int dt);
-	void initializeEntity(Entity* entity);
 	void removeEntity(Entity* entity);
 	void removeExpiredItems();
 	void removeObject(Object* object);

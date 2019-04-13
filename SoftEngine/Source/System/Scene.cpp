@@ -31,7 +31,9 @@ Scene::~Scene() {
 
 void Scene::add(Entity* entity) {
 	entities.push_back(entity);
-	initializeEntity(entity);
+
+	entity->setActiveScene(this);
+	entity->initialize();
 }
 
 void Scene::add(Object* object) {
@@ -201,30 +203,6 @@ void Scene::handleWASDControl(int dt) {
 
 	camera->position.x += cy * velocity.x + sy * -velocity.z;
 	camera->position.z += cy * velocity.z + sy * velocity.x;
-}
-
-void Scene::initializeEntity(Entity* entity) {
-	entity->initialize();
-
-	for (auto* entity : entity->getQueuedEntities()) {
-		add(entity);
-	}
-
-	for (auto* object : entity->getQueuedObjects()) {
-		add(object);
-	}
-
-	for (auto* particleSystem : entity->getQueuedParticleSystems()) {
-		add(particleSystem);
-	}
-
-	for (auto* sound : entity->getQueuedSounds()) {
-		add(sound);
-	}
-
-	for (auto* uiObject : entity->getQueuedUIObjects()) {
-		ui->add(uiObject);
-	}
 }
 
 bool Scene::isInCurrentOccupiedSector(int sectorId) {

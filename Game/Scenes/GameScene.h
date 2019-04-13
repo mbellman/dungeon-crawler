@@ -3,6 +3,7 @@
 #include <SoftEngine.h>
 #include <MathUtils.h>
 #include <Inventory.h>
+#include <Party.h>
 #include <Level/LevelLayout.h>
 #include <Level/LevelLoader.h>
 #include <Entities/Chest.h>
@@ -18,6 +19,7 @@ public:
 	void onUpdate(int dt) override;
 
 private:
+	Party* party = nullptr;
 	Inventory* inventory = nullptr;
 	LevelLayout* levelLayout = nullptr;
 	TTF_Font* uiFont = nullptr;
@@ -34,6 +36,7 @@ private:
 	void handleItemMenuKeyDown(const SDL_Keycode& code);
 	bool isItemMenuOpen();
 	void loadLevel();
+	void loadParty();
 	void loadTextures();
 	void showItemMenu();
 	void showItemObtainedText(const char* itemName);

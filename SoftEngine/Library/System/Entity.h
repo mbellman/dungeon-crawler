@@ -25,6 +25,7 @@ public:
 	const std::vector<UIObject*>& getQueuedUIObjects() const;
 	virtual void initialize() = 0;
 	virtual void onUpdate(int dt);
+	void setActiveScene(Scene* scene);
 	void update(int dt);
 
 protected:
@@ -35,6 +36,7 @@ protected:
 	void add(UIObject* uiObject);
 
 private:
+	Scene* activeScene = nullptr;
 	int age = 0;
 	std::vector<Entity*> queuedEntities;
 	std::vector<Object*> queuedObjects;
