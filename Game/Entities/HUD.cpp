@@ -59,8 +59,6 @@ void HUD::initialize() {
 	int baseHeight = windowArea.height - (windowArea.height * GameUtils::RASTER_REGION.height / 100.0f);
 	int baseY = windowArea.height - baseHeight;
 
-	printf("Basey: %d\n", baseY);
-
 	Soft::UIGraphic* leftColumn = new Soft::UIGraphic("./Assets/UI/column.png");
 	leftColumn->position = { -30, 0 };
 
