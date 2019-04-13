@@ -12,6 +12,7 @@ enum StatusEffects {
 };
 
 struct PartyMemberStats {
+	int characterId = 0;
 	int currentHP = 100;
 	int maxHP = 100;
 	int statusEffects = 0;

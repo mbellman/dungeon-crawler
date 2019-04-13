@@ -11,11 +11,13 @@ public:
 	void onUpdate(int dt) override;
 
 private:
-	static Soft::Area BAR_SIZE;
+	static Soft::Region HEALTH_BAR_REGION;
+	static Soft::Region MAGIC_BAR_REGION;
 	static Soft::Coordinate positions[4];
 
 	const PartyMember* partyMember = nullptr;
 	Soft::UIRect* healthBar = nullptr;
+	Soft::UIRect* magicBar = nullptr;
 	int index;
 };
 

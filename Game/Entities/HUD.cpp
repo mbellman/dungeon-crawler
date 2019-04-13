@@ -2,6 +2,7 @@
 #include <GameUtils.h>
 #include <SoftEngine.h>
 #include <Party.h>
+#include <string>
 
 /**
  * PartyMemberHUD
@@ -15,29 +16,48 @@ PartyMemberHUD::PartyMemberHUD(const PartyMember* partyMember, int index) {
 void PartyMemberHUD::initialize() {
 	Soft::Coordinate offset = PartyMemberHUD::positions[index];
 
-	Soft::UIGraphic* slab = new Soft::UIGraphic("./Assets/UI/party-member-slab.png");
+	Soft::UIGraphic* slab = new Soft::UIGraphic("./Assets/UI/PartyHUD/slab.png");
 	slab->position = offset;
+
+	std::string iconPath = "./Assets/UI/PartyHUD/icon-" + std::to_string(partyMember->getStats().characterId) + ".png";
+	Soft::UIGraphic* icon = new Soft::UIGraphic(iconPath.c_str());
+
+	icon->position = { offset.x + 13, offset.y + 12 };
 
 	healthBar = new Soft::UIRect();
 
 	healthBar->setColor({ 255, 0, 0 });
 	healthBar->setAlpha(0.5f);
-	healthBar->setSize(PartyMemberHUD::BAR_SIZE.width, PartyMemberHUD::BAR_SIZE.height);
+	healthBar->setSize(PartyMemberHUD::HEALTH_BAR_REGION.width, PartyMemberHUD::HEALTH_BAR_REGION.height);
 
 	healthBar->position = {
-		offset.x + 63,
-		offset.y + 19
+		offset.x + PartyMemberHUD::HEALTH_BAR_REGION.x,
+		offset.y + PartyMemberHUD::HEALTH_BAR_REGION.y
+	};
+
+	magicBar = new Soft::UIRect();
+
+	magicBar->setColor({ 0, 255, 0 });
+	magicBar->setAlpha(0.5f);
+	magicBar->setSize(PartyMemberHUD::MAGIC_BAR_REGION.width, PartyMemberHUD::MAGIC_BAR_REGION.height);
+
+	magicBar->position = {
+		offset.x + PartyMemberHUD::MAGIC_BAR_REGION.x,
+		offset.y + PartyMemberHUD::MAGIC_BAR_REGION.y
 	};
 
 	add(slab);
+	add(icon);
 	add(healthBar);
+	add(magicBar);
 }
 
 void PartyMemberHUD::onUpdate(int dt) {
-	healthBar->clip(PartyMemberHUD::BAR_SIZE.width * partyMember->getPercentageHP(), 5);
+	healthBar->clip(PartyMemberHUD::HEALTH_BAR_REGION.width * partyMember->getPercentageHP(), 5);
 }
 
-Soft::Area PartyMemberHUD::BAR_SIZE = { 61, 5 };
+Soft::Region PartyMemberHUD::HEALTH_BAR_REGION = { 63, 19, 62, 5 };
+Soft::Region PartyMemberHUD::MAGIC_BAR_REGION = { 63, 34, 62, 5 };
 
 Soft::Coordinate PartyMemberHUD::positions[4] = {
 	{ 395, 639 },
