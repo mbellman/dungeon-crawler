@@ -27,7 +27,7 @@ void PartyMemberHUD::initialize() {
 }
 
 void PartyMemberHUD::onUpdate(int dt) {
-	healthBar->clip(PartyMemberHUD::HEALTH_BAR_REGION.width * partyMember->getPercentageHP(), 5);
+	healthBar->clip(healthBar->getWidth() * partyMember->getPercentageHP(), 5);
 }
 
 void PartyMemberHUD::addBars() {
@@ -116,10 +116,10 @@ void HUD::initialize() {
 	base->position = { 0, baseY };
 
 	lightBar = new Soft::UIRect();
-	lightBar->setSize(200, 24);
+	lightBar->setSize(136, 24);
 	lightBar->setColor({ 0, 0, 255 });
 	lightBar->setAlpha(0.5f);
-	lightBar->position = { 92, baseY + 27 };
+	lightBar->position = { 200, baseY + 27 };
 
 	add(leftColumn);
 	add(rightColumn);
