@@ -61,6 +61,8 @@ set(SOURCE_FILES
     Game/Entities/HUD.cpp
     Game/Entities/ItemMenu.h
     Game/Entities/ItemMenu.cpp
+    Game/Entities/MiniMap.h
+    Game/Entities/MiniMap.cpp
     Game/Entities/Player.h
     Game/Entities/Player.cpp
     Game/Entities/Staff.h

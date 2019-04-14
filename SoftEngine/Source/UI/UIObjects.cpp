@@ -31,6 +31,16 @@ void UIObject::clip(int w, int h) {
 	destRect.h = h;
 }
 
+void UIObject::clip(Region region) {
+	sourceRect.x = region.x;
+	sourceRect.y = region.y;
+	sourceRect.w = region.width;
+	sourceRect.h = region.height;
+
+	destRect.w = region.width;
+	destRect.h = region.height;
+}
+
 Uint8 UIObject::getAlphaMod() {
 	return alpha * 255;
 }
@@ -73,6 +83,8 @@ void UIObject::setTextureFromSurface(SDL_Surface* surface) {
 }
 
 void UIObject::unclip() {
+	sourceRect.x = 0;
+	sourceRect.y = 0;
 	sourceRect.w = width;
 	sourceRect.h = height;
 
@@ -83,7 +95,7 @@ void UIObject::unclip() {
 void UIObject::update(int dt) {
 	updatePosition(dt);
 
-	if (m_texture != NULL) {
+	if (m_texture != NULL && alpha > 0.001f) {
 		destRect.x = position.x;
 		destRect.y = position.y;
 

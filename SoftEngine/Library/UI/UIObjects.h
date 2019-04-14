@@ -19,6 +19,7 @@ public:
 	virtual ~UIObject();
 
 	void clip(int w, int h);
+	void clip(Soft::Region region);
 	int getHeight() const;
 	const std::string& getKey() const;
 	int getWidth() const;

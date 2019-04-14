@@ -25,6 +25,7 @@ private:
 	TTF_Font* uiFont = nullptr;
 	SpawnPosition playerSpawnPosition;
 
+	void addHUD();
 	void addPlayer();
 	void addStaff();
 	void castLight();

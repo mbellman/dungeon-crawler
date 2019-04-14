@@ -8,6 +8,7 @@
 #include <Entities/TextBox.h>
 #include <Entities/ItemMenu.h>
 #include <Entities/HUD.h>
+#include <Entities/MiniMap.h>
 #include <Entities/Torch.h>
 #include <Entities/Chest.h>
 #include <Entities/Door.h>
@@ -47,10 +48,10 @@ void GameScene::load() {
 	loadParty();
 
 	add("textBox", new TextBox(uiFont));
-	add("hud", new HUD({ controller->getWindowWidth(), controller->getWindowHeight() }, party));
 
 	addPlayer();
 	addStaff();
+	addHUD();
 
 	inputManager->onMouseUp([=]() {
 		castLight();
@@ -225,6 +226,15 @@ void GameScene::handleItemMenuKeyDown(const SDL_Keycode& code) {
 
 bool GameScene::isItemMenuOpen() {
 	return getEntity<ItemMenu>("itemMenu") != nullptr;
+}
+
+void GameScene::addHUD() {
+	auto* player = getEntity<Player>("player");
+
+	MiniMap* miniMap = new MiniMap(levelLayout, player);
+
+	add("hud", new HUD({ controller->getWindowWidth(), controller->getWindowHeight() }, party));
+	add(miniMap);
 }
 
 void GameScene::loadLevel() {
