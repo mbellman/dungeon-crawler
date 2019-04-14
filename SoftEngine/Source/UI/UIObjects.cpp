@@ -173,9 +173,9 @@ void UIText::setValue(const char* value) {
  * ---------
  */
 UIGraphic::UIGraphic(const char* filename) {
-	image = IMG_Load(filename);
+	surface = IMG_Load(filename);
 
-	if (!image) {
+	if (!surface) {
 		char errorMessage[60];
 
 		sprintf(errorMessage, "Unable to load image: %s", filename);
@@ -183,58 +183,93 @@ UIGraphic::UIGraphic(const char* filename) {
 		exit(0);
 	}
 
-	width = image->w;
-	height = image->h;
+	width = surface->w;
+	height = surface->h;
 
 	unclip();
 	setTransparentPixels();
 }
 
-void UIGraphic::normalizeImageFormat() {
-	if (image == NULL) {
+
+UIGraphic::UIGraphic(const ColorBuffer* colorBuffer) {
+	initializeSurfaceFromColorBuffer(colorBuffer);
+
+	width = colorBuffer->getWidth();
+	height = colorBuffer->getHeight();
+
+	unclip();
+	setTransparentPixels();
+}
+
+void UIGraphic::initializeSurfaceFromColorBuffer(const ColorBuffer* colorBuffer) {
+	int width = colorBuffer->getWidth();
+	int height = colorBuffer->getHeight();
+
+	surface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, SDL_PIXELFORMAT_RGBA32);
+
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			const Color& color = colorBuffer->read(x, y);
+			Uint8* pixel = (Uint8*)surface->pixels + surface->pitch * y + surface->format->BytesPerPixel * x;
+
+		#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+			pixel[0] = color.R;
+			pixel[1] = color.G;
+			pixel[2] = color.B;
+			pixel[3] = 255;
+		#else
+			pixel[3] = color.R;
+			pixel[2] = color.G;
+			pixel[1] = color.B;
+			pixel[0] = 255;
+		#endif
+		}
+	}
+}
+
+void UIGraphic::normalizeSurfaceFormat() {
+	if (surface == NULL) {
 		return;
 	}
 
-	SDL_Surface* rgbaImage = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA32, 0);
+	SDL_Surface* rgbaSurface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
 
-	SDL_FreeSurface(image);
+	SDL_FreeSurface(surface);
 
-	image = rgbaImage;
+	surface = rgbaSurface;
 }
 
 void UIGraphic::refresh() {
-	if (image != NULL) {
-		setTextureFromSurface(image);
+	if (surface != NULL) {
+		setTextureFromSurface(surface);
 		refreshAlpha();
 
 		// We can safely reset the pointer since
 		// the surface data is now freed
-		image = NULL;
+		surface = NULL;
 	}
 }
 
 void UIGraphic::setTransparentPixels() {
-	if (image == NULL) {
+	if (surface == NULL) {
 		return;
 	}
 
-	if (image->format->BytesPerPixel < 4) {
-		normalizeImageFormat();
+	if (surface->format->BytesPerPixel < 4) {
+		normalizeSurfaceFormat();
 	}
-
-	SDL_PixelFormat* format = image->format;
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			int pixelIndex = y * width + x;
-			Uint32 color = TextureBuffer::readPixel(image, pixelIndex);
+			Uint32 color = TextureBuffer::readPixel(surface, pixelIndex);
 
 			int R = (color & 0x00FF0000) >> 16;
 			int G = (color & 0x0000FF00) >> 8;
 			int B = (color & 0x000000FF);
 
 			if (R == COLOR_TRANSPARENT.R && G == COLOR_TRANSPARENT.G && B == COLOR_TRANSPARENT.B) {
-				Uint8* pixel = (Uint8*)image->pixels + image->pitch * y + format->BytesPerPixel * x;
+				Uint8* pixel = (Uint8*)surface->pixels + surface->pitch * y + surface->format->BytesPerPixel * x;
 
 			#if SDL_BYTEORDER == SDL_LIL_ENDIAN
 				pixel[3] = 0;

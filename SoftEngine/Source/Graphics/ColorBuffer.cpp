@@ -43,12 +43,20 @@ ColorBuffer* ColorBuffer::createDownsizedBuffer() {
 	return colorBuffer;
 }
 
+int ColorBuffer::getHeight() const {
+	return height;
+}
+
 inline int ColorBuffer::getIndex(int x, int y) const {
 	if (x >= width || y >= height) {
 		return 0;
 	}
 
 	return width * y + x;
+}
+
+int ColorBuffer::getWidth() const {
+	return width;
 }
 
 const Color& ColorBuffer::read(int index) const {

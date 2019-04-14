@@ -20,6 +20,8 @@ public:
 	~ColorBuffer();
 
 	ColorBuffer* createDownsizedBuffer();
+	int getHeight() const;
+	int getWidth() const;
 	const Color& read(int index) const;
 	const Color& read(int x, int y) const;
 	const Color& sample(float u, float v) const;

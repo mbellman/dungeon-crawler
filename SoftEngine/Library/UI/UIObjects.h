@@ -4,6 +4,7 @@
 #include <SDL_ttf.h>
 #include <System/Positionable.h>
 #include <Graphics/Color.h>
+#include <Graphics/ColorBuffer.h>
 #include <string>
 
 namespace Soft {
@@ -90,14 +91,16 @@ private:
 class UIGraphic : public UIObject {
 public:
 	UIGraphic(const char* filename);
+	UIGraphic(const ColorBuffer* colorBuffer);
 
 protected:
 	void refresh();
 
 private:
-	SDL_Surface* image = NULL;
+	SDL_Surface* surface = NULL;
 
-	void normalizeImageFormat();
+	void initializeSurfaceFromColorBuffer(const ColorBuffer* colorBuffer);
+	void normalizeSurfaceFormat();
 	void setTransparentPixels();
 };
 
