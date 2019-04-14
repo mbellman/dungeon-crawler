@@ -57,12 +57,11 @@ void MiniMap::setColorBufferTileColor(Soft::ColorBuffer* colorBuffer, int x, int
 }
 
 void MiniMap::createLayerMap(int layerIndex) {
-	int width = levelLayout->getSize().width * MiniMap::TILE_SIZE;
-	int height = levelLayout->getSize().height * MiniMap::TILE_SIZE;
-	Soft::ColorBuffer* layerMapBuffer = new Soft::ColorBuffer(width, height);
+	const Soft::Area& levelSize = levelLayout->getSize();
+	Soft::ColorBuffer* layerMapBuffer = new Soft::ColorBuffer(mapSize.width, mapSize.height);
 
-	for (int z = 0; z < height; z++) {
-		for (int x = 0; x < width; x++) {
+	for (int z = 0; z < levelSize.height; z++) {
+		for (int x = 0; x < levelSize.width; x++) {
 			GridPosition position = { layerIndex, x, z };
 
 			const Soft::Color& tileColor = levelLayout->isWalkablePosition(position) || levelLayout->isStaircaseBlock(position)
