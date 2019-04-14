@@ -294,7 +294,7 @@ void GameScene::loadLevel() {
 
 void GameScene::loadParty() {
 	for (int i = 0; i < 4; i++) {
-		party->addMember(new PartyMember("Member"));
+		party->addMember(new PartyMember("Member", i));
 	}
 }
 

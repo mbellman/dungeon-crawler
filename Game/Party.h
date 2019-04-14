@@ -22,7 +22,7 @@ struct PartyMemberStats {
 
 class PartyMember {
 public:
-	PartyMember(std::string name);
+	PartyMember(std::string name, int characterId);
 
 	void applyStatusEffect(StatusEffects effect);
 	float getAttackFactor() const;

@@ -6,8 +6,9 @@
  * PartyMember
  * -----------
  */
-PartyMember::PartyMember(std::string name) {
+PartyMember::PartyMember(std::string name, int characterId) {
 	this->name = name;
+	stats.characterId = characterId;
 }
 
 void PartyMember::applyStatusEffect(StatusEffects effect) {

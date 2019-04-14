@@ -22,7 +22,7 @@ void PartyMemberHUD::initialize() {
 	std::string iconPath = "./Assets/UI/PartyHUD/icon-" + std::to_string(partyMember->getStats().characterId) + ".png";
 	Soft::UIGraphic* icon = new Soft::UIGraphic(iconPath.c_str());
 
-	icon->position = { offset.x + 13, offset.y + 12 };
+	icon->position = { offset.x + 11, offset.y + 8 };
 
 	healthBar = new Soft::UIRect();
 
