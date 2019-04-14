@@ -47,11 +47,11 @@ void MiniMap::setColorBufferTileColor(Soft::ColorBuffer* colorBuffer, int x, int
 
 	for (int i = 0; i < MiniMap::TILE_SIZE; i++) {
 		for (int j = 0; j < MiniMap::TILE_SIZE; j++) {
-			if (i == 0 || j == 0) {
-				colorBuffer->write(px + j, py + i, MiniMap::GRID_LINE_COLOR.R, MiniMap::GRID_LINE_COLOR.G, MiniMap::GRID_LINE_COLOR.B);
-			} else {
-				colorBuffer->write(px + j, py + i, color.R, color.G, color.B);
-			}
+			const Soft::Color& pixelColor = i == 0 || j == 0
+				? MiniMap::GRID_LINE_COLOR
+				: color;
+
+			colorBuffer->write(px + j, py + i, pixelColor.R, pixelColor.G, pixelColor.B);
 		}
 	}
 }
@@ -65,11 +65,11 @@ void MiniMap::createLayerMap(int layerIndex) {
 		for (int x = 0; x < width; x++) {
 			GridPosition position = { layerIndex, x, z };
 
-			if (levelLayout->isWalkablePosition(position) || levelLayout->isStaircaseBlock(position)) {
-				setColorBufferTileColor(layerMapBuffer, x, z, MiniMap::WALKABLE_TILE_COLOR);
-			} else {
-				setColorBufferTileColor(layerMapBuffer, x, z, MiniMap::SOLID_TILE_COLOR);
-			}
+			const Soft::Color& tileColor = levelLayout->isWalkablePosition(position) || levelLayout->isStaircaseBlock(position)
+				? MiniMap::WALKABLE_TILE_COLOR
+				: MiniMap::SOLID_TILE_COLOR;
+
+			setColorBufferTileColor(layerMapBuffer, x, z, tileColor);
 		}
 	}
 
