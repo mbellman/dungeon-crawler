@@ -293,9 +293,10 @@ void GameScene::loadLevel() {
 }
 
 void GameScene::loadParty() {
-	for (int i = 0; i < 4; i++) {
-		party->addMember(new PartyMember("Member", i));
-	}
+	party->addMember(new PartyMember("Player", 0));
+	party->addMember(new PartyMember("Sobek", 1));
+	party->addMember(new PartyMember("Khonsu", 2));
+	party->addMember(new PartyMember("Player", 3));
 }
 
 void GameScene::loadTextures() {

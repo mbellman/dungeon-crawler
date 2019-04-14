@@ -1,6 +1,7 @@
 #include <Entities/HUD.h>
 #include <GameUtils.h>
 #include <SoftEngine.h>
+#include <SDL_ttf.h>
 #include <Party.h>
 #include <string>
 
@@ -8,24 +9,31 @@
  * PartyMemberHUD
  * --------------
  */
-PartyMemberHUD::PartyMemberHUD(const PartyMember* partyMember, int index) {
+PartyMemberHUD::PartyMemberHUD(const PartyMember* partyMember, int index, TTF_Font* font) {
 	this->partyMember = partyMember;
 	this->index = index;
+	this->font = font;
 }
 
 void PartyMemberHUD::initialize() {
-	Soft::Coordinate offset = PartyMemberHUD::positions[index];
-
 	Soft::UIGraphic* slab = new Soft::UIGraphic("./Assets/UI/PartyHUD/slab.png");
-	slab->position = offset;
+	slab->position = getContainerOffset();
 
-	std::string iconPath = "./Assets/UI/PartyHUD/icon-" + std::to_string(partyMember->getStats().characterId) + ".png";
-	Soft::UIGraphic* icon = new Soft::UIGraphic(iconPath.c_str());
+	add(slab);
 
-	icon->position = { offset.x + 11, offset.y + 8 };
+	addIcon();
+	addName();
+	addBars();
+}
+
+void PartyMemberHUD::onUpdate(int dt) {
+	healthBar->clip(PartyMemberHUD::HEALTH_BAR_REGION.width * partyMember->getPercentageHP(), 5);
+}
+
+void PartyMemberHUD::addBars() {
+	Soft::Coordinate offset = getContainerOffset();
 
 	healthBar = new Soft::UIRect();
-
 	healthBar->setColor({ 255, 0, 0 });
 	healthBar->setAlpha(0.5f);
 	healthBar->setSize(PartyMemberHUD::HEALTH_BAR_REGION.width, PartyMemberHUD::HEALTH_BAR_REGION.height);
@@ -36,7 +44,6 @@ void PartyMemberHUD::initialize() {
 	};
 
 	magicBar = new Soft::UIRect();
-
 	magicBar->setColor({ 0, 255, 0 });
 	magicBar->setAlpha(0.5f);
 	magicBar->setSize(PartyMemberHUD::MAGIC_BAR_REGION.width, PartyMemberHUD::MAGIC_BAR_REGION.height);
@@ -46,14 +53,32 @@ void PartyMemberHUD::initialize() {
 		offset.y + PartyMemberHUD::MAGIC_BAR_REGION.y
 	};
 
-	add(slab);
-	add(icon);
 	add(healthBar);
 	add(magicBar);
 }
 
-void PartyMemberHUD::onUpdate(int dt) {
-	healthBar->clip(PartyMemberHUD::HEALTH_BAR_REGION.width * partyMember->getPercentageHP(), 5);
+void PartyMemberHUD::addIcon() {
+	Soft::Coordinate offset = getContainerOffset();
+	std::string iconPath = "./Assets/UI/PartyHUD/icon-" + std::to_string(partyMember->getStats().characterId) + ".png";
+	Soft::UIGraphic* icon = new Soft::UIGraphic(iconPath.c_str());
+
+	icon->position = { offset.x + 11, offset.y + 8 };
+
+	add(icon);
+}
+
+void PartyMemberHUD::addName() {
+	Soft::Coordinate offset = getContainerOffset();
+	Soft::UIText* text = new Soft::UIText();
+	text->setFont(font);
+	text->setValue(partyMember->getName().c_str());
+	text->position = { offset.x + 63, offset.y + 5 };
+
+	add(text);
+}
+
+const Soft::Coordinate& PartyMemberHUD::getContainerOffset() {
+	return PartyMemberHUD::positions[index];
 }
 
 Soft::Region PartyMemberHUD::HEALTH_BAR_REGION = { 63, 19, 62, 5 };
@@ -73,6 +98,8 @@ Soft::Coordinate PartyMemberHUD::positions[4] = {
 HUD::HUD(const Soft::Area& windowArea, const Party* party) {
 	this->windowArea = windowArea;
 	this->party = party;
+
+	font = TTF_OpenFont("./Assets/Fonts/CourierPrime.ttf", 12);
 }
 
 void HUD::initialize() {
@@ -101,7 +128,7 @@ void HUD::initialize() {
 
 	for (int i = 0; i < party->getSize(); i++) {
 		const PartyMember* partyMember = party->getMemberByIndex(i);
-		PartyMemberHUD* partyMemberHUD = new PartyMemberHUD(partyMember, i);
+		PartyMemberHUD* partyMemberHUD = new PartyMemberHUD(partyMember, i, font);
 
 		add(partyMemberHUD);
 	}

@@ -27,6 +27,7 @@ public:
 	void applyStatusEffect(StatusEffects effect);
 	float getAttackFactor() const;
 	float getDefenseFactor() const;
+	const std::string& getName() const;
 	float getPercentageHP() const;
 	const PartyMemberStats& getStats() const;
 	void heal(int amount);

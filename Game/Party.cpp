@@ -27,6 +27,10 @@ float PartyMember::getDefenseFactor() const {
 
 }
 
+const std::string& PartyMember::getName() const {
+	return name;
+}
+
 float PartyMember::getPercentageHP() const {
 	return (float)stats.currentHP / stats.maxHP;
 }

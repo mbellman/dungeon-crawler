@@ -22,7 +22,6 @@ public:
 	const std::string& getKey() const;
 	int getWidth() const;
 	void setAlpha(float alpha);
-	void setPosition(int x, int y);
 	void setRenderer(SDL_Renderer* renderer);
 	void unclip();
 	void update(int dt);
