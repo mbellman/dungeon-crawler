@@ -15,6 +15,7 @@ MiniMap::MiniMap(const LevelLayout* levelLayout, const Player* player) {
 
 MiniMap::~MiniMap() {
 	layerMaps.clear();
+	directionalPlayerIcons.clear();
 }
 
 void MiniMap::initialize() {
