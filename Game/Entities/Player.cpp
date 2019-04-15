@@ -63,6 +63,10 @@ const GridPosition& Player::getCurrentGridPosition() const {
 	return currentGridPosition;
 }
 
+const Soft::Vec3& Player::getCurrentPosition() const {
+	return camera->position;
+}
+
 MathUtils::Direction Player::getDirection() const {
 	return GameUtils::getYawDirection(camera->yaw);
 }

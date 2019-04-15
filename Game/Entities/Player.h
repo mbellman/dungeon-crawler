@@ -12,6 +12,7 @@ public:
 	void initialize() override;
 	void onUpdate(int dt) override;
 	const GridPosition& getCurrentGridPosition() const;
+	const Soft::Vec3& getCurrentPosition() const;
 	MathUtils::Direction getDirection() const;
 	GridPosition getDirectionalGridPosition(MathUtils::Direction direction) const;
 	void move(MathUtils::Direction direction);

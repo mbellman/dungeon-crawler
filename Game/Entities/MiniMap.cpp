@@ -1,4 +1,5 @@
 #include <Entities/MiniMap.h>
+#include <GameUtils.h>
 #include <SoftEngine.h>
 #include <algorithm>
 
@@ -86,13 +87,15 @@ int MiniMap::getCurrentLayer() {
 }
 
 void MiniMap::updateClippingRegion() {
-	const GridPosition& position = player->getCurrentGridPosition();
+	const Soft::Vec3& playerPosition = player->getCurrentPosition();
 	const Soft::Area& levelSize = levelLayout->getSize();
+	float xPercent = playerPosition.x / (levelSize.width * GameUtils::TILE_SIZE);
+	float zPercent = -playerPosition.z / (levelSize.height * GameUtils::TILE_SIZE);
 	int half_w = clippingRegion.width >> 1;
 	int half_h = clippingRegion.height >> 1;
 	int halfTileSize = MiniMap::TILE_SIZE >> 1;
-	int clipX = position.x * MiniMap::TILE_SIZE - half_w + halfTileSize;
-	int clipY = position.z * MiniMap::TILE_SIZE - half_h + halfTileSize;
+	int clipX = xPercent * mapSize.width - half_w + halfTileSize;
+	int clipY = zPercent * mapSize.height - half_h + halfTileSize;
 
 	clippingRegion.x = std::clamp(clipX, 0, mapSize.width - clippingRegion.width);
 	clippingRegion.y = std::clamp(clipY, 0, mapSize.height - clippingRegion.height);
