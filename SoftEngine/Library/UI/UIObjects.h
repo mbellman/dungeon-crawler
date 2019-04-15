@@ -25,6 +25,7 @@ public:
 	int getWidth() const;
 	void setAlpha(float alpha);
 	void setRenderer(SDL_Renderer* renderer);
+	void setSize(int width, int height);
 	void unclip();
 	void update(int dt);
 

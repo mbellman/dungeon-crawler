@@ -1,5 +1,6 @@
 #include <Entities/MiniMap.h>
 #include <GameUtils.h>
+#include <MathUtils.h>
 #include <SoftEngine.h>
 #include <algorithm>
 
@@ -23,13 +24,30 @@ void MiniMap::initialize() {
 	mapSize.height = levelSize.height * MiniMap::TILE_SIZE;
 
 	for (int i = 0; i < levelLayout->getTotalLayers(); i++) {
-		createLayerMap(i);
+		addLayerMap(i);
 	}
+
+	addDirectionalPlayerIcons();
 }
 
 void MiniMap::onUpdate(int dt) {
-	updateClippingRegion();
+	// Recalculate the map clipping region x/y coordinates
+	const Soft::Vec3& playerPosition = player->getCurrentPosition();
+	const Soft::Area& levelSize = levelLayout->getSize();
+	float xPercent = playerPosition.x / (levelSize.width * GameUtils::TILE_SIZE);
+	float zPercent = -playerPosition.z / (levelSize.height * GameUtils::TILE_SIZE);
+	int half_w = clippingRegion.width >> 1;
+	int half_h = clippingRegion.height >> 1;
+	int halfTileSize = MiniMap::TILE_SIZE >> 1;
+	int clipX = xPercent * mapSize.width - half_w + halfTileSize;
+	int clipY = zPercent * mapSize.height - half_h + halfTileSize;
+	int maxClipX = mapSize.width - clippingRegion.width;
+	int maxClipY = mapSize.height - clippingRegion.height;
 
+	clippingRegion.x = std::clamp(clipX, 0, maxClipX);
+	clippingRegion.y = std::clamp(clipY, 0, maxClipY);
+
+	// Show only the current layer map
 	int currentLayer = player->getCurrentGridPosition().layer;
 
 	for (int i = 0; i < layerMaps.size(); i++) {
@@ -40,24 +58,51 @@ void MiniMap::onUpdate(int dt) {
 			layerMaps[i]->setAlpha(0.0f);
 		}
 	}
-}
 
-void MiniMap::setColorBufferTileColor(Soft::ColorBuffer* colorBuffer, int x, int z, const Soft::Color& color) {
-	int px = x * MiniMap::TILE_SIZE;
-	int py = z * MiniMap::TILE_SIZE;
+	// Update the directional player icon and its position
+	int currentIndex = getCurrentPlayerIconIndex();
 
-	for (int i = 0; i < MiniMap::TILE_SIZE; i++) {
-		for (int j = 0; j < MiniMap::TILE_SIZE; j++) {
-			const Soft::Color& pixelColor = i == 0 || j == 0
-				? MiniMap::GRID_LINE_COLOR
-				: color;
+	Soft::Coordinate centerOffset = {
+		clipX < 0 ? clipX : clipX > maxClipX ? clipX - maxClipX : 0,
+		clipY < 0 ? clipY : clipY > maxClipY ? clipY - maxClipY : 0
+	};
 
-			colorBuffer->write(px + j, py + i, pixelColor.R, pixelColor.G, pixelColor.B);
+	Soft::Coordinate playerIconPosition = {
+		44 + half_w - halfTileSize + 1 + centerOffset.x,
+		628 + half_h - halfTileSize + 1 + centerOffset.y
+	};
+
+	for (int i = 0; i < directionalPlayerIcons.size(); i++) {
+		Soft::UIGraphic* icon = directionalPlayerIcons[i];
+
+		if (i == currentIndex) {
+			icon->setAlpha(0.5f);
+			icon->setSize(MiniMap::TILE_SIZE - 1, MiniMap::TILE_SIZE - 1);
+			icon->position = playerIconPosition;
+		} else {
+			icon->setAlpha(0.0f);
 		}
 	}
 }
 
-void MiniMap::createLayerMap(int layerIndex) {
+void MiniMap::addDirectionalPlayerIcons() {
+	Soft::UIGraphic* icon1 = new Soft::UIGraphic("./Assets/UI/MiniMap/player-forward.png");
+	Soft::UIGraphic* icon2 = new Soft::UIGraphic("./Assets/UI/MiniMap/player-left.png");
+	Soft::UIGraphic* icon3 = new Soft::UIGraphic("./Assets/UI/MiniMap/player-backward.png");
+	Soft::UIGraphic* icon4 = new Soft::UIGraphic("./Assets/UI/MiniMap/player-right.png");
+
+	directionalPlayerIcons.push_back(icon1);
+	directionalPlayerIcons.push_back(icon2);
+	directionalPlayerIcons.push_back(icon3);
+	directionalPlayerIcons.push_back(icon4);
+
+	add(icon1);
+	add(icon2);
+	add(icon3);
+	add(icon4);
+}
+
+void MiniMap::addLayerMap(int layerIndex) {
 	const Soft::Area& levelSize = levelLayout->getSize();
 	Soft::ColorBuffer* layerMapBuffer = new Soft::ColorBuffer(mapSize.width, mapSize.height);
 
@@ -86,19 +131,34 @@ int MiniMap::getCurrentLayer() {
 	return player->getCurrentGridPosition().layer;
 }
 
-void MiniMap::updateClippingRegion() {
-	const Soft::Vec3& playerPosition = player->getCurrentPosition();
-	const Soft::Area& levelSize = levelLayout->getSize();
-	float xPercent = playerPosition.x / (levelSize.width * GameUtils::TILE_SIZE);
-	float zPercent = -playerPosition.z / (levelSize.height * GameUtils::TILE_SIZE);
-	int half_w = clippingRegion.width >> 1;
-	int half_h = clippingRegion.height >> 1;
-	int halfTileSize = MiniMap::TILE_SIZE >> 1;
-	int clipX = xPercent * mapSize.width - half_w + halfTileSize;
-	int clipY = zPercent * mapSize.height - half_h + halfTileSize;
+int MiniMap::getCurrentPlayerIconIndex() {
+	switch (player->getDirection()) {
+		case MathUtils::Direction::FORWARD:
+			return 0;
+		case MathUtils::Direction::LEFT:
+			return 1;
+		case MathUtils::Direction::BACKWARD:
+			return 2;
+		case MathUtils::Direction::RIGHT:
+			return 3;
+		default:
+			return 0;
+	}
+}
 
-	clippingRegion.x = std::clamp(clipX, 0, mapSize.width - clippingRegion.width);
-	clippingRegion.y = std::clamp(clipY, 0, mapSize.height - clippingRegion.height);
+void MiniMap::setColorBufferTileColor(Soft::ColorBuffer* colorBuffer, int x, int z, const Soft::Color& color) {
+	int px = x * MiniMap::TILE_SIZE;
+	int py = z * MiniMap::TILE_SIZE;
+
+	for (int i = 0; i < MiniMap::TILE_SIZE; i++) {
+		for (int j = 0; j < MiniMap::TILE_SIZE; j++) {
+			const Soft::Color& pixelColor = i == 0 || j == 0
+				? MiniMap::GRID_LINE_COLOR
+				: color;
+
+			colorBuffer->write(px + j, py + i, pixelColor.R, pixelColor.G, pixelColor.B);
+		}
+	}
 }
 
 Soft::Color MiniMap::WALKABLE_TILE_COLOR = { 100, 100, 100 };

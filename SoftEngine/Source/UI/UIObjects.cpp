@@ -57,6 +57,11 @@ int UIObject::getWidth() const {
 	return width;
 }
 
+void UIObject::refreshAlpha() {
+	SDL_SetTextureBlendMode(m_texture, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureAlphaMod(m_texture, getAlphaMod());
+}
+
 void UIObject::setAlpha(float alpha) {
 	this->alpha = alpha;
 
@@ -65,15 +70,15 @@ void UIObject::setAlpha(float alpha) {
 	}
 }
 
-void UIObject::refreshAlpha() {
-	SDL_SetTextureBlendMode(m_texture, SDL_BLENDMODE_BLEND);
-	SDL_SetTextureAlphaMod(m_texture, getAlphaMod());
-}
-
 void UIObject::setRenderer(SDL_Renderer* renderer) {
 	m_renderer = renderer;
 
 	refresh();
+}
+
+void UIObject::setSize(int width, int height) {
+	destRect.w = width;
+	destRect.h = height;
 }
 
 void UIObject::setTextureFromSurface(SDL_Surface* surface) {
