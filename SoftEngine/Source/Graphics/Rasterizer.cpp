@@ -28,6 +28,7 @@ Rasterizer::Rasterizer(SDL_Renderer* renderer, int width, int height) {
 	scanlines = new Scanline[width * height];
 	bufferSize = width * height;
 
+	SDL_SetTextureBlendMode(screenTexture, SDL_BLENDMODE_BLEND);
 	clear();
 }
 
@@ -41,7 +42,7 @@ Rasterizer::~Rasterizer() {
 
 void Rasterizer::clear() {
 	int bufferLength = width * height;
-	Uint32 clearColor = ARGB(backgroundColor.R, backgroundColor.G, backgroundColor.B);
+	Uint32 clearColor = ARGB(255, backgroundColor.R, backgroundColor.G, backgroundColor.B);
 
 	std::fill(pixelBuffer, pixelBuffer + bufferLength, clearColor);
 	std::fill(depthBuffer, depthBuffer + bufferLength, 0.0f);
@@ -273,6 +274,9 @@ void Rasterizer::line(int x1, int y1, int x2, int y2) {
 void Rasterizer::render(SDL_Renderer* renderer, int sizeFactor = 1) {
 	SDL_Rect destinationRect = { offset.x, offset.y, sizeFactor * width, sizeFactor * height };
 
+	SDL_SetRenderDrawColor(renderer, backgroundColor.R, backgroundColor.G, backgroundColor.B, 255);
+	SDL_RenderFillRect(renderer, &destinationRect);
+
 	SDL_UpdateTexture(screenTexture, NULL, pixelBuffer, width * sizeof(Uint32));
 	SDL_RenderCopy(renderer, screenTexture, NULL, &destinationRect);
 }
@@ -288,7 +292,7 @@ void Rasterizer::setDrawColor(Uint32 color) {
 }
 
 void Rasterizer::setDrawColor(int R, int G, int B) {
-	drawColor = ARGB(R, G, B);
+	drawColor = ARGB(255, R, G, B);
 }
 
 void Rasterizer::setDrawColor(const Color& color) {
@@ -364,7 +368,7 @@ void Rasterizer::triangleScanline(
 		const ColorBuffer* mipmap = texture->getMipmap(mipmapLevel);
 		int textureSampleInterval = getTextureSampleInterval(length, averageDepth);
 		int textureSampleIntervalCounter = textureSampleInterval;
-		bool isTransparent = false;
+		bool isTransparentPixel = false;
 
 		for (int x = start; x <= end; x++) {
 			int index = pixelIndexOffset + x;
@@ -380,9 +384,9 @@ void Rasterizer::triangleScanline(
 					float v = Lerp::lerp(perspectiveUV.start.y, perspectiveUV.end.y, progress) * depth;
 					const Color& sample = mipmap->sample(u, v);
 
-					isTransparent = sample.R == COLOR_TRANSPARENT.R && sample.G == COLOR_TRANSPARENT.G && sample.B == COLOR_TRANSPARENT.B;
+					isTransparentPixel = sample.R == COLOR_TRANSPARENT.R && sample.G == COLOR_TRANSPARENT.G && sample.B == COLOR_TRANSPARENT.B;
 
-					if (!isTransparent) {
+					if (!isTransparentPixel) {
 						float intensity_R = Lerp::lerp(textureIntensity.start.x, textureIntensity.end.x, progress);
 						float intensity_G = Lerp::lerp(textureIntensity.start.y, textureIntensity.end.y, progress);
 						float intensity_B = Lerp::lerp(textureIntensity.start.z, textureIntensity.end.z, progress);
@@ -390,21 +394,20 @@ void Rasterizer::triangleScanline(
 						int R = (int)(sample.R * intensity_R);
 						int G = (int)(sample.G * intensity_G);
 						int B = (int)(sample.B * intensity_B);
+						int A = 255;
 
 						if (visibility < INT_MAX) {
 							float visibilityRatio = depth / visibility;
-							visibilityRatio = FAST_MIN(visibilityRatio, 1.0f);
+							float alphaFactor = 1.0f - FAST_MIN(visibilityRatio, 1.0f);
 
-							R = Lerp::lerp(R, backgroundColor.R, visibilityRatio);
-							G = Lerp::lerp(G, backgroundColor.G, visibilityRatio);
-							B = Lerp::lerp(B, backgroundColor.B, visibilityRatio);
+							A *= alphaFactor;
 						}
 
-						currentColor = ARGB(FAST_CLAMP(R, 0, 255), FAST_CLAMP(G, 0, 255), FAST_CLAMP(B, 0, 255));
+						currentColor = ARGB(A, FAST_CLAMP(R, 0, 255), FAST_CLAMP(G, 0, 255), FAST_CLAMP(B, 0, 255));
 					}
 				}
 
-				if (!isTransparent) {
+				if (!isTransparentPixel) {
 					pixelBuffer[index] = currentColor;
 					depthBuffer[index] = i_depth;
 				}
@@ -429,7 +432,7 @@ void Rasterizer::triangleScanline(
 				int B = Lerp::lerp(color.start.B, color.end.B, progress);
 
 				int cx2 = FAST_MIN(x + colorLerpInterval, chunkXLimit);
-				Uint32 color = ARGB(R, G, B);
+				Uint32 color = ARGB(255, R, G, B);
 
 				for (int cx = x; cx < cx2; cx++) {
 					if (depthBuffer[index] < i_depth) {
@@ -455,7 +458,7 @@ void Rasterizer::triangleScanline(
 						int G = Lerp::lerp(color.start.G, color.end.G, progress);
 						int B = Lerp::lerp(color.start.B, color.end.B, progress);
 
-						currentColor = ARGB(R, G, B);
+						currentColor = ARGB(255, R, G, B);
 						colorLerpIntervalCounter = 0;
 					}
 

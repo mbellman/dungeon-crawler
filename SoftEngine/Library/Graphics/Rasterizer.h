@@ -55,7 +55,7 @@ private:
 	Scanline* scanlines;
 	int totalBufferedScanlines = 0;
 	Color backgroundColor = { 0, 0, 0 };
-	Uint32 drawColor = ARGB(255, 255, 255);
+	Uint32 drawColor = ARGB(255, 255, 255, 255);
 	int visibility = MAX_VISIBILITY;
 	SDL_Texture* screenTexture;
 	Uint32* pixelBuffer;

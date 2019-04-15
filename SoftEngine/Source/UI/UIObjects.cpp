@@ -119,7 +119,7 @@ void UIRect::refresh() {
 		}
 
 		Uint32* pixels = new Uint32[width * height];
-		Uint32 fillColor = ARGB(color.R, color.G, color.B);
+		Uint32 fillColor = ARGB(255, color.R, color.G, color.B);
 		m_texture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, width, height);
 
 		std::fill(pixels, pixels + width * height, fillColor);

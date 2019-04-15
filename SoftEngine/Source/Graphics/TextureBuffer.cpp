@@ -132,7 +132,7 @@ Uint32 TextureBuffer::readPixel(SDL_Surface* surface, int index) {
 	int B = pixel[format->BytesPerPixel - 3];
 #endif
 
-	return ARGB(R, G, B);
+	return ARGB(255, R, G, B);
 }
 
 void TextureBuffer::setCurrentFrame(int currentFrame) {
