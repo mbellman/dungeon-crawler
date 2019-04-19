@@ -9,6 +9,7 @@
 std::vector<int> BlockUtils::walkableBlockTypes = {
 	GameUtils::BlockTypes::SOLID_1,
 	GameUtils::BlockTypes::SOLID_2,
+	GameUtils::BlockTypes::SOLID_3,
 	GameUtils::BlockTypes::BRIDGE
 };
 
@@ -17,7 +18,7 @@ bool BlockUtils::isEmpty(int blockType) {
 }
 
 bool BlockUtils::isSolid(int blockType) {
-	return blockType >= GameUtils::BlockTypes::SOLID_1 && blockType <= GameUtils::BlockTypes::SOLID_2;
+	return blockType >= GameUtils::BlockTypes::SOLID_1 && blockType <= GameUtils::BlockTypes::SOLID_3;
 }
 
 bool BlockUtils::isStaircase(int blockType) {

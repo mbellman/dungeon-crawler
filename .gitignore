@@ -9,3 +9,5 @@ Debug/
 *.vcxproj.user
 *.dll
 *.stackdump
+*.bin
+*.ipch

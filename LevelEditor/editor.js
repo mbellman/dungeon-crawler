@@ -15,14 +15,15 @@
 		0: { name: 'Empty', file: null },
 		1: { name: 'Solid 1', file: 'solid_1.png' },
 		2: { name: 'Solid 2', file: 'solid_2.png' },
-		3: { name: 'Column B', file: 'column_bottom.png' },
-		4: { name: 'Column M', file: 'column_middle.png' },
-		5: { name: 'Column T', file: 'column_top.png' },
-		6: { name: 'Staircase F', file: 'staircase_forward.png' },
-		7: { name: 'Staircase B', file: 'staircase_backward.png' },
-		8: { name: 'Staircase L', file: 'staircase_left.png' },
-		9: { name: 'Staircase R', file: 'staircase_right.png' },
-		10: { name: 'Bridge', file: 'bridge.png' }
+		3: { name: 'Solid 3', file: 'solid_3.png' },
+		4: { name: 'Column B', file: 'column_bottom.png' },
+		5: { name: 'Column M', file: 'column_middle.png' },
+		6: { name: 'Column T', file: 'column_top.png' },
+		7: { name: 'Staircase F', file: 'staircase_forward.png' },
+		8: { name: 'Staircase B', file: 'staircase_backward.png' },
+		9: { name: 'Staircase L', file: 'staircase_left.png' },
+		10: { name: 'Staircase R', file: 'staircase_right.png' },
+		11: { name: 'Bridge', file: 'bridge.png' }
 	};
 
 	var entities = [
@@ -42,14 +43,15 @@
 		EMPTY: 0,
 		SOLID_1: 1,
 		SOLID_2: 2,
-		COLUMN_B: 3,
-		COLUMN_M: 4,
-		COLUMN_T: 5,
-		STAIRCASE_F: 6,
-		STAIRCASE_B: 7,
-		STAIRCASE_L: 8,
-		STAIRCASE_R: 9,
-		BRIDGE: 10
+		SOLID_3: 3,
+		COLUMN_B: 4,
+		COLUMN_M: 5,
+		COLUMN_T: 6,
+		STAIRCASE_F: 7,
+		STAIRCASE_B: 8,
+		STAIRCASE_L: 9,
+		STAIRCASE_R: 10,
+		BRIDGE: 11
 	};
 
 	var EntityTypes = {

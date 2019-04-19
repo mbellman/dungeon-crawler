@@ -21,14 +21,15 @@ namespace GameUtils {
 		EMPTY = 0,
 		SOLID_1 = 1,
 		SOLID_2 = 2,
-		COLUMN_BOTTOM = 3,
-		COLUMN_MIDDLE = 4,
-		COLUMN_TOP = 5,
-		STAIRCASE_FORWARD = 6,
-		STAIRCASE_BACKWARD = 7,
-		STAIRCASE_LEFT = 8,
-		STAIRCASE_RIGHT = 9,
-		BRIDGE = 10
+		SOLID_3 = 3,
+		COLUMN_BOTTOM = 4,
+		COLUMN_MIDDLE = 5,
+		COLUMN_TOP = 6,
+		STAIRCASE_FORWARD = 7,
+		STAIRCASE_BACKWARD = 8,
+		STAIRCASE_LEFT = 9,
+		STAIRCASE_RIGHT = 10,
+		BRIDGE = 11
 	};
 
 	float getDirectionalRotationAngle(MathUtils::Direction direction);

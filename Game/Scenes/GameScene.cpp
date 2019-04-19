@@ -135,6 +135,8 @@ Soft::TextureBuffer* GameScene::getBlockTexture(int blockType) {
 			return getTexture("solid_1");
 		case BlockTypes::SOLID_2:
 			return getTexture("solid_2");
+		case BlockTypes::SOLID_3:
+			return getTexture("solid_3");
 		case BlockTypes::COLUMN_BOTTOM:
 		case BlockTypes::COLUMN_MIDDLE:
 		case BlockTypes::COLUMN_TOP:
@@ -313,6 +315,7 @@ void GameScene::loadTextures() {
 	add("staff", new Soft::TextureBuffer("./Assets/Textures/staff.png"));
 	add("solid_1", new Soft::TextureBuffer("./Assets/Textures/Blocks/solid_1.png"));
 	add("solid_2", new Soft::TextureBuffer("./Assets/Textures/Blocks/solid_2.png"));
+	add("solid_3", new Soft::TextureBuffer("./Assets/Textures/Blocks/solid_3.png"));
 	add("column", new Soft::TextureBuffer("./Assets/Textures/Blocks/column.png"));
 	add("staircase", new Soft::TextureBuffer("./Assets/Textures/Blocks/staircase.png"));
 	add("bridge", new Soft::TextureBuffer("./Assets/Textures/Blocks/bridge.png"));
