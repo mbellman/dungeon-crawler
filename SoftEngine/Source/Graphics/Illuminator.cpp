@@ -22,9 +22,9 @@ void Illuminator::computeAmbientLightColorIntensity(const Vec3& normal, float fr
 			float intensity = incidence * settings.ambientLightFactor * (1.0f + fresnelFactor);
 			const Vec3& colorRatios = settings.ambientLightColor.ratios();
 
-			colorIntensity.x *= (1.0f + (intensity * colorRatios.x) / settings.brightness);
-			colorIntensity.y *= (1.0f + (intensity * colorRatios.y) / settings.brightness);
-			colorIntensity.z *= (1.0f + (intensity * colorRatios.z) / settings.brightness);
+			colorIntensity.x += intensity * colorRatios.x;
+			colorIntensity.y += intensity * colorRatios.y;
+			colorIntensity.z += intensity * colorRatios.z;
 		}
 	}
 }
@@ -92,9 +92,9 @@ void Illuminator::computeLightColorIntensity(Light* light, const Vec3& vertexPos
 	float intensity = light->power.value() * incidence * illuminance * (1.0f + fresnelFactor);
 	const Vec3& colorRatios = light->getColorRatios();
 
-	colorIntensity.x *= (1.0f + (intensity * colorRatios.x) / settings.brightness);
-	colorIntensity.y *= (1.0f + (intensity * colorRatios.y) / settings.brightness);
-	colorIntensity.z *= (1.0f + (intensity * colorRatios.z) / settings.brightness);
+	colorIntensity.x += (intensity * colorRatios.x);
+	colorIntensity.y += (intensity * colorRatios.y);
+	colorIntensity.z += (intensity * colorRatios.z);
 }
 
 Vec3 Illuminator::getTriangleVertexColorIntensity(Triangle* triangle, int vertexIndex) {
@@ -102,6 +102,7 @@ Vec3 Illuminator::getTriangleVertexColorIntensity(Triangle* triangle, int vertex
 	const Vec3& normal = triangle->sourcePolygon->sourceObject->isFlatShaded ? triangle->sourcePolygon->normal : vertex.normal;
 	const Settings& settings = activeScene->settings;
 	bool isStaticTriangle = !triangle->isSynthetic && triangle->sourcePolygon->sourceObject->isStatic;
+	bool shouldRecomputeAmbientLightColorIntensity = settings.ambientLightFactor > 0 && (!isStaticTriangle || !settings.hasStaticAmbientLight);
 	Vec3 colorIntensity;
 
 	if (isStaticTriangle) {
@@ -110,19 +111,15 @@ Vec3 Illuminator::getTriangleVertexColorIntensity(Triangle* triangle, int vertex
 		colorIntensity = { settings.brightness, settings.brightness, settings.brightness };
 	}
 
-	if (settings.brightness > 0.0f) {
-		bool shouldRecomputeAmbientLightColorIntensity = settings.ambientLightFactor > 0 && (!isStaticTriangle || !settings.hasStaticAmbientLight);
+	if (shouldRecomputeAmbientLightColorIntensity) {
+		computeAmbientLightColorIntensity(normal, triangle->fresnelFactor, colorIntensity);
+	}
 
-		if (shouldRecomputeAmbientLightColorIntensity) {
-			computeAmbientLightColorIntensity(normal, triangle->fresnelFactor, colorIntensity);
-		}
+	for (auto* light : activeScene->getLights()) {
+		bool shouldRecomputeLightColorIntensity = !isStaticTriangle || !light->isStatic;
 
-		for (auto* light : activeScene->getLights()) {
-			bool shouldRecomputeLightColorIntensity = !isStaticTriangle || !light->isStatic;
-
-			if (shouldRecomputeLightColorIntensity) {
-				computeLightColorIntensity(light, vertex.worldVector, normal, triangle->fresnelFactor, colorIntensity);
-			}
+		if (shouldRecomputeLightColorIntensity) {
+			computeLightColorIntensity(light, vertex.worldVector, normal, triangle->fresnelFactor, colorIntensity);
 		}
 	}
 
