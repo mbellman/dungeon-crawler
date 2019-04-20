@@ -1,5 +1,5 @@
-#include <Entities/TextBox.h>
-#include <Entities/Frame.h>
+#include <UI/TextBox.h>
+#include <UI/Frame.h>
 #include <SoftEngine.h>
 #include <SDL_ttf.h>
 #include <algorithm>

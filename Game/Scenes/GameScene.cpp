@@ -5,13 +5,13 @@
 #include <Entities/Player.h>
 #include <Entities/CastLight.h>
 #include <Entities/Staff.h>
-#include <Entities/TextBox.h>
-#include <Entities/ItemMenu.h>
-#include <Entities/HUD.h>
-#include <Entities/MiniMap.h>
 #include <Entities/Torch.h>
 #include <Entities/Chest.h>
 #include <Entities/Door.h>
+#include <UI/TextBox.h>
+#include <UI/ItemMenu.h>
+#include <UI/HUD.h>
+#include <UI/MiniMap.h>
 #include <MathUtils.h>
 #include <GameUtils.h>
 #include <Party.h>

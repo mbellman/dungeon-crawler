@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Entities/Frame.h>
+#include <UI/Frame.h>
 #include <SoftEngine.h>
 #include <SDL_ttf.h>
 #include <string>

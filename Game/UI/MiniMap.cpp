@@ -1,4 +1,4 @@
-#include <Entities/MiniMap.h>
+#include <UI/MiniMap.h>
 #include <GameUtils.h>
 #include <MathUtils.h>
 #include <SoftEngine.h>

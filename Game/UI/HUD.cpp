@@ -1,8 +1,8 @@
-#include <Entities/HUD.h>
+#include <UI/HUD.h>
 #include <GameUtils.h>
+#include <Party.h>
 #include <SoftEngine.h>
 #include <SDL_ttf.h>
-#include <Party.h>
 #include <string>
 
 /**

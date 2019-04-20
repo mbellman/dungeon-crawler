@@ -55,20 +55,10 @@ set(SOURCE_FILES
     Game/Entities/Chest.cpp
     Game/Entities/Door.h
     Game/Entities/Door.cpp
-    Game/Entities/Frame.h
-    Game/Entities/Frame.cpp
-    Game/Entities/HUD.h
-    Game/Entities/HUD.cpp
-    Game/Entities/ItemMenu.h
-    Game/Entities/ItemMenu.cpp
-    Game/Entities/MiniMap.h
-    Game/Entities/MiniMap.cpp
     Game/Entities/Player.h
     Game/Entities/Player.cpp
     Game/Entities/Staff.h
     Game/Entities/Staff.cpp
-    Game/Entities/TextBox.h
-    Game/Entities/TextBox.cpp
     Game/Entities/Torch.h
     Game/Entities/Torch.cpp
     Game/Level/BlockBuilder.h
@@ -81,6 +71,16 @@ set(SOURCE_FILES
     Game/Level/LevelLoader.cpp
     Game/Scenes/GameScene.h
     Game/Scenes/GameScene.cpp
+    Game/UI/Frame.h
+    Game/UI/Frame.cpp
+    Game/UI/HUD.h
+    Game/UI/HUD.cpp
+    Game/UI/ItemMenu.h
+    Game/UI/ItemMenu.cpp
+    Game/UI/MiniMap.h
+    Game/UI/MiniMap.cpp
+    Game/UI/TextBox.h
+    Game/UI/TextBox.cpp
 
     # -- Header files --
     SoftEngine/Library/Graphics/Color.h

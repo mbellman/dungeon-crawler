@@ -1,5 +1,5 @@
-#include <Entities/ItemMenu.h>
-#include <Entities/Frame.h>
+#include <UI/ItemMenu.h>
+#include <UI/Frame.h>
 #include <Inventory.h>
 #include <SoftEngine.h>
 #include <vector>
