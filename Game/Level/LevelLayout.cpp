@@ -3,6 +3,7 @@
 #include <Level/BlockUtils.h>
 #include <Entities/Chest.h>
 #include <Entities/Door.h>
+#include <Entities/Desecration.h>
 #include <GameUtils.h>
 #include <SoftEngine.h>
 
@@ -34,10 +35,15 @@ LevelLayout::~LevelLayout() {
 
 	chests.clear();
 	doors.clear();
+	desecrations.clear();
 }
 
 void LevelLayout::addChest(Chest* chest) {
 	chests.push_back(chest);
+}
+
+void LevelLayout::addDesecration(Desecration* desecration) {
+	desecrations.push_back(desecration);
 }
 
 void LevelLayout::addDoor(Door* door) {
@@ -78,6 +84,16 @@ Door* LevelLayout::getMatchingDoor(GridPosition position) const {
 	for (auto* door : doors) {
 		if (position == door->getDoorData().position) {
 			return door;
+		}
+	}
+
+	return nullptr;
+}
+
+Desecration* LevelLayout::getMatchingDesecration(GridPosition position) const {
+	for (auto* desecration : desecrations) {
+		if (position == desecration->getDesecrationData().position) {
+			return desecration;
 		}
 	}
 

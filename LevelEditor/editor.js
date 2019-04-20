@@ -29,7 +29,8 @@
 	var entities = [
 		{ name: 'Torch', file: 'torch.png' },
 		{ name: 'Chest', file: 'chest.png' },
-		{ name: 'Door', file: 'door.png' }
+		{ name: 'Door', file: 'door.png' },
+		{ name: 'Desecration', file: 'desecration.png' }
 	];
 
 	var directions = [
@@ -57,7 +58,8 @@
 	var EntityTypes = {
 		TORCH: 0,
 		CHEST: 1,
-		DOOR: 2
+		DOOR: 2,
+		DESECRATION: 3
 	};
 
 	var Direction = {
@@ -94,6 +96,7 @@
 		torches: [],
 		chests: [],
 		doors: [],
+		desecrations: [],
 		layers: [],
 		currentLayer: 0,
 		currentPlacementType: 'block',
@@ -397,6 +400,15 @@
 		}
 	}
 
+	function getRect(x, z, blockWidth, blockHeight) {
+		return {
+			x: blockWidth * x,
+			y: blockHeight * z,
+			width: blockWidth,
+			height: blockHeight
+		};
+	}
+
 	function activeLayerEntityFilter(entity) {
 		return entity.layer === appState.currentLayer;
 	}
@@ -450,13 +462,7 @@
 
 			for (var x = 0; x < row.length; x++) {
 				var blockType = row[x];
-
-				var rect = {
-					x: blockWidth * x,
-					y: blockHeight * z,
-					width: blockWidth,
-					height: blockHeight
-				};
+				var rect = getRect(x, z, blockWidth, blockHeight);
 
 				renderBlockType(canvas, blockType, rect);
 
@@ -500,13 +506,7 @@
 
 		appState.doors.filter(activeLayerEntityFilter).forEach(function(door) {
 			var asset = entityAssets[EntityTypes.DOOR];
-
-			var rect = {
-				x: blockWidth * door.x,
-				y: blockHeight * door.z,
-				width: blockWidth,
-				height: blockHeight
-			};
+			var rect = getRect(door.x, door.z, blockWidth, blockHeight);
 
 			canvas.save();
 
@@ -519,6 +519,13 @@
 			}
 
 			canvas.restore();
+		});
+
+		appState.desecrations.filter(activeLayerEntityFilter).forEach(function(desecration) {
+			var asset = entityAssets[EntityTypes.DESECRATION];
+			var rect = getRect(desecration.x, desecration.z, blockWidth, blockHeight);
+
+			canvas.drawImage(asset, rect.x, rect.y, rect.width, rect.height);
 		});
 
 		if (appState.currentLayer === appState.spawn.layer) {
@@ -580,6 +587,15 @@
 
 		newline();
 
+		for (var i = 0; i < appState.desecrations.length; i++) {
+			var desecration = appState.desecrations[i];
+
+			write(`DE ${desecration.layer}, ${desecration.x}, ${desecration.z}`);
+			newline();
+		}
+
+		newline();
+
 		for (var i = 0; i < appState.layers.length; i++) {
 			var layer = appState.layers[i];
 
@@ -612,6 +628,7 @@
 		appState.layers.length = 0;
 		appState.torches.length = 0;
 		appState.chests.length = 0;
+		appState.desecrations.length = 0;
 
 		for (var i = 0; i < 3; i++) {
 			addLayer();
@@ -692,6 +709,16 @@
 			});
 		}
 
+		function parseDesecration(data) {
+			var values = data.split(',');
+
+			appState.desecrations.push({
+				layer: parseInt(values[0]),
+				x: parseInt(values[1]),
+				z: parseInt(values[2])
+			});
+		}
+
 		function parseLayerRow(data, activeLayer, rowIndex) {
 			if (activeLayer >= appState.layers.length) {
 				addLayer();
@@ -739,6 +766,9 @@
 					break;
 				case 'D':
 					parseDoor(data);
+					break;
+				case 'DE':
+					parseDesecration(data);
 					break;
 				case 'L':
 					for (var n = 1; n <= appState.layerSize.height; n++) {
@@ -809,6 +839,7 @@
 		appState.torches = appState.torches.filter(predicate);
 		appState.chests = appState.chests.filter(predicate);
 		appState.doors = appState.doors.filter(predicate);
+		appState.desecrations = appState.desecrations.filter(predicate);
 	}
 
 	function placeCurrentEntity(tile) {
@@ -845,6 +876,13 @@
 					x: tile.x,
 					z: tile.z,
 					axis: options.axis
+				});
+				break;
+			case EntityTypes.DESECRATION:
+				appState.desecrations.push({
+					layer: appState.currentLayer,
+					x: tile.x,
+					z: tile.z
 				});
 				break;
 		}

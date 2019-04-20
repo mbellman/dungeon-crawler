@@ -53,6 +53,8 @@ set(SOURCE_FILES
     Game/Entities/CastLight.cpp
     Game/Entities/Chest.h
     Game/Entities/Chest.cpp
+    Game/Entities/Desecration.h
+    Game/Entities/Desecration.cpp
     Game/Entities/Door.h
     Game/Entities/Door.cpp
     Game/Entities/Player.h

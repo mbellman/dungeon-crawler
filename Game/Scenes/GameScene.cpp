@@ -8,6 +8,7 @@
 #include <Entities/Torch.h>
 #include <Entities/Chest.h>
 #include <Entities/Door.h>
+#include <Entities/Desecration.h>
 #include <UI/TextBox.h>
 #include <UI/ItemMenu.h>
 #include <UI/HUD.h>
@@ -279,6 +280,13 @@ void GameScene::loadLevel() {
 
 		levelLayout->addDoor(door);
 		add(door);
+	}
+
+	for (const auto& desecrationData : levelData.desecrations) {
+		Desecration* desecration = new Desecration(desecrationData);
+
+		levelLayout->addDesecration(desecration);
+		add(desecration);
 	}
 
 	BlockBuilder builder(levelLayout);

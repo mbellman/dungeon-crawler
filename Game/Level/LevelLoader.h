@@ -16,21 +16,25 @@ struct SpawnPosition : GridPosition {
 	MathUtils::Direction direction;
 };
 
-struct TorchData {
+struct EntityData {
 	GridPosition position;
+};
+
+struct TorchData : EntityData {
 	MathUtils::Direction direction;
 };
 
-struct ChestData {
-	GridPosition position;
+struct ChestData : EntityData {
 	MathUtils::Direction direction;
 	int itemType;
 };
 
-struct DoorData {
+struct DoorData : EntityData {
 	GridPosition position;
 	MathUtils::Axis axis;
 };
+
+struct DesecrationData : EntityData {};
 
 struct LayerData {
 	std::vector<int> blockTypes;
@@ -48,6 +52,7 @@ struct LevelData {
 	std::vector<TorchData> torches;
 	std::vector<ChestData> chests;
 	std::vector<DoorData> doors;
+	std::vector<DesecrationData> desecrations;
 };
 
 class LevelLoader : Soft::Loader {
@@ -65,6 +70,7 @@ private:
 	void parseAmbientLightSettings();
 	void parseBrightness();
 	void parseChestData();
+	void parseDesecrationData();
 	void parseDoorData();
 	void parseLayerSize();
 	void parseLayerData();
