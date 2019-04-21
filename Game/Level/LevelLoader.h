@@ -9,7 +9,7 @@ struct GridPosition {
 	int x = 0;
 	int z = 0;
 
-	bool operator ==(const GridPosition& position);
+	bool operator ==(const GridPosition& position) const;
 };
 
 struct SpawnPosition : GridPosition {

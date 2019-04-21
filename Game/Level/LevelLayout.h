@@ -32,20 +32,21 @@ public:
 	void addDesecration(Desecration* desecration);
 	void addDoor(Door* door);
 	int getBlockType(int layerIndex, int x, int z) const;
-	int getBlockType(GridPosition position) const;
+	int getBlockType(const GridPosition& position) const;
 	const Soft::Area& getSize() const;
 	int getTotalLayers() const;
-	Chest* getMatchingChest(GridPosition position) const;
-	Desecration* getMatchingDesecration(GridPosition position) const;
-	Door* getMatchingDoor(GridPosition position) const;
-	bool hasImpassableObject(GridPosition position) const;
+	Chest* getMatchingChest(const GridPosition& position) const;
+	Desecration* getMatchingDesecration(const GridPosition& position) const;
+	Door* getMatchingDoor(const GridPosition& position) const;
+	bool hasImpassableObject(const GridPosition& position) const;
+	bool isDesecrated(const GridPosition& position) const;
 	bool isEmptyBlock(int layerIndex, int x, int z) const;
-	bool isEmptyBlock(GridPosition position) const;
+	bool isEmptyBlock(const GridPosition& position) const;
 	bool isStaircaseBlock(int layerIndex, int x, int z) const;
-	bool isStaircaseBlock(GridPosition position) const;
+	bool isStaircaseBlock(const GridPosition& position) const;
 	bool isWalkableBlock(int layerIndex, int x, int z) const;
-	bool isWalkableBlock(GridPosition position) const;
-	bool isWalkablePosition(GridPosition position) const;
+	bool isWalkableBlock(const GridPosition& position) const;
+	bool isWalkablePosition(const GridPosition& position) const;
 	void setBlockType(int layerIndex, int x, int z, int blockType);
 
 private:

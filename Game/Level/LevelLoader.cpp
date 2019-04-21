@@ -17,7 +17,7 @@ static std::string LAYER = "L";
  * GridPosition
  * ------------
  */
-bool GridPosition::operator ==(const GridPosition& position) {
+bool GridPosition::operator ==(const GridPosition& position) const {
 	return layer == position.layer && x == position.x && z == position.z;
 }
 

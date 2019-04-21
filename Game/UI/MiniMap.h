@@ -16,6 +16,7 @@ public:
 private:
 	constexpr static int TILE_SIZE = 11;
 	static Soft::Color WALKABLE_TILE_COLOR;
+	static Soft::Color DESECRATED_TILE_COLOR;
 	static Soft::Color SOLID_TILE_COLOR;
 	static Soft::Color GRID_LINE_COLOR;
 
@@ -30,5 +31,6 @@ private:
 	void addLayerMap(int layerIndex);
 	int getCurrentLayer();
 	int getCurrentPlayerIconIndex();
+	Soft::Color getTileColor(const GridPosition& position);
 	void setColorBufferTileColor(Soft::ColorBuffer* colorBuffer, int x, int z, const Soft::Color& color);
 };

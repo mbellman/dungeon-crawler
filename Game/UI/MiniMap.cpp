@@ -110,10 +110,7 @@ void MiniMap::addLayerMap(int layerIndex) {
 	for (int z = 0; z < levelSize.height; z++) {
 		for (int x = 0; x < levelSize.width; x++) {
 			GridPosition position = { layerIndex, x, z };
-
-			const Soft::Color& tileColor = levelLayout->isWalkablePosition(position) || levelLayout->isStaircaseBlock(position)
-				? MiniMap::WALKABLE_TILE_COLOR
-				: MiniMap::SOLID_TILE_COLOR;
+			Soft::Color tileColor = getTileColor(position);
 
 			setColorBufferTileColor(layerMapBuffer, x, z, tileColor);
 		}
@@ -147,6 +144,16 @@ int MiniMap::getCurrentPlayerIconIndex() {
 	}
 }
 
+Soft::Color MiniMap::getTileColor(const GridPosition& position) {
+	if (levelLayout->isDesecrated(position)) {
+		return MiniMap::DESECRATED_TILE_COLOR;
+	} else if (levelLayout->isWalkablePosition(position) || levelLayout->isStaircaseBlock(position)) {
+		return MiniMap::WALKABLE_TILE_COLOR;
+	} else {
+		return MiniMap::SOLID_TILE_COLOR;
+	}
+}
+
 void MiniMap::setColorBufferTileColor(Soft::ColorBuffer* colorBuffer, int x, int z, const Soft::Color& color) {
 	int px = x * MiniMap::TILE_SIZE;
 	int py = z * MiniMap::TILE_SIZE;
@@ -163,5 +170,6 @@ void MiniMap::setColorBufferTileColor(Soft::ColorBuffer* colorBuffer, int x, int
 }
 
 Soft::Color MiniMap::WALKABLE_TILE_COLOR = { 100, 100, 100 };
+Soft::Color MiniMap::DESECRATED_TILE_COLOR = { 150, 30, 30 };
 Soft::Color MiniMap::SOLID_TILE_COLOR = { 30, 30, 30 };
 Soft::Color MiniMap::GRID_LINE_COLOR = { 0, 0, 0 };

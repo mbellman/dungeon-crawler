@@ -66,11 +66,11 @@ int LevelLayout::getBlockType(int layerIndex, int x, int z) const {
 	return layer.blocks[blockIndex];
 }
 
-int LevelLayout::getBlockType(GridPosition position) const {
+int LevelLayout::getBlockType(const GridPosition& position) const {
 	return getBlockType(position.layer, position.x, position.z);
 }
 
-Chest* LevelLayout::getMatchingChest(GridPosition position) const {
+Chest* LevelLayout::getMatchingChest(const GridPosition& position) const {
 	for (auto* chest : chests) {
 		if (position == chest->getChestData().position) {
 			return chest;
@@ -80,7 +80,7 @@ Chest* LevelLayout::getMatchingChest(GridPosition position) const {
 	return nullptr;
 }
 
-Door* LevelLayout::getMatchingDoor(GridPosition position) const {
+Door* LevelLayout::getMatchingDoor(const GridPosition& position) const {
 	for (auto* door : doors) {
 		if (position == door->getDoorData().position) {
 			return door;
@@ -90,7 +90,7 @@ Door* LevelLayout::getMatchingDoor(GridPosition position) const {
 	return nullptr;
 }
 
-Desecration* LevelLayout::getMatchingDesecration(GridPosition position) const {
+Desecration* LevelLayout::getMatchingDesecration(const GridPosition& position) const {
 	for (auto* desecration : desecrations) {
 		if (position == desecration->getDesecrationData().position) {
 			return desecration;
@@ -108,18 +108,22 @@ int LevelLayout::getTotalLayers() const {
 	return totalLayers;
 }
 
-bool LevelLayout::hasImpassableObject(GridPosition position) const {
+bool LevelLayout::hasImpassableObject(const GridPosition& position) const {
 	const Chest* chest = getMatchingChest(position);
 	const Door* door = getMatchingDoor(position);
 
 	return chest != nullptr || (door != nullptr && !door->isOpen());
 }
 
+bool LevelLayout::isDesecrated(const GridPosition& position) const {
+	return getMatchingDesecration(position) != nullptr;
+}
+
 bool LevelLayout::isEmptyBlock(int layerIndex, int x, int z) const {
 	return BlockUtils::isEmpty(getBlockType(layerIndex, x, z));
 }
 
-bool LevelLayout::isEmptyBlock(GridPosition position) const {
+bool LevelLayout::isEmptyBlock(const GridPosition& position) const {
 	return isEmptyBlock(position.layer, position.x, position.z);
 }
 
@@ -127,7 +131,7 @@ bool LevelLayout::isStaircaseBlock(int layerIndex, int x, int z) const {
 	return BlockUtils::isStaircase(getBlockType(layerIndex, x, z));
 }
 
-bool LevelLayout::isStaircaseBlock(GridPosition position) const {
+bool LevelLayout::isStaircaseBlock(const GridPosition& position) const {
 	return isStaircaseBlock(position.layer, position.x, position.z);
 }
 
@@ -135,11 +139,11 @@ bool LevelLayout::isWalkableBlock(int layerIndex, int x, int z) const {
 	return BlockUtils::isWalkable(getBlockType(layerIndex, x, z));
 }
 
-bool LevelLayout::isWalkableBlock(GridPosition position) const {
+bool LevelLayout::isWalkableBlock(const GridPosition& position) const {
 	return isWalkableBlock(position.layer, position.x, position.z);
 }
 
-bool LevelLayout::isWalkablePosition(GridPosition position) const {
+bool LevelLayout::isWalkablePosition(const GridPosition& position) const {
 	bool isBridged = getBlockType(position) == GameUtils::BlockTypes::BRIDGE;
 
 	return (

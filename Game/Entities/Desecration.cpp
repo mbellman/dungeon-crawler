@@ -25,11 +25,8 @@ void Desecration::initialize() {
 
 	particles->setParticleBehavior([=](Soft::Particle* particle, int dt) {
 		particle->position.y += 0.05f * dt;
-		particle->hasLighting = false;
 
-		if (
-			(particle->position.y - spawnRange.start.y) > GameUtils::TILE_SIZE
-		) {
+		if (particle->position.y - spawnRange.start.y > GameUtils::TILE_SIZE) {
 			particle->shouldReset = true;
 		}
 	});
