@@ -6,9 +6,7 @@
  * Desecration
  * -----------
  */
-Desecration::Desecration(const DesecrationData& desecrationData) {
-	this->desecrationData = desecrationData;
-}
+Desecration::Desecration(const DesecrationData& desecrationData): Interactible(desecrationData) {}
 
 void Desecration::initialize() {
 	auto spawnRange = getSpawnRange();
@@ -33,7 +31,7 @@ void Desecration::initialize() {
 
 	Soft::Light* light = new Soft::Light();
 
-	light->position = GameUtils::getGridPositionVec3(desecrationData.position);
+	light->position = GameUtils::getGridPositionVec3(data.position);
 	light->setColor({ 255, 0, 0 });
 	light->isStatic = true;
 
@@ -41,13 +39,9 @@ void Desecration::initialize() {
 	add(light);
 }
 
-const DesecrationData& Desecration::getDesecrationData() const {
-	return desecrationData;
-}
-
 Soft::Range<Soft::Vec3> Desecration::getSpawnRange() {
 	Soft::Range<Soft::Vec3> spawnRange;
-	Soft::Vec3 position = GameUtils::getGridPositionVec3(desecrationData.position);
+	Soft::Vec3 position = GameUtils::getGridPositionVec3(data.position);
 
 	spawnRange.start = {
 		position.x - GameUtils::HALF_TILE_SIZE,

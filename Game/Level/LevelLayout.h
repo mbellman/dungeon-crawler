@@ -4,6 +4,7 @@
 #include <Entities/Chest.h>
 #include <Entities/Door.h>
 #include <Entities/Desecration.h>
+#include <Entities/Interactible.h>
 #include <SoftEngine.h>
 #include <MathUtils.h>
 #include <vector>
@@ -28,16 +29,27 @@ public:
 	LevelLayout(int totalLayers, const Soft::Area& area);
 	~LevelLayout();
 
-	void addChest(Chest* chest);
-	void addDesecration(Desecration* desecration);
-	void addDoor(Door* door);
+	template<typename T>
+	void addInteractible(Interactible<T>* interactible) {
+		interactibles.push_back((Interactible<>*)interactible);
+	}
+
 	int getBlockType(int layerIndex, int x, int z) const;
 	int getBlockType(const GridPosition& position) const;
 	const Soft::Area& getSize() const;
 	int getTotalLayers() const;
-	Chest* getMatchingChest(const GridPosition& position) const;
-	Desecration* getMatchingDesecration(const GridPosition& position) const;
-	Door* getMatchingDoor(const GridPosition& position) const;
+
+	template<class T>
+	T* getMatchingInteractible(const GridPosition& position, bool t = false) const {
+		for (auto* interactible : interactibles) {
+			if ((Soft::Entity*)interactible->isOfType<T>() && ((T*)interactible)->getData().position == position) {
+				return (T*)interactible;
+			}
+		}
+
+		return nullptr;
+	}
+
 	bool hasImpassableObject(const GridPosition& position) const;
 	bool isDesecrated(const GridPosition& position) const;
 	bool isEmptyBlock(int layerIndex, int x, int z) const;
@@ -52,7 +64,5 @@ public:
 private:
 	int totalLayers = 0;
 	Layer* layers = nullptr;
-	std::vector<Chest*> chests;
-	std::vector<Door*> doors;
-	std::vector<Desecration*> desecrations;
+	std::vector<Interactible<>*> interactibles;
 };

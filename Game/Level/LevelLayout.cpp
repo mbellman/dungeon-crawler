@@ -33,21 +33,7 @@ LevelLayout::LevelLayout(int totalLayers, const Soft::Area& area) {
 LevelLayout::~LevelLayout() {
 	delete[] layers;
 
-	chests.clear();
-	doors.clear();
-	desecrations.clear();
-}
-
-void LevelLayout::addChest(Chest* chest) {
-	chests.push_back(chest);
-}
-
-void LevelLayout::addDesecration(Desecration* desecration) {
-	desecrations.push_back(desecration);
-}
-
-void LevelLayout::addDoor(Door* door) {
-	doors.push_back(door);
+	interactibles.clear();
 }
 
 int LevelLayout::getBlockType(int layerIndex, int x, int z) const {
@@ -70,36 +56,6 @@ int LevelLayout::getBlockType(const GridPosition& position) const {
 	return getBlockType(position.layer, position.x, position.z);
 }
 
-Chest* LevelLayout::getMatchingChest(const GridPosition& position) const {
-	for (auto* chest : chests) {
-		if (position == chest->getChestData().position) {
-			return chest;
-		}
-	}
-
-	return nullptr;
-}
-
-Door* LevelLayout::getMatchingDoor(const GridPosition& position) const {
-	for (auto* door : doors) {
-		if (position == door->getDoorData().position) {
-			return door;
-		}
-	}
-
-	return nullptr;
-}
-
-Desecration* LevelLayout::getMatchingDesecration(const GridPosition& position) const {
-	for (auto* desecration : desecrations) {
-		if (position == desecration->getDesecrationData().position) {
-			return desecration;
-		}
-	}
-
-	return nullptr;
-}
-
 const Soft::Area& LevelLayout::getSize() const {
 	return layers[0].area;
 }
@@ -109,14 +65,14 @@ int LevelLayout::getTotalLayers() const {
 }
 
 bool LevelLayout::hasImpassableObject(const GridPosition& position) const {
-	const Chest* chest = getMatchingChest(position);
-	const Door* door = getMatchingDoor(position);
+	const Chest* chest = getMatchingInteractible<Chest>(position);
+	const Door* door = getMatchingInteractible<Door>(position);
 
 	return chest != nullptr || (door != nullptr && !door->isOpen());
 }
 
 bool LevelLayout::isDesecrated(const GridPosition& position) const {
-	return getMatchingDesecration(position) != nullptr;
+	return getMatchingInteractible<Desecration>(position) != nullptr;
 }
 
 bool LevelLayout::isEmptyBlock(int layerIndex, int x, int z) const {

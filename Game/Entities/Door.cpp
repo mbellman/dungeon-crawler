@@ -8,8 +8,7 @@
  * Door
  * ----
  */
-Door::Door(const DoorData& doorData, Soft::TextureBuffer* frameTexture, Soft::TextureBuffer* slabTexture) {
-	this->doorData = doorData;
+Door::Door(const DoorData& doorData, Soft::TextureBuffer* frameTexture, Soft::TextureBuffer* slabTexture): Interactible(doorData) {
 	this->frameTexture = frameTexture;
 	this->slabTexture = slabTexture;
 }
@@ -22,7 +21,7 @@ void Door::initialize() {
 
 	frame->setTexture(frameTexture);
 	frame->scale(GameUtils::HALF_TILE_SIZE);
-	frame->position = GameUtils::getGridPositionVec3(doorData.position);
+	frame->position = GameUtils::getGridPositionVec3(data.position);
 
 	slab = new Soft::Model(slabLoader);
 
@@ -31,17 +30,13 @@ void Door::initialize() {
 	slab->scale(GameUtils::HALF_TILE_SIZE);
 	slab->position = frame->position;
 
-	if (doorData.axis == MathUtils::Axis::X) {
+	if (data.axis == MathUtils::Axis::X) {
 		frame->rotateDeg({ 0.0f, 90.0f, 0.0f });
 		slab->rotateDeg({ 0.0f, 90.0f, 0.0f });
 	}
 
 	add(frame);
 	add(slab);
-}
-
-const DoorData& Door::getDoorData() const {
-	return doorData;
 }
 
 bool Door::isOpen() const {

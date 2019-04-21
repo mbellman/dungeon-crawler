@@ -1,22 +1,21 @@
 #pragma once
 
 #include <SoftEngine.h>
+#include <Entities/Interactible.h>
 #include <Level/LevelLoader.h>
 #include <MathUtils.h>
 
-class Door : public Soft::Entity {
+class Door : public Interactible<DoorData> {
 public:
 	Door(const DoorData& doorData, Soft::TextureBuffer* frameTexture, Soft::TextureBuffer* slabTexture);
 
 	void initialize() override;
-	const DoorData& getDoorData() const;
 	bool isOpen() const;
 	void open();
 
 private:
 	constexpr static int OPEN_ANIMATION_DURATION = 2000;
 
-	DoorData doorData;
 	Soft::Object* slab = nullptr;
 	Soft::TextureBuffer* frameTexture = nullptr;
 	Soft::TextureBuffer* slabTexture = nullptr;

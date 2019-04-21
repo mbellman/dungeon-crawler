@@ -164,8 +164,8 @@ void GameScene::handleAction() {
 	} else {
 		auto* player = getEntity<Player>("player");
 		GridPosition nextPosition = player->getDirectionalGridPosition(player->getDirection());
-		Chest* chest = levelLayout->getMatchingChest(nextPosition);
-		Door* door = levelLayout->getMatchingDoor(nextPosition);
+		Chest* chest = levelLayout->getMatchingInteractible<Chest>(nextPosition);
+		Door* door = levelLayout->getMatchingInteractible<Door>(nextPosition, true);
 
 		if (chest != nullptr) {
 			handleChestAction(chest);
@@ -271,21 +271,21 @@ void GameScene::loadLevel() {
 	for (const auto& chestData : levelData.chests) {
 		Chest* chest = new Chest(chestData, getTexture("chestBox"), getTexture("chestLid"));
 
-		levelLayout->addChest(chest);
+		levelLayout->addInteractible(chest);
 		add(chest);
 	}
 
 	for (const auto& doorData : levelData.doors) {
 		Door* door = new Door(doorData, getTexture("doorFrame"), getTexture("doorSlab"));
 
-		levelLayout->addDoor(door);
+		levelLayout->addInteractible(door);
 		add(door);
 	}
 
 	for (const auto& desecrationData : levelData.desecrations) {
 		Desecration* desecration = new Desecration(desecrationData);
 
-		levelLayout->addDesecration(desecration);
+		levelLayout->addInteractible(desecration);
 		add(desecration);
 	}
 

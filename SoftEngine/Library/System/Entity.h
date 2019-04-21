@@ -15,7 +15,7 @@ class Entity {
 public:
 	int lifetime = -1;
 
-	~Entity();
+	virtual ~Entity();
 
 	int getAge() const;
 	const std::vector<Entity*>& getQueuedEntities() const;
@@ -24,6 +24,12 @@ public:
 	const std::vector<Sound*>& getQueuedSounds() const;
 	const std::vector<UIObject*>& getQueuedUIObjects() const;
 	virtual void initialize() = 0;
+
+	template<class T>
+	bool isOfType() {
+		return dynamic_cast<T*>(this) != nullptr;
+	}
+
 	virtual void onUpdate(int dt);
 	void setActiveScene(Scene* scene);
 	void update(int dt);

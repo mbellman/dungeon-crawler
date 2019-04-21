@@ -57,6 +57,7 @@ set(SOURCE_FILES
     Game/Entities/Desecration.cpp
     Game/Entities/Door.h
     Game/Entities/Door.cpp
+    Game/Entities/Interactible.h
     Game/Entities/Player.h
     Game/Entities/Player.cpp
     Game/Entities/Staff.h
