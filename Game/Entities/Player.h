@@ -22,6 +22,7 @@ private:
 	Soft::Camera* camera = nullptr;
 	const LevelLayout* levelLayout = nullptr;
 	GridPosition currentGridPosition;
+	Soft::Light* desecrationWarningLight = nullptr;
 	int lastMovementTime = 0;
 	bool shouldBobCamera = false;
 
@@ -32,4 +33,5 @@ private:
 	void moveOffStaircase(MathUtils::Direction direction);
 	void moveUpOntoStaircase(MathUtils::Direction direction);
 	void moveDownOntoStaircase(MathUtils::Direction direction);
+	void updateDesecrationWarningLight();
 };

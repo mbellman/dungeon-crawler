@@ -11,7 +11,16 @@ Player::Player(Soft::Camera* camera, const LevelLayout* levelLayout) {
 	this->levelLayout = levelLayout;
 }
 
-void Player::initialize() {}
+void Player::initialize() {
+	desecrationWarningLight = new Soft::Light();
+
+	desecrationWarningLight->setColor({ 255, 0, 0 });
+	desecrationWarningLight->lockTo(camera);
+	desecrationWarningLight->range = 2000.0f;
+	desecrationWarningLight->power = 0.0f;
+
+	add(desecrationWarningLight);
+}
 
 void Player::onUpdate(int dt) {
 	if (isMoving() && shouldBobCamera) {
@@ -119,6 +128,8 @@ void Player::move(MathUtils::Direction direction) {
 		currentGridPosition = targetGridPosition;
 		shouldBobCamera = true;
 	}
+
+	updateDesecrationWarningLight();
 }
 
 void Player::moveOffStaircase(MathUtils::Direction direction) {
@@ -231,5 +242,13 @@ void Player::spawn(const SpawnPosition& spawnPosition) {
 		case Direction::RIGHT:
 			camera->yaw = DEG_270;
 			break;
+	}
+}
+
+void Player::updateDesecrationWarningLight() {
+	float updatedPower = levelLayout->isDesecrated(currentGridPosition) ? 1.0f : 0.0f;
+
+	if (desecrationWarningLight->power.value() != updatedPower) {
+		desecrationWarningLight->power.tweenTo(updatedPower, 500, Soft::Ease::linear);
 	}
 }

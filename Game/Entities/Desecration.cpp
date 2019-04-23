@@ -34,6 +34,7 @@ void Desecration::initialize() {
 	light->position = GameUtils::getGridPositionVec3(data.position);
 	light->setColor({ 255, 0, 0 });
 	light->isStatic = true;
+	light->power = 0.75f;
 
 	add(particles);
 	add(light);
