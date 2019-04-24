@@ -1,4 +1,5 @@
 #include <Scenes/GameScene.h>
+#include <Scenes/BattleScene.h>
 #include <Level/LevelLayout.h>
 #include <Level/BlockBuilder.h>
 #include <Level/LevelLoader.h>
@@ -83,6 +84,10 @@ void GameScene::onUpdate(int dt) {
 		player->move(getYawDirection(camera->yaw + MathUtils::DEG_180));
 	} else if (inputManager->isKeyPressed(Soft::Keys::D)) {
 		player->move(getYawDirection(camera->yaw + MathUtils::DEG_270));
+	}
+
+	if (shouldInitiateEnemyEncounter()) {
+		controller->enterScene(new BattleScene(party, inventory));
 	}
 }
 
@@ -349,6 +354,12 @@ void GameScene::loadTextures() {
 	fireTexture->addFrame("./Assets/Textures/Fire/8.png");
 
 	add("fireTexture", fireTexture);
+}
+
+bool GameScene::shouldInitiateEnemyEncounter() {
+	auto* player = getEntity<Player>("player");
+
+	return Soft::RNG::random(0.0f, 100.0f) < 1.0f && levelLayout->isDesecrated(player->getCurrentGridPosition());
 }
 
 void GameScene::showItemMenu() {

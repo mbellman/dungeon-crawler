@@ -72,8 +72,12 @@ set(SOURCE_FILES
     Game/Level/LevelLayout.cpp
     Game/Level/LevelLoader.h
     Game/Level/LevelLoader.cpp
+    Game/Scenes/BattleScene.h
+    Game/Scenes/BattleScene.cpp
     Game/Scenes/GameScene.h
     Game/Scenes/GameScene.cpp
+    Game/UI/BattleMenu.h
+    Game/UI/BattleMenu.cpp
     Game/UI/Frame.h
     Game/UI/Frame.cpp
     Game/UI/HUD.h

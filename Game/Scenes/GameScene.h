@@ -39,6 +39,7 @@ private:
 	void loadLevel();
 	void loadParty();
 	void loadTextures();
+	bool shouldInitiateEnemyEncounter();
 	void showItemMenu();
 	void showItemObtainedText(const char* itemName);
 	void showText(const char* value);
