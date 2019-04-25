@@ -26,7 +26,7 @@ void PartyMemberNameWindow::addFrame() {
 	frame = new Frame({
 		basePosition.x, basePosition.y,
 		PartyMemberNameWindow::SIZE.width, PartyMemberNameWindow::SIZE.height
-	});
+	}, 5);
 
 	add(frame);
 }
@@ -87,7 +87,7 @@ void BattleMenu::initialize() {
 }
 
 void BattleMenu::addBottomFrame() {
-	Frame* frame = new Frame(BattleMenu::BOTTOM_FRAME_REGION);
+	Frame* frame = new Frame(BattleMenu::BOTTOM_FRAME_REGION, 8);
 
 	add(frame);
 }

@@ -5,8 +5,9 @@
  * Frame
  * -----
  */
-Frame::Frame(const Soft::Region& region) {
+Frame::Frame(const Soft::Region& region, int borderSize) {
 	this->region = region;
+	this->borderSize = borderSize;
 }
 
 void Frame::initialize() {
@@ -18,8 +19,8 @@ void Frame::initialize() {
 	outerFrame->position = { region.x, region.y };
 
 	innerFrame->setColor({ 0, 20, 40 });
-	innerFrame->setSize(region.width - 20, region.height - 20);
-	innerFrame->position = { region.x + 10, region.y + 10 };
+	innerFrame->setSize(region.width - borderSize * 2, region.height - borderSize * 2);
+	innerFrame->position = { region.x + borderSize, region.y + borderSize };
 
 	add(outerFrame);
 	add(innerFrame);
