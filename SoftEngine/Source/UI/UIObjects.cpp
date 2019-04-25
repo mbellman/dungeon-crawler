@@ -185,6 +185,11 @@ void UIText::setValue(const char* value) {
 	refresh();
 }
 
+void UIText::setValue(const std::string& value) {
+	m_value = value;
+	refresh();
+}
+
 /**
  * UIGraphic
  * ---------

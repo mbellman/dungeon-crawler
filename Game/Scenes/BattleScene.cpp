@@ -19,7 +19,7 @@ void BattleScene::load() {
 }
 
 void BattleScene::addMenu() {
-	BattleMenu* battleMenu = new BattleMenu();
+	BattleMenu* battleMenu = new BattleMenu(party, inventory);
 
 	add("battleMenu", battleMenu);
 }

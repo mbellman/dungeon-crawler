@@ -76,6 +76,7 @@ public:
 	void setFont(TTF_Font* font);
 	void setColor(const SDL_Color &color);
 	void setValue(const char* value);
+	void setValue(const std::string& value);
 
 protected:
 	void refresh();

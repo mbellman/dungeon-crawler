@@ -77,6 +77,10 @@ PartyMember* Party::getMemberByIndex(int index) const {
 	return members[index];
 }
 
+const std::vector<PartyMember*>& Party::getMembers() const {
+	return members;
+}
+
 int Party::getSize() const {
 	return members.size();
 }

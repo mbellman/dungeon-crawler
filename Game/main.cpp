@@ -4,7 +4,7 @@
 
 int main(int argc, char* argv[]) {
 	Soft::Engine* engine = new Soft::Engine(
-		1200, 720,
+		GameUtils::WINDOW_SIZE.width, GameUtils::WINDOW_SIZE.height,
 		"Dungeon Crawler",
 		NULL,
 		"./Assets/fonts/FreeMono.ttf",

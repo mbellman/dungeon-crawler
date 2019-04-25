@@ -47,6 +47,7 @@ public:
 
 	void addMember(PartyMember* member);
 	PartyMember* getMemberByIndex(int index) const;
+	const std::vector<PartyMember*>& getMembers() const;
 	int getSize() const;
 	void update();
 
