@@ -30,7 +30,7 @@ private:
 
 class HUD : public Soft::Entity {
 public:
-	HUD(const Soft::Area& windowArea, const Party* party);
+	HUD(const Party* party);
 
 	void initialize() override;
 	void onUpdate(int dt) override;
@@ -39,7 +39,6 @@ public:
 
 private:
 	TTF_Font* font = nullptr;
-	Soft::Area windowArea;
 	Soft::UIRect* lightBar = nullptr;
 	const Party* party = nullptr;
 	int lastCastLightTime = 0;

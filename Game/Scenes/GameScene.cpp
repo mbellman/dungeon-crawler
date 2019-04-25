@@ -241,7 +241,7 @@ void GameScene::addHUD() {
 
 	MiniMap* miniMap = new MiniMap(levelLayout, player);
 
-	add("hud", new HUD({ controller->getWindowWidth(), controller->getWindowHeight() }, party));
+	add("hud", new HUD(party));
 	add(miniMap);
 }
 

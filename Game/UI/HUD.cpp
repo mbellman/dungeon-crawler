@@ -95,22 +95,23 @@ Soft::Coordinate PartyMemberHUD::positions[4] = {
  * HUD
  * ---
  */
-HUD::HUD(const Soft::Area& windowArea, const Party* party) {
-	this->windowArea = windowArea;
+HUD::HUD(const Party* party) {
 	this->party = party;
 
 	font = TTF_OpenFont("./Assets/Fonts/CourierPrime.ttf", 12);
 }
 
 void HUD::initialize() {
-	int baseHeight = windowArea.height - (windowArea.height * GameUtils::RASTER_REGION.height / 100.0f);
-	int baseY = windowArea.height - baseHeight;
+	using namespace GameUtils;
+
+	int baseHeight = WINDOW_SIZE.height - (WINDOW_SIZE.height * RASTER_REGION.height / 100.0f);
+	int baseY = WINDOW_SIZE.height - baseHeight;
 
 	Soft::UIGraphic* leftColumn = new Soft::UIGraphic("./Assets/UI/column.png");
 	leftColumn->position = { -30, 0 };
 
 	Soft::UIGraphic* rightColumn = new Soft::UIGraphic("./Assets/UI/column.png");
-	rightColumn->position = { windowArea.width - rightColumn->getWidth() + 30, 0 };
+	rightColumn->position = { WINDOW_SIZE.width - rightColumn->getWidth() + 30, 0 };
 
 	Soft::UIGraphic* base = new Soft::UIGraphic("./Assets/UI/hud.png");
 	base->position = { 0, baseY };
