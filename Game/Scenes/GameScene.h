@@ -19,12 +19,16 @@ public:
 	void onUpdate(int dt) override;
 
 private:
+	constexpr static int BATTLE_TRANSITION_DURATION = 1500;
+
 	Party* party = nullptr;
 	Inventory* inventory = nullptr;
 	LevelLayout* levelLayout = nullptr;
 	TTF_Font* uiFont = nullptr;
 	SpawnPosition playerSpawnPosition;
+	Soft::TweenableFloat battleTransitionProgress = 0.0f;
 
+	void addBattleTransitionFade();
 	void addHUD();
 	void addPlayer();
 	void addStaff();
@@ -35,13 +39,14 @@ private:
 	void handleDoorAction(Door* door);
 	void handleGameKeyDown(const SDL_Keycode& code);
 	void handleItemMenuKeyDown(const SDL_Keycode& code);
+	void initiateBattleTransition();
 	bool isItemMenuOpen();
 	void loadLevel();
 	void loadParty();
 	void loadTextures();
-	bool shouldInitiateEnemyEncounter();
+	bool shouldInitiateBattleTransition();
 	void showItemMenu();
 	void showItemObtainedText(const char* itemName);
 	void showText(const char* value);
-	void updateUI(int dt);
+	void updateBattleTransition(int dt);
 };

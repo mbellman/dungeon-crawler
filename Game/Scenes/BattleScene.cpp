@@ -25,6 +25,12 @@ void BattleScene::load() {
 	settings.brightness = 0.5f;
 }
 
+void BattleScene::addMenu() {
+	BattleMenu* battleMenu = new BattleMenu(party, inventory);
+
+	add("battleMenu", battleMenu);
+}
+
 void BattleScene::addScenery() {
 	Soft::Mesh* ground = new Soft::Mesh(20, 20, GameUtils::TILE_SIZE);
 
@@ -47,12 +53,6 @@ void BattleScene::addScenery() {
 
 	ui->add(leftColumn);
 	ui->add(rightColumn);
-}
-
-void BattleScene::addMenu() {
-	BattleMenu* battleMenu = new BattleMenu(party, inventory);
-
-	add("battleMenu", battleMenu);
 }
 
 void BattleScene::loadTextures() {

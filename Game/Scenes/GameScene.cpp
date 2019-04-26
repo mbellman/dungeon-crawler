@@ -49,6 +49,7 @@ void GameScene::load() {
 	loadLevel();
 	loadParty();
 
+	addBattleTransitionFade();
 	add("textBox", new TextBox(uiFont));
 
 	addPlayer();
@@ -74,21 +75,35 @@ void GameScene::load() {
 void GameScene::onUpdate(int dt) {
 	using namespace GameUtils;
 
-	auto* player = getEntity<Player>("player");
+	if (battleTransitionProgress.isTweening()) {
+		updateBattleTransition(dt);
+	} else {
+		auto* player = getEntity<Player>("player");
 
-	if (inputManager->isKeyPressed(Soft::Keys::W)) {
-		player->move(getYawDirection(camera->yaw));
-	} else if (inputManager->isKeyPressed(Soft::Keys::A)) {
-		player->move(getYawDirection(camera->yaw + MathUtils::DEG_90));
-	} else if (inputManager->isKeyPressed(Soft::Keys::S)) {
-		player->move(getYawDirection(camera->yaw + MathUtils::DEG_180));
-	} else if (inputManager->isKeyPressed(Soft::Keys::D)) {
-		player->move(getYawDirection(camera->yaw + MathUtils::DEG_270));
-	}
+		if (inputManager->isKeyPressed(Soft::Keys::W)) {
+			player->move(getYawDirection(camera->yaw));
+		} else if (inputManager->isKeyPressed(Soft::Keys::A)) {
+			player->move(getYawDirection(camera->yaw + MathUtils::DEG_90));
+		} else if (inputManager->isKeyPressed(Soft::Keys::S)) {
+			player->move(getYawDirection(camera->yaw + MathUtils::DEG_180));
+		} else if (inputManager->isKeyPressed(Soft::Keys::D)) {
+			player->move(getYawDirection(camera->yaw + MathUtils::DEG_270));
+		}
 
-	if (shouldInitiateEnemyEncounter()) {
-		controller->enterScene(new BattleScene(party, inventory));
+		if (shouldInitiateBattleTransition()) {
+			initiateBattleTransition();
+		}
 	}
+}
+
+void GameScene::addBattleTransitionFade() {
+	Soft::UIRect* fade = new Soft::UIRect();
+
+	fade->setColor({ 0, 0, 0 });
+	fade->setAlpha(0.0f);
+	fade->setSize(GameUtils::WINDOW_SIZE.width, GameUtils::WINDOW_SIZE.height);
+
+	ui->add("battleTransitionFade", fade);
 }
 
 void GameScene::addPlayer() {
@@ -232,6 +247,13 @@ void GameScene::handleItemMenuKeyDown(const SDL_Keycode& code) {
 	}
 }
 
+void GameScene::initiateBattleTransition() {
+	battleTransitionProgress = 0.0f;
+	battleTransitionProgress.tweenTo(1.0f, GameScene::BATTLE_TRANSITION_DURATION, Soft::Ease::linear);
+
+	settings.controlMode = 0;
+}
+
 bool GameScene::isItemMenuOpen() {
 	return getEntity<ItemMenu>("itemMenu") != nullptr;
 }
@@ -356,7 +378,7 @@ void GameScene::loadTextures() {
 	add("fireTexture", fireTexture);
 }
 
-bool GameScene::shouldInitiateEnemyEncounter() {
+bool GameScene::shouldInitiateBattleTransition() {
 	auto* player = getEntity<Player>("player");
 
 	return Soft::RNG::random(0.0f, 100.0f) < 1.0f && levelLayout->isDesecrated(player->getCurrentGridPosition());
@@ -380,4 +402,18 @@ void GameScene::showText(const char* value) {
 
 	textBox->write(value, TextSpeed::NORMAL);
 	textBox->show();
+}
+
+void GameScene::updateBattleTransition(int dt) {
+	Soft::UIObject* battleTransitionFade = ui->get("battleTransitionFade");
+
+	battleTransitionProgress.update(dt);
+	battleTransitionFade->setAlpha(battleTransitionProgress.value());
+
+	if (battleTransitionProgress.value() >= 1.0f) {
+		battleTransitionFade->setAlpha(0.0f);
+		controller->enterScene(new BattleScene(party, inventory));
+
+		settings.controlMode = Soft::ControlMode::MOUSE;
+	}
 }
