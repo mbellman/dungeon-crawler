@@ -59,7 +59,7 @@ void PartyMemberNameWindow::unfocus() {
 
 }
 
-Soft::Area PartyMemberNameWindow::SIZE = { 200, 50 };
+Soft::Area PartyMemberNameWindow::SIZE = { 175, 50 };
 
 /**
  * BattleMenu

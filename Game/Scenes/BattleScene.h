@@ -15,4 +15,6 @@ private:
 	Inventory* inventory = nullptr;
 
 	void addMenu();
+	void addScenery();
+	void loadTextures();
 };

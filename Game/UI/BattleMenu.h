@@ -10,7 +10,7 @@
 class PartyMemberNameWindow : public Soft::Entity {
 public:
 	static Soft::Area SIZE;
-	constexpr static int MARGIN = 100;
+	constexpr static int MARGIN = 75;
 
 	PartyMemberNameWindow(TTF_Font* font, const PartyMember* partyMember, const Soft::Coordinate& position);
 
